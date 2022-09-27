@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.11">
+  <Itf Name="I_Cylinder" Id="{50ca6ff3-f8de-4812-b33f-a125edbe41cc}">
+    <Declaration><![CDATA[INTERFACE I_Cylinder]]></Declaration>
+    <Method Name="Extend" Id="{6fbcc9e0-be52-4e2a-9078-3acec51c193a}">
+      <Declaration><![CDATA[METHOD Extend
+VAR_INPUT
+END_VAR]]></Declaration>
+    </Method>
+    <Property Name="Extended" Id="{9f4d9bef-6c2c-4f9e-ab74-6501c7dcdd54}">
+      <Declaration><![CDATA[PROPERTY Extended : BOOL]]></Declaration>
+      <Get Name="Get" Id="{0ce0f491-727f-46bd-8ae9-d07fc1b439f4}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Property Name="ExtendTime" Id="{0b25d1f7-7d2b-4293-927e-c976acf84c90}">
+      <Declaration><![CDATA[PROPERTY ExtendTime : LREAL]]></Declaration>
+      <Get Name="Get" Id="{a9d984a8-e2c9-4448-8b87-030a9d7ace95}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+      <Set Name="Set" Id="{b8aa82ed-a8e6-4c73-86f0-2dea90f4093e}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Set>
+    </Property>
+    <Method Name="Retract" Id="{e9f314be-8bc7-45b6-badc-a8667edfcee4}">
+      <Declaration><![CDATA[METHOD Retract
+VAR_INPUT
+END_VAR]]></Declaration>
+    </Method>
+    <Property Name="Retracted" Id="{d3c1ed2b-0f2f-45fa-8b47-63220b6c1c72}">
+      <Declaration><![CDATA[PROPERTY Retracted : BOOL]]></Declaration>
+      <Get Name="Get" Id="{432d6e09-2b85-489a-899f-8c5f849d134c}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Property Name="RetractTime" Id="{39f45264-4659-40f9-aa89-df4bfa2eedd2}">
+      <Declaration><![CDATA[PROPERTY RetractTime : LREAL]]></Declaration>
+      <Get Name="Get" Id="{a3fd9ea1-b55a-4ccd-9c5b-728a04948787}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+      <Set Name="Set" Id="{3fc0243a-2e25-4d04-a19a-68b7bec5a887}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Set>
+    </Property>
+  </Itf>
+</TcPlcObject>

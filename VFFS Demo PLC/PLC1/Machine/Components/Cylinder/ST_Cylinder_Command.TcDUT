@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.11">
+  <DUT Name="ST_Cylinder_Command" Id="{d44409e6-319f-4e95-a8f4-c35c15ab4350}">
+    <Declaration><![CDATA[TYPE ST_Cylinder_Command :
+    STRUCT
+        Extend  : BOOL;
+        Retract : BOOL;
+    END_STRUCT
+END_TYPE]]></Declaration>
+  </DUT>
+</TcPlcObject>

@@ -1,0 +1,171 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.11">
+  <POU Name="FB_EquipmentModuleTemplate" Id="{18ed3aa7-c83f-44ce-8119-20fe14cb0cfa}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK ABSTRACT FB_EquipmentModuleTemplate EXTENDS FB_PackML_BaseModule
+VAR
+    // Sub module definitions here
+
+    // List of sub modules
+    ipSubModules_Init : ARRAY[1..Parameters_PackML_Base.MAX_NO_OF_SUBMODULES] OF I_PackML_BaseModule := [];
+
+    // Component definitions here
+
+    // List of Components
+    ipComponents_Init : ARRAY[1..Parameters_PackML_Base.MAX_NO_OF_COMPONENTS] OF I_ComponentBase := [];
+
+    //Parameters from PackTags for module
+    _Param : ARRAY[1..10] OF ST_Descriptor2;
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Folder Name="I_CyclicFB" Id="{769d746d-1ab5-4a6d-8c77-4b1403733257}" />
+    <Folder Name="Methods" Id="{1414b749-8a1b-4539-8751-a9eb98ce9efa}">
+      <Folder Name="Acting States" Id="{f6cfc130-33f5-4b9c-9ed3-b6e57724e54f}" />
+      <Folder Name="HMI" Id="{0f08a4f8-e768-454b-a528-0661effe207e}" />
+      <Folder Name="Waiting States" Id="{ab86d3ba-50da-471d-864b-21041ca20d53}" />
+    </Folder>
+    <Method Name="CreateEvents" Id="{72c60c54-f456-4c10-a113-470233e3942b}" FolderPath="Methods\">
+      <Declaration><![CDATA[METHOD PROTECTED CreateEvents
+VAR_INPUT
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[// Add your event creation here
+
+// Super call to base
+SUPER^.CreateEvents();]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="CyclicLogic" Id="{31fa8ff0-2b84-4416-a54a-15ba032d89ac}" FolderPath="I_CyclicFB\">
+      <Declaration><![CDATA[METHOD CyclicLogic
+VAR_INPUT
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF NOT _InitComplete THEN
+    _InitComplete := Initialize();
+    RETURN;
+END_IF
+
+SUPER^.CyclicLogic();]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Initialize" Id="{cea669eb-9427-49e9-a099-b64514cc633b}" FolderPath="Methods\">
+      <Declaration><![CDATA[//! @summary Basic module initialization logic
+METHOD PROTECTED Initialize : BOOL;
+VAR
+    i                        : UDINT;
+    varInfo                  : __SYSTEM.VAR_INFO;
+    AllSubUnitsInitialized   : BOOL := TRUE;
+    AllComponentsInitialized : BOOL := TRUE;
+END_VAR
+
+//! @description This method is called by <c>CyclicLogic()</c> as required]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[Initialize := FALSE;
+CASE DescendantSequenceState OF
+    0:
+        // Define the interfaces to the different subunits (Must take place before SUPER^.initialize call)
+        FOR i := 1 TO SPT_PackMLBase.Parameters_PackML_Base.MAX_NO_OF_SUBMODULES DO
+            ipSubModules[i] := ipSubModules_Init[i];
+        END_FOR
+
+        FOR i := 1 TO SPT_PackMLBase.Parameters_PackML_Base.MAX_NO_OF_COMPONENTS DO
+            ipComponents[i] := ipComponents_Init[i];
+        END_FOR
+
+        _LogModeChanges         := FALSE;
+        _LogStateChanges        := FALSE;
+        DescendantSequenceState := DescendantSequenceState + 10;
+    10:
+        //Setup Custom modes here
+
+        (*CustomModes(eMode                          :=,
+                    sName                          :=,
+                    bDisableClearing               :=,
+                    bDisableStarting               :=,
+                    bDisableSuspended              :=,
+                    bDisableStopping               :=,
+                    bDisableAborting               :=,
+                    bDisableHolding                :=,
+                    bDisableHeld                   :=,
+                    bDisableUnholding              :=,
+                    bDisableSuspending             :=,
+                    bDisableUnsuspending           :=,
+                    bDisableResetting              :=,
+                    bDisableIdle                   :=,
+                    bDisableCompleting             :=,
+                    bDisableComplete               :=,
+                    bEnableUnitModeChangeStopped   :=,
+                    bEnableUnitModeChangeIdle      :=,
+                    bEnableUnitModeChangeSuspended :=,
+                    bEnableUnitModeChangeExecute   :=,
+                    bEnableUnitModeChangeAborted   :=,
+                    bEnableUnitModeChangeHeld      :=,
+                    bEnableUnitModeChangeComplete  :=,
+                    bError                         =>,
+                    nErrorId                       =>);*)
+        DescendantSequenceState := DescendantSequenceState + 10;
+    20:
+        //Copy Mode names
+        DescendantSequenceState := DescendantSequenceState + 10;
+    30:
+        //Call the Super
+        IF SUPER^.Initialize() THEN
+            DescendantSequenceState := DescendantSequenceState + 10;
+        END_IF
+    40:
+        Initialize := TRUE;
+END_CASE]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="RaiseAlarm2Args" Id="{7713a5e8-69ea-428d-b7e5-42373285d731}" FolderPath="Methods\">
+      <Declaration><![CDATA[METHOD RaiseAlarm2Args
+VAR_IN_OUT
+    fbAlarm : FB_TcAlarm; //Alarm to be raised
+END_VAR
+
+VAR_INPUT
+    String_1 : STRING; //First String Parameter (The Name of this component will be applied first automatically)
+    String_2 : STRING; //Second String Parameter
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[F_RaiseAlarmWithStringParameters(Alarm    := fbAlarm,
+                                 String_1 := Name,
+                                 String_2 := String_1,
+                                 String_3 := String_2);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="SetParam" Id="{5e985821-8916-49cb-b23c-8daa63b21bb8}" FolderPath="Methods\">
+      <Declaration><![CDATA[METHOD SetParam
+VAR_INPUT
+    ParamID   : DINT;
+    Parameter : ST_Descriptor2;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[_Param[ParamID] := Parameter;]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="FB_EquipmentModuleTemplate">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_EquipmentModuleTemplate.CreateEvents">
+      <LineId Id="61" Count="2" />
+      <LineId Id="6" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_EquipmentModuleTemplate.CyclicLogic">
+      <LineId Id="70" Count="4" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_EquipmentModuleTemplate.Initialize">
+      <LineId Id="634" Count="53" />
+      <LineId Id="11" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_EquipmentModuleTemplate.RaiseAlarm2Args">
+      <LineId Id="36" Count="2" />
+      <LineId Id="16" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_EquipmentModuleTemplate.SetParam">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

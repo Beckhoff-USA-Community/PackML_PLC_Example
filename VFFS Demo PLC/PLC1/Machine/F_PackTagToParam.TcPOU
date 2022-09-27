@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.11">
+  <POU Name="F_PackTagToParam" Id="{d1acd9dd-428b-4cc1-a16e-c1d46ac4a59a}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION F_PackTagToParam : ST_Descriptor2
+VAR_INPUT
+    descriptor : ST_Descriptor;
+END_VAR
+
+VAR
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[F_PackTagToParam.ID    := descriptor.ID;
+F_PackTagToParam.Name  := descriptor.Name;
+F_PackTagToParam.Unit  := descriptor.Unit;
+F_PackTagToParam.Value := REAL_TO_LREAL(descriptor.Value);]]></ST>
+    </Implementation>
+    <LineIds Name="F_PackTagToParam">
+      <LineId Id="84" Count="2" />
+      <LineId Id="7" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>
