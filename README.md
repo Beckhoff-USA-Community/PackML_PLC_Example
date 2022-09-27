@@ -2,7 +2,7 @@
 The purpose of this project is to serve as an example of how to setup a PLC project using the current PackML base framework it is provided publically under the License in the repository.
 
 # Getting Started
-Once the Repository has bee cloned the user will need to install project libraries.
+Once the Repository has been cloned the user will need to install project libraries.
 
 # Build and Test
 TwinCAT "Activate and restart".
