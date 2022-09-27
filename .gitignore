@@ -30,8 +30,8 @@ UpgradeLog.htm
 ## Build files
 _CompileInfo
 _Boot
-_Libraries
-!_Libraries/beckhoff automation llc/
+_Libraries/
+#*/_Libraries/beckhoff\ automation\ llc/
 ## TwinCAT licence files are machine specific
 TrialLicense.tclrs
 
@@ -143,4 +143,3 @@ artifacts/
 # NuGet v3's project.json files produces more ignoreable files
 *.nuget.props
 *.nuget.targets
-TwinCAT Drive Manager 2 Project/

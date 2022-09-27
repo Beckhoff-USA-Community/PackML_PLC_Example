@@ -1,0 +1,139 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.11">
+  <POU Name="FB_SealBar" Id="{ab562724-f2ca-416e-b831-b15d6083aa70}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_SealBar EXTENDS FB_ComponentBase
+VAR
+    // Data
+    _SetTemperature    : LREAL;
+    _ActualTemperature : LREAL;
+
+    // IO
+    _Heat AT %Q* : BOOL;
+
+    // Other items
+    TempUpdate   : TON;
+    _InTempRange : BOOL;
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Folder Name="I_ComponentBase" Id="{6988ed05-0623-4392-a74b-659338262400}" />
+    <Folder Name="I_CyclicFB" Id="{9c7dbd40-2329-4d37-80bb-9312e30eceba}" />
+    <Folder Name="I_SealBar" Id="{6692dfd2-b960-4d90-9dce-e743cce28a6f}" />
+    <Property Name="ActualTemperature" Id="{2c1e9d11-f43f-485b-999d-29733c4a40cc}" FolderPath="I_SealBar\">
+      <Declaration><![CDATA[PROPERTY ActualTemperature : LREAL]]></Declaration>
+      <Get Name="Get" Id="{825b3faf-f9d0-4280-92a0-347a6febd8aa}">
+        <Declaration><![CDATA[VAR
+END_VAR]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[ActualTemperature := _ActualTemperature;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Method Name="CyclicLogic" Id="{2eb5b232-4650-451a-acea-d277a3303acf}" FolderPath="I_CyclicFB\">
+      <Declaration><![CDATA[METHOD CyclicLogic
+VAR_INPUT
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF NOT _InitComplete THEN
+    _InitComplete := Initialize();
+    RETURN;
+END_IF
+
+SUPER^.CyclicLogic();
+
+//Read data from Parameters
+
+/// Set from the property SetTemperature := _Param[SETTEMP].Value;
+
+(*Temperature for simulation of temperature changes
+This will add 0.3 every 100ms to actual until it gets to Setpoint
+It will subtract 0.1 degrees every 100ms unitl it is down to setpoint or 20
+Do not set below 20 or it will not get passed resetting*)
+TempUpdate(IN := NOT TempUpdate.Q, PT := T#100MS);
+IF TempUpdate.Q THEN
+    IF _Heat AND _ActualTemperature < _SetTemperature THEN
+        _ActualTemperature := _ActualTemperature + 0.3;
+    ELSIF _ActualTemperature > 20 THEN
+        _ActualTemperature := _ActualTemperature - 0.1;
+    END_IF
+END_IF
+
+IF ABS(_SetTemperature - _ActualTemperature) < 1 THEN
+    _InTempRange := TRUE;
+ELSE
+    _InTempRange := FALSE;
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="Heat" Id="{7e9e9463-3cab-4a5f-b56e-58ed71a977eb}" FolderPath="I_SealBar\">
+      <Declaration><![CDATA[PROPERTY Heat : BOOL]]></Declaration>
+      <Get Name="Get" Id="{3bf52207-ca86-44c6-bad6-49d059e34aa5}">
+        <Declaration><![CDATA[VAR
+END_VAR]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Heat := _Heat;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{0b515c20-43d3-4d3a-b294-c24de8301402}">
+        <Declaration><![CDATA[VAR
+END_VAR]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[_Heat := Heat;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="InTempRange" Id="{ef285aec-9753-486c-bd66-9094bbe2910e}" FolderPath="I_SealBar\">
+      <Declaration><![CDATA[PROPERTY InTempRange : BOOL]]></Declaration>
+      <Get Name="Get" Id="{43492085-da08-4922-9e03-47515fde9ff0}">
+        <Declaration><![CDATA[VAR
+END_VAR]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[InTempRange := _InTempRange;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="SetTemperature" Id="{b0235246-fc0d-416e-ad23-71c3fcb36431}" FolderPath="I_SealBar\">
+      <Declaration><![CDATA[PROPERTY SetTemperature : LREAL]]></Declaration>
+      <Get Name="Get" Id="{adca20c1-327b-458b-93a9-e53da43a8d1c}">
+        <Declaration><![CDATA[VAR
+END_VAR]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[SetTemperature := _SetTemperature;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{5eabeff8-a172-4183-a5e1-15e3ae65271e}">
+        <Declaration><![CDATA[VAR
+END_VAR]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[_SetTemperature := SetTemperature;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <LineIds Name="FB_SealBar">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_SealBar.ActualTemperature.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_SealBar.CyclicLogic">
+      <LineId Id="249" Count="27" />
+      <LineId Id="142" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_SealBar.Heat.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_SealBar.Heat.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_SealBar.InTempRange.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_SealBar.SetTemperature.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_SealBar.SetTemperature.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>
