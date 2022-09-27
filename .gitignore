@@ -28,7 +28,6 @@ UpgradeLog.htm
 *.tfzip
 
 ## Build files
-_Config
 _CompileInfo
 _Boot
 **/_Libraries/3s*/*
