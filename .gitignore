@@ -30,8 +30,13 @@ UpgradeLog.htm
 ## Build files
 _CompileInfo
 _Boot
-_Libraries/
-#*/_Libraries/beckhoff\ automation\ llc/
+**/_Libraries/3s*/*
+**/_Libraries/caa*/*
+**/_Libraries/intern/*
+**/_Libraries/beckhoff automation gmbh/*
+**/_Libraries/system/*
+
+
 ## TwinCAT licence files are machine specific
 TrialLicense.tclrs
 
@@ -143,3 +148,6 @@ artifacts/
 # NuGet v3's project.json files produces more ignoreable files
 *.nuget.props
 *.nuget.targets
+
+
+#!VFFS Demo PLC/PLC1/_Libraries/beckhoff automation llc/base types/3.0.0/
