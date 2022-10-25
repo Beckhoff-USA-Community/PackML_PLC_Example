@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.11">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
   <POU Name="FB_Machine" Id="{d5c1a520-7f34-4388-b108-926928c14741}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK FB_Machine EXTENDS FB_PackML_BaseModule // IMPLEMENTS I_ControlsProductionRate
 VAR
@@ -20,19 +20,24 @@ VAR
     MachineAlarms : ARRAY[1..MACHINE_ALARM_COUNT] OF FB_TcAlarm;
 
     //Data 
-    sealTimeStart : ULINT;
-    sealTimeEnd   : ULINT;
-    sealingTime   : LREAL;
-    sealTrig      : R_TRIG;
-    pullTimeStart : ULINT;
-    pullTimeEnd   : ULINT;
-    pullingTime   : LREAL;
-    pulltrig      : R_TRIG;
-    partTimeStart : ULINT;
-    partTimeEnd   : ULINT;
-    partTime      : LREAL;
-    parts         : DINT;
-    product       : DINT;
+    sealTimeStart                    : ULINT;
+    sealTimeEnd                      : ULINT;
+    sealingTime                      : LREAL;
+    sealTrig                         : R_TRIG;
+    pullTimeStart                    : ULINT;
+    pullTimeEnd                      : ULINT;
+    pullingTime                      : LREAL;
+    pulltrig                         : R_TRIG;
+    partTimeStart                    : ULINT;
+    partTimeEnd                      : ULINT;
+    partTime                         : LREAL;
+    parts                            : DINT;
+    product                          : DINT;
+    ProductionRate                   : LREAL;
+    SealerAxisVelocitySP             : LREAL;
+    SealerAxisVelocitySP_Previous    : LREAL;
+    PullWheelAxisVeloctiySP          : LREAL;
+    PullWheelAxisVeloctiySP_Previous : LREAL;
 
     //Pack Tags for System
     {attribute 'OPC.UA.DA' := '1'}
@@ -44,13 +49,16 @@ VAR CONSTANT
     LENGTH              : INT := 1;
     SEALTEMP            : INT := 2;
     SEALTIME            : INT := 3;
-    MACHINE_ALARM_COUNT : INT := 3;
+    MACHINE_ALARM_COUNT : INT := 6;
 END_VAR
 
 // Simulation variables
 VAR
     EstopInput  : BOOL;
     LowAirInput : BOOL;
+    ErrorInput  : BOOL;
+    WarnInput   : BOOL;
+    InfoInput   : BOOL;
 END_VAR]]></Declaration>
     <Implementation>
       <ST><![CDATA[]]></ST>
@@ -58,6 +66,7 @@ END_VAR]]></Declaration>
     <Folder Name="I_CyclicFB" Id="{c2b7af95-c402-4115-b5e6-e32c5abd7442}" />
     <Folder Name="Methods" Id="{9b31e10f-2f7d-47d0-8b03-ede4de2288d4}">
       <Folder Name="Acting States" Id="{4852ed8f-2499-410b-a324-a30452567bd3}" />
+      <Folder Name="AlarmHandling" Id="{a6320f6e-50c1-47d2-91fb-4b1b67c24593}" />
       <Folder Name="HMI" Id="{2790fade-5dfc-4738-ae5f-b9a7fc939b52}" />
       <Folder Name="Waiting States" Id="{e66a6a2f-4562-4f2c-b64d-d3242d14ce67}" />
     </Folder>
@@ -134,6 +143,25 @@ IF LowAirInput AND NOT MachineAlarms[E_VFFSDemo.LowAir].bRaised THEN
     RaiseAlarm2Args(MachineAlarms[E_VFFSDemo.LowAir], '', '');
 ELSIF NOT LowAirInput AND MachineAlarms[E_VFFSDemo.LowAir].bRaised THEN
     MachineAlarms[E_VFFSDemo.LowAir].Clear(0, 0);
+END_IF
+
+//Generic Alarms for Testing
+IF ErrorInput AND NOT MachineAlarms[E_VFFSDemo.AlarmMessage].bRaised THEN
+    RaiseAlarm2Args(MachineAlarms[E_VFFSDemo.AlarmMessage], '', '');
+ELSIF NOT ErrorInput AND MachineAlarms[E_VFFSDemo.AlarmMessage].bRaised THEN
+    MachineAlarms[E_VFFSDemo.AlarmMessage].Clear(0, 0);
+END_IF
+
+IF WarnInput AND NOT MachineAlarms[E_VFFSDemo.WarnMessage].bRaised THEN
+    RaiseAlarm2Args(MachineAlarms[E_VFFSDemo.WarnMessage], '', '');
+ELSIF NOT WarnInput AND MachineAlarms[E_VFFSDemo.WarnMessage].bRaised THEN
+    MachineAlarms[E_VFFSDemo.WarnMessage].Clear(0, 0);
+END_IF
+
+IF InfoInput AND NOT MachineAlarms[E_VFFSDemo.InfoMessage].bRaised THEN
+    RaiseAlarm2Args(MachineAlarms[E_VFFSDemo.InfoMessage], '', '');
+ELSIF NOT InfoInput AND MachineAlarms[E_VFFSDemo.InfoMessage].bRaised THEN
+    MachineAlarms[E_VFFSDemo.InfoMessage].Clear(0, 0);
 END_IF]]></ST>
       </Implementation>
     </Method>
@@ -160,32 +188,40 @@ END_VAR]]></Declaration>
             pullTimeStart := F_GetActualDcTime64();
         END_IF
 
-        CASE SequenceState OF
-            0: //Started
-                Unwind.ChangeState(E_PMLCommand.ePMLCommand_Start);
-                IF Unwind.CurrentState = E_PMLState.ePMLState_Execute THEN
-                    SequenceState := SequenceState + 10;
-                END_IF
-            10: // SEAL First
-                Sealer.ChangeState(E_PMLCommand.ePMLCommand_Start);
-                IF Sealer.CurrentState = E_PMLState.ePMLState_Complete THEN
-                    Sealer.ChangeState(E_PMLCommand.ePMLCommand_Reset);
-                    SequenceState := SequenceState + 10;
-                    SealTimeEnd   := F_GetActualDcTime64();
-                    sealingTime   := ULINT_TO_LREAL(sealtimeEnd - sealTimeStart) * 1E-9;
-                END_IF
-            20: // Run Pullwheels
-                PullWheels.ChangeState(E_PMLCommand.ePMLCommand_Start);
-                IF PullWheels.CurrentState = E_PMLState.ePMLState_Complete THEN
-                    partTimeEnd   := F_GetActualDcTime64();
-                    parts         := parts + 1;
-                    SequenceState := 10;
-                    PullWheels.ChangeState(E_PMLCommand.ePMLCommand_Reset);
-                    pullTimeEnd := F_GetActualDcTime64();
-                    pullingTime := ULINT_TO_LREAL(pullTimeEnd - pullTimeStart) * 1E-9;
-                END_IF
-        END_CASE
-
+		IF THIS^.Sealer.sealbar.InTempRange THEN
+			CASE SequenceState OF
+				0: //Started
+					Unwind.ChangeState(E_PMLCommand.ePMLCommand_Start);
+					IF Unwind.CurrentState = E_PMLState.ePMLState_Execute THEN
+						SequenceState := SequenceState + 10;
+					END_IF
+				10: // SEAL First
+					Sealer.ChangeState(E_PMLCommand.ePMLCommand_Start);
+					IF Sealer.CurrentState = E_PMLState.ePMLState_Complete THEN
+						Sealer.ChangeState(E_PMLCommand.ePMLCommand_Reset);
+						SequenceState := SequenceState + 10;
+						SealTimeEnd   := F_GetActualDcTime64();
+						sealingTime   := ULINT_TO_LREAL(sealtimeEnd - sealTimeStart) * 1E-9;
+					END_IF
+				20: // Run Pullwheels
+					PullWheels.ChangeState(E_PMLCommand.ePMLCommand_Start);
+					IF PullWheels.CurrentState = E_PMLState.ePMLState_Complete THEN
+						partTimeEnd   := F_GetActualDcTime64();
+						parts         := parts + 1;
+						SequenceState := 10;
+						PullWheels.ChangeState(E_PMLCommand.ePMLCommand_Reset);
+						pullTimeEnd := F_GetActualDcTime64();
+						pullingTime := ULINT_TO_LREAL(pullTimeEnd - pullTimeStart) * 1E-9;
+						partTime := ULINT_TO_LREAL(partTimeEnd - partTimeStart) * 1E-9;
+						IF partTime <> 0 THEN
+							ProductionRate := 60 / partTime;
+						END_IF
+					END_IF
+			END_CASE
+		ELSE
+			ChangeState(E_PMLCommand.ePMLCommand_Suspend);
+		END_IF
+			
     //=================================MAINTENANCE MODE==================================	
     E_PMLUnitMode.ePMLUnitMode_Maintenance:
         ;
@@ -194,6 +230,42 @@ END_VAR]]></Declaration>
     E_PMLUnitMode.ePMLUnitMode_Manual:
         ;
 END_CASE]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Held" Id="{13e9b32f-9ecf-4d05-ad5c-588ebbf60926}" FolderPath="Methods\Waiting States\">
+      <Declaration><![CDATA[METHOD PROTECTED Held
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="HMICommunication" Id="{e896c866-f63e-4c97-bb87-b5cad4ab8828}" FolderPath="Methods\HMI\">
+      <Declaration><![CDATA[//! @summary Provides interlocks for HMI control and updates HMI status information for this module
+METHOD PROTECTED HMICommunication
+VAR
+	TempParameter : ST_Descriptor2;
+END_VAR
+//! @description This method is called cyclically by <c>CyclicLogic()</c>]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF SealerAxisVelocitySP <> SealerAxisVelocitySP_Previous THEN
+    MEMSET(ADR(TempParameter), 0, SIZEOF(ST_Descriptor2));
+    TempParameter.Value := SealerAxisVelocitySP;
+    Sealer.SetParam(Sealer.AxisVel, TempParameter);
+END_IF
+
+SealerAxisVelocitySP_Previous := SealerAxisVelocitySP;
+
+IF PullWheelAxisVeloctiySP <> PullWheelAxisVeloctiySP_Previous THEN
+    MEMSET(ADR(TempParameter), 0, SIZEOF(ST_Descriptor2));
+    TempParameter.Value := PullWheelAxisVeloctiySP;
+    PullWheels.SetParam(PullWheels.VEL, TempParameter);
+END_IF
+
+PullWheelAxisVeloctiySP_Previous := PullWheelAxisVeloctiySP;
+
+SUPER^.HMICommunication();]]></ST>
       </Implementation>
     </Method>
     <Method Name="HMIPermissions" Id="{01f1aea6-e802-48f8-abd4-50a2a3d31fba}" FolderPath="Methods\HMI\">
@@ -220,12 +292,22 @@ CASE _CurrentMode OF
             E_PMLState.ePMLState_Complete:
                 BlockHMIControl();
         END_CASE*)
+		
         AllowHMIControl(ThisModuleOnly := FALSE);
     E_PMLUnitMode.ePMLUnitMode_Manual:
         AllowHMIControl(ThisModuleOnly := FALSE);
     E_PMLUnitMode.ePMLUnitMode_Maintenance:
         AllowHMIControl(ThisModuleOnly := FALSE);
 END_CASE]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="HoldImmediate" Id="{84b7ed94-99a4-4ce2-a25d-701c2131ac5b}" FolderPath="Methods\AlarmHandling\">
+      <Declaration><![CDATA[METHOD PROTECTED HoldImmediate
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[ChangeState(E_PMLCommand.ePMLCommand_Hold);]]></ST>
       </Implementation>
     </Method>
     <Method Name="Holding" Id="{6157ebd5-b7da-45cf-bea2-d134443d548e}" FolderPath="Methods\Acting States\">
@@ -255,16 +337,20 @@ END_VAR]]></Declaration>
 CASE DescendantSequenceState OF
     0:
         // Define the interfaces to the different subunits (Must take place before SUPER^.initialize call)
-        FOR i := 1 TO PackMLBase.Parameters_PackML_Base.MAX_NO_OF_SUBMODULES DO
+        FOR i := 1 TO SPT_PackMLBase.Parameters_PackML_Base.MAX_NO_OF_SUBMODULES DO
             ipSubModules[i] := ipSubModules_Init[i];
         END_FOR
 
-        FOR i := 1 TO PackMLBase.Parameters_PackML_Base.MAX_NO_OF_COMPONENTS DO
+        FOR i := 1 TO SPT_PackMLBase.Parameters_PackML_Base.MAX_NO_OF_COMPONENTS DO
             ipComponents[i] := ipComponents_Init[i];
         END_FOR
 
         _LogModeChanges         := FALSE;
         _LogStateChanges        := FALSE;
+		
+		PullWheelAxisVeloctiySP := 123;
+		SealerAxisVelocitySP := 321;
+		
         DescendantSequenceState := DescendantSequenceState + 10;
     10:
         //Setup Custom modes here
@@ -561,6 +647,17 @@ ELSIF _CurrentState = E_PMLState.ePMLState_Stopped OR _CurrentState = E_PMLState
 END_IF]]></ST>
       </Implementation>
     </Method>
+    <Method Name="Suspended" Id="{79ca3bdc-9375-4f6d-9d45-57cd5f6a0884}" FolderPath="Methods\Waiting States\">
+      <Declaration><![CDATA[METHOD PROTECTED Suspended
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF THIS^.Sealer.sealbar.InTempRange THEN
+	ChangeState(E_PMLCommand.ePMLCommand_Unsuspend);
+END_IF]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="Suspending" Id="{d570f0c8-0271-4ff4-8e7f-e85eaaadf524}" FolderPath="Methods\Acting States\">
       <Declaration><![CDATA[METHOD PROTECTED Suspending
 VAR_INPUT
@@ -664,15 +761,43 @@ END_IF]]></ST>
       <LineId Id="112" Count="0" />
     </LineIds>
     <LineIds Name="FB_Machine.CyclicLogic_Simulation">
-      <LineId Id="36" Count="13" />
-      <LineId Id="17" Count="0" />
+      <LineId Id="81" Count="32" />
+      <LineId Id="55" Count="0" />
     </LineIds>
     <LineIds Name="FB_Machine.Execute">
-      <LineId Id="594" Count="50" />
+      <LineId Id="594" Count="16" />
+      <LineId Id="647" Count="0" />
+      <LineId Id="611" Count="0" />
+      <LineId Id="651" Count="22" />
+      <LineId Id="681" Count="3" />
+      <LineId Id="674" Count="2" />
+      <LineId Id="678" Count="0" />
+      <LineId Id="677" Count="0" />
+      <LineId Id="637" Count="7" />
       <LineId Id="105" Count="0" />
     </LineIds>
+    <LineIds Name="FB_Machine.Held">
+      <LineId Id="7" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Machine.HMICommunication">
+      <LineId Id="36" Count="1" />
+      <LineId Id="18" Count="0" />
+      <LineId Id="21" Count="2" />
+      <LineId Id="6" Count="0" />
+      <LineId Id="25" Count="1" />
+      <LineId Id="34" Count="1" />
+      <LineId Id="29" Count="2" />
+      <LineId Id="24" Count="0" />
+      <LineId Id="33" Count="0" />
+      <LineId Id="32" Count="0" />
+    </LineIds>
     <LineIds Name="FB_Machine.HMIPermissions">
-      <LineId Id="203" Count="23" />
+      <LineId Id="203" Count="18" />
+      <LineId Id="229" Count="0" />
+      <LineId Id="222" Count="4" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Machine.HoldImmediate">
       <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="FB_Machine.Holding">
@@ -680,7 +805,11 @@ END_IF]]></ST>
       <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="FB_Machine.Initialize">
-      <LineId Id="775" Count="61" />
+      <LineId Id="775" Count="13" />
+      <LineId Id="840" Count="1" />
+      <LineId Id="843" Count="0" />
+      <LineId Id="842" Count="0" />
+      <LineId Id="789" Count="47" />
       <LineId Id="28" Count="0" />
     </LineIds>
     <LineIds Name="FB_Machine.Initialize_Recipes">
@@ -705,6 +834,10 @@ END_IF]]></ST>
     <LineIds Name="FB_Machine.SubModuleMonitor">
       <LineId Id="58" Count="37" />
       <LineId Id="37" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Machine.Suspended">
+      <LineId Id="6" Count="1" />
+      <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="FB_Machine.Suspending">
       <LineId Id="59" Count="8" />
