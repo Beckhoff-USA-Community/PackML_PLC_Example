@@ -1,3 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <FileVersion>1.0.0.0</FileVersion>
@@ -110,25 +111,35 @@
     <Folder Include="Machine\VISUs\VisuOjects" />
   </ItemGroup>
   <ItemGroup>
-    <PlaceholderReference Include="Base Types">
-      <DefaultResolution>Base Types, * (Beckhoff Automation LLC)</DefaultResolution>
-      <Namespace>BaseTypes</Namespace>
+    <PlaceholderReference Include="SPT Base Types">
+      <DefaultResolution>SPT Base Types, * (Beckhoff Automation LLC)</DefaultResolution>
+      <Namespace>SPT_BaseTypes</Namespace>
     </PlaceholderReference>
-    <PlaceholderReference Include="Component Base">
-      <DefaultResolution>Component Base, * (Beckhoff Automation LLC)</DefaultResolution>
-      <Namespace>ComponentBase</Namespace>
+    <PlaceholderReference Include="SPT Component Base">
+      <DefaultResolution>SPT Component Base, * (Beckhoff Automation LLC)</DefaultResolution>
+      <Namespace>SPT_ComponentBase</Namespace>
+      <Parameters>
+        <Parameter ListName="PARAMETERS_BASECOMPONENT" xmlns="">
+          <Key>COMPONENT_BASE_ALARM_COUNT</Key>
+          <Value>16</Value>
+        </Parameter>
+      </Parameters>
     </PlaceholderReference>
-    <PlaceholderReference Include="Components">
-      <DefaultResolution>Components, * (Beckhoff Automation LLC)</DefaultResolution>
-      <Namespace>Components</Namespace>
+    <PlaceholderReference Include="SPT Components">
+      <DefaultResolution>SPT Components, * (Beckhoff Automation LLC)</DefaultResolution>
+      <Namespace>SPT_Components</Namespace>
     </PlaceholderReference>
-    <PlaceholderReference Include="Event Logger">
-      <DefaultResolution>Event Logger, * (Beckhoff Automation LLC)</DefaultResolution>
-      <Namespace>EventLogger</Namespace>
+    <PlaceholderReference Include="SPT Event Logger">
+      <DefaultResolution>SPT Event Logger, * (Beckhoff Automation LLC)</DefaultResolution>
+      <Namespace>SPT_EventLogger</Namespace>
     </PlaceholderReference>
-    <PlaceholderReference Include="PackML Base">
-      <DefaultResolution>PackML Base, * (Beckhoff Automation LLC)</DefaultResolution>
-      <Namespace>PackMLBase</Namespace>
+    <PlaceholderReference Include="SPT PackML Base">
+      <DefaultResolution>SPT PackML Base, * (Beckhoff Automation LLC)</DefaultResolution>
+      <Namespace>SPT_PackMLBase</Namespace>
+    </PlaceholderReference>
+    <PlaceholderReference Include="SPT Utilities">
+      <DefaultResolution>SPT Utilities, * (Beckhoff Automation LLC)</DefaultResolution>
+      <Namespace>SPT_Utilities</Namespace>
     </PlaceholderReference>
     <PlaceholderReference Include="System_VisuElemMeter">
       <DefaultResolution>VisuElemMeter, 3.5.13.0 (System)</DefaultResolution>
@@ -196,10 +207,6 @@
       <DefaultResolution>Tc3_PackML_V2, * (Beckhoff Automation GmbH)</DefaultResolution>
       <Namespace>Tc3_PackML_V2</Namespace>
     </PlaceholderReference>
-    <PlaceholderReference Include="Utilities">
-      <DefaultResolution>Utilities, * (Beckhoff Automation LLC)</DefaultResolution>
-      <Namespace>Utilities</Namespace>
-    </PlaceholderReference>
     <PlaceholderReference Include="VisuDialogs">
       <DefaultResolution>VisuDialogs, * (System)</DefaultResolution>
       <Namespace>VisuDialogs</Namespace>
@@ -209,6 +216,17 @@
     <LibraryReference Include="VisuSymbols,newest,System">
       <Namespace>VisuSymbols</Namespace>
     </LibraryReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Machine\Events\VFFS Demo.xlsx">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Machine\Events\VFFSDemo.tmc">
+      <SubType>Content</SubType>
+    </Content>
+    <None Include="PLC1.tmc">
+      <SubType>Content</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <PlaceholderResolution Include="CAA Callback">
@@ -262,20 +280,8 @@
     <PlaceholderResolution Include="SPT Component Base">
       <Resolution>SPT Component Base, * (Beckhoff Automation LLC)</Resolution>
     </PlaceholderResolution>
-    <PlaceholderResolution Include="SPT Drives">
-      <Resolution>SPT Drives, * (Beckhoff Automation LLC)</Resolution>
-    </PlaceholderResolution>
     <PlaceholderResolution Include="SPT Event Logger">
       <Resolution>SPT Event Logger, * (Beckhoff Automation LLC)</Resolution>
-    </PlaceholderResolution>
-    <PlaceholderResolution Include="SPT NC Axis">
-      <Resolution>SPT NC Axis, * (Beckhoff Automation LLC)</Resolution>
-    </PlaceholderResolution>
-    <PlaceholderResolution Include="SPT NC Basic Slave">
-      <Resolution>SPT NC Basic Slave, 0.10.1 (Beckhoff Automation LLC)</Resolution>
-    </PlaceholderResolution>
-    <PlaceholderResolution Include="SPT NC Homing">
-      <Resolution>SPT NC Homing, * (Beckhoff Automation LLC)</Resolution>
     </PlaceholderResolution>
     <PlaceholderResolution Include="SPT PackML Base">
       <Resolution>SPT PackML Base, * (Beckhoff Automation LLC)</Resolution>
@@ -325,23 +331,8 @@
     <PlaceholderResolution Include="SysTimeRtc">
       <Resolution>SysTimeRtc, 3.5.5.0 (System)</Resolution>
     </PlaceholderResolution>
-    <PlaceholderResolution Include="Tc2_Drive">
-      <Resolution>Tc2_Drive, 3.3.8.0 (Beckhoff Automation GmbH)</Resolution>
-    </PlaceholderResolution>
     <PlaceholderResolution Include="Tc2_EtherCAT">
       <Resolution>Tc2_EtherCAT, 3.3.20.0 (Beckhoff Automation GmbH)</Resolution>
-    </PlaceholderResolution>
-    <PlaceholderResolution Include="Tc2_Math">
-      <Resolution>Tc2_Math, 3.3.1.0 (Beckhoff Automation GmbH)</Resolution>
-    </PlaceholderResolution>
-    <PlaceholderResolution Include="Tc2_MC2">
-      <Resolution>Tc2_MC2, 3.3.48.0 (Beckhoff Automation GmbH)</Resolution>
-    </PlaceholderResolution>
-    <PlaceholderResolution Include="Tc2_NC">
-      <Resolution>Tc2_NC, 3.3.2.0 (Beckhoff Automation GmbH)</Resolution>
-    </PlaceholderResolution>
-    <PlaceholderResolution Include="Tc2_NcDrive">
-      <Resolution>Tc2_NcDrive, 3.3.4.0 (Beckhoff Automation GmbH)</Resolution>
     </PlaceholderResolution>
     <PlaceholderResolution Include="Tc2_Standard">
       <Resolution>Tc2_Standard, 3.3.3.0 (Beckhoff Automation GmbH)</Resolution>
@@ -367,17 +358,6 @@
     <PlaceholderResolution Include="Util">
       <Resolution>Util, 3.5.11.0 (System)</Resolution>
     </PlaceholderResolution>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Machine\Events\VFFS Demo.xlsx">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="Machine\Events\VFFSDemo.tmc">
-      <SubType>Content</SubType>
-    </Content>
-    <None Include="PLC1.tmc">
-      <SubType>Content</SubType>
-    </None>
   </ItemGroup>
   <ProjectExtensions>
     <PlcProjectOptions>

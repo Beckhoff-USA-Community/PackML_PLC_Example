@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.11">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
   <POU Name="FB_Unwind" Id="{93b6d370-9060-40d7-8101-95f7e4ba6901}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK FB_Unwind EXTENDS FB_PackML_BaseModule
 VAR
@@ -32,7 +32,14 @@ VAR CONSTANT
     FAULT : INT := 1;
 
     //Alarms
-    UNWIND_ALARM_COUNT : INT := 2;
+    UNWIND_ALARM_COUNT : INT := 5;
+END_VAR
+
+//Simulation variables for messaging
+VAR
+    ErrorInput : BOOL;
+    WarnInput  : BOOL;
+    InfoInput  : BOOL;
 END_VAR]]></Declaration>
     <Implementation>
       <ST><![CDATA[]]></ST>
@@ -40,6 +47,7 @@ END_VAR]]></Declaration>
     <Folder Name="I_CyclicFB" Id="{50b2b73b-a7e6-449c-8083-d6eb4b73f60c}" />
     <Folder Name="Methods" Id="{1fe8be3a-f7d7-42ae-b885-2501b85559e1}">
       <Folder Name="Acting States" Id="{694adf4f-f884-4b0e-ba6d-9f953b81f310}" />
+      <Folder Name="AlarmHandling" Id="{70e44d7b-4274-40c4-b74d-565592321484}" />
     </Folder>
     <Method Name="Aborting" Id="{bdb0d746-aea7-4c8d-aad7-79d5f9fbae03}" FolderPath="Methods\Acting States\">
       <Declaration><![CDATA[METHOD PROTECTED Aborting
@@ -126,7 +134,45 @@ END_IF
 SUPER^.CyclicLogic();
 
 //Set the current alarm severity for this module
-_CurrentAlarmSeverity := F_GetMaxSeverityRaised(Alarms := UnwindAlarms, CurrentSeverity := _CurrentAlarmSeverity);]]></ST>
+_CurrentAlarmSeverity := F_GetMaxSeverityRaised(Alarms := UnwindAlarms, CurrentSeverity := _CurrentAlarmSeverity);
+
+IF _CurrentAlarmSeverity >= TcEventSeverity.Error THEN
+	ChangeState(E_PMLCommand.ePMLCommand_Abort);
+END_IF
+
+
+CyclicLogic_Simulation();]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="CyclicLogic_Simulation" Id="{9b148660-9d4a-4cd8-aff6-f8eb0f885962}" FolderPath="Methods\">
+      <Declaration><![CDATA[METHOD CyclicLogic_Simulation
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[(*	
+This is just for testing. Real hardware can be setup in other places
+Here the alarms will raise and clear on its own if the input changes	
+*)
+
+//Generic Alarms for Testing
+IF ErrorInput AND NOT UnwindAlarms[E_Unwind.AlarmMessage].bRaised THEN
+    RaiseAlarm2Args(UnwindAlarms[E_Unwind.AlarmMessage], '', '');
+ELSIF NOT ErrorInput AND UnwindAlarms[E_Unwind.AlarmMessage].bRaised THEN
+    UnwindAlarms[E_Unwind.AlarmMessage].Clear(0, 0);
+END_IF
+
+IF WarnInput AND NOT UnwindAlarms[E_Unwind.WarnMessage].bRaised THEN
+    RaiseAlarm2Args(UnwindAlarms[E_Unwind.WarnMessage], '', '');
+ELSIF NOT WarnInput AND UnwindAlarms[E_Unwind.WarnMessage].bRaised THEN
+    UnwindAlarms[E_Unwind.WarnMessage].Clear(0, 0);
+END_IF
+
+IF InfoInput AND NOT UnwindAlarms[E_Unwind.InfoMessage].bRaised THEN
+    RaiseAlarm2Args(UnwindAlarms[E_Unwind.InfoMessage], '', '');
+ELSIF NOT InfoInput AND UnwindAlarms[E_Unwind.InfoMessage].bRaised THEN
+    UnwindAlarms[E_Unwind.InfoMessage].Clear(0, 0);
+END_IF]]></ST>
       </Implementation>
     </Method>
     <Method Name="Initialize" Id="{59d1fe7d-28ec-4cbf-a3ef-81f06735b3ba}" FolderPath="Methods\">
@@ -145,11 +191,11 @@ END_VAR
 CASE DescendantSequenceState OF
     0:
         // Define the interfaces to the different subunits (Must take place before SUPER^.initialize call)
-        FOR i := 1 TO PackMLBase.Parameters_PackML_Base.MAX_NO_OF_SUBMODULES DO
+        FOR i := 1 TO SPT_PackMLBase.Parameters_PackML_Base.MAX_NO_OF_SUBMODULES DO
             ipSubModules[i] := ipSubModules_Init[i];
         END_FOR
 
-        FOR i := 1 TO PackMLBase.Parameters_PackML_Base.MAX_NO_OF_COMPONENTS DO
+        FOR i := 1 TO SPT_PackMLBase.Parameters_PackML_Base.MAX_NO_OF_COMPONENTS DO
             ipComponents[i] := ipComponents_Init[i];
         END_FOR
 
@@ -192,6 +238,9 @@ CASE DescendantSequenceState OF
         END_FOR
 
         Initialize_TagData();
+		
+		//Set the Parent Response here
+		_ParentFaultResponseDefinitions[TcEventSeverity.Error] := E_AlarmResponse.Hold_Immediate;
         DescendantSequenceState := DescendantSequenceState + 10;
     30:
         //Call the Super
@@ -338,11 +387,15 @@ SUPER^.Stopping();]]></ST>
       <LineId Id="6" Count="0" />
     </LineIds>
     <LineIds Name="FB_Unwind.CyclicLogic">
-      <LineId Id="76" Count="7" />
+      <LineId Id="86" Count="14" />
       <LineId Id="68" Count="0" />
     </LineIds>
+    <LineIds Name="FB_Unwind.CyclicLogic_Simulation">
+      <LineId Id="3" Count="21" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
     <LineIds Name="FB_Unwind.Initialize">
-      <LineId Id="617" Count="58" />
+      <LineId Id="685" Count="61" />
       <LineId Id="11" Count="0" />
     </LineIds>
     <LineIds Name="FB_Unwind.Initialize_TagData">

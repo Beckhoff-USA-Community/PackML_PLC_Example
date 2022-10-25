@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.11">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
   <POU Name="FB_Sealer" Id="{ff58966f-3da2-41b5-b2fb-39a4520ba938}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK FB_Sealer EXTENDS FB_PackML_BaseModule
 VAR
@@ -38,7 +38,15 @@ VAR CONSTANT
     CURRPOS  : INT := 3; // current position of the sealing bar  
 
     //Alarms
-    SEALER_ALARM_COUNT : INT := 3;
+    SEALER_ALARM_COUNT : INT := 6;
+END_VAR
+
+//Simulation variables for messaging
+VAR
+    ErrorInput      : BOOL;
+    WarnInput       : BOOL;
+    InfoInput       : BOOL;
+    TempFeedbackBad : BOOL;
 END_VAR]]></Declaration>
     <Implementation>
       <ST><![CDATA[]]></ST>
@@ -127,10 +135,8 @@ VAR
     HighLimit : STRING;
 END_VAR
 
-//Only created here for simulating alarm
-VAR_INST
-    TempFeedbackBad : BOOL;
-END_VAR]]></Declaration>
+
+]]></Declaration>
       <Implementation>
         <ST><![CDATA[IF NOT _InitComplete THEN
     _InitComplete := Initialize();
@@ -138,6 +144,8 @@ END_VAR]]></Declaration>
 END_IF
 
 SUPER^.CyclicLogic();
+
+CyclicLogic_Simulation();
 
 //Set the current alarm severity for this module
 _CurrentAlarmSeverity   := F_GetMaxSeverityRaised(Alarms := SealerAlarms, CurrentSeverity := _CurrentAlarmSeverity);
@@ -151,6 +159,41 @@ IF NOT SealBar.InTempRange AND NOT SealerAlarms[E_Sealer.TemeratureOutOfRange].b
     RaiseAlarm2Args(SealerAlarms[E_Sealer.TemeratureOutOfRange], LowLimit, HighLimit);
 ELSIF SealBar.InTempRange AND SealerAlarms[E_Sealer.TemeratureOutOfRange].bRaised THEN
     SealerAlarms[E_Sealer.TemeratureOutOfRange].Clear(0, 0);
+END_IF
+
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="CyclicLogic_Simulation" Id="{cb7b038b-49dc-4f4e-b388-330c9a9651b1}" FolderPath="Methods\">
+      <Declaration><![CDATA[METHOD CyclicLogic_Simulation
+VAR_INPUT
+END_VAR
+
+VAR_INST
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[(*	
+This is just for testing. Real hardware can be setup in other places
+Here the alarms will raise and clear on its own if the input changes	
+*)
+
+//Generic Alarms for Testing
+IF ErrorInput AND NOT SealerAlarms[E_Sealer.AlarmMessage].bRaised THEN
+    RaiseAlarm2Args(SealerAlarms[E_Sealer.AlarmMessage], '', '');
+ELSIF NOT ErrorInput AND SealerAlarms[E_Sealer.AlarmMessage].bRaised THEN
+    SealerAlarms[E_Sealer.AlarmMessage].Clear(0, 0);
+END_IF
+
+IF WarnInput AND NOT SealerAlarms[E_Sealer.WarnMessage].bRaised THEN
+    RaiseAlarm2Args(SealerAlarms[E_Sealer.WarnMessage], '', '');
+ELSIF NOT WarnInput AND SealerAlarms[E_Sealer.WarnMessage].bRaised THEN
+    SealerAlarms[E_Sealer.WarnMessage].Clear(0, 0);
+END_IF
+
+IF InfoInput AND NOT SealerAlarms[E_Sealer.InfoMessage].bRaised THEN
+    RaiseAlarm2Args(SealerAlarms[E_Sealer.InfoMessage], '', '');
+ELSIF NOT InfoInput AND SealerAlarms[E_Sealer.InfoMessage].bRaised THEN
+    SealerAlarms[E_Sealer.InfoMessage].Clear(0, 0);
 END_IF
 
 // Only here for simulating alarm
@@ -236,11 +279,11 @@ END_VAR
 CASE DescendantSequenceState OF
     0:
         // Define the interfaces to the different subunits (Must take place before SUPER^.initialize call)
-        FOR i := 1 TO PackMLBase.Parameters_PackML_Base.MAX_NO_OF_SUBMODULES DO
+        FOR i := 1 TO SPT_PackMLBase.Parameters_PackML_Base.MAX_NO_OF_SUBMODULES DO
             ipSubModules[i] := ipSubModules_Init[i];
         END_FOR
 
-        FOR i := 1 TO PackMLBase.Parameters_PackML_Base.MAX_NO_OF_COMPONENTS DO
+        FOR i := 1 TO SPT_PackMLBase.Parameters_PackML_Base.MAX_NO_OF_COMPONENTS DO
             ipComponents[i] := ipComponents_Init[i];
         END_FOR
 
@@ -334,7 +377,7 @@ _Param[AXISVEL].Value   := 100;
 _Param[AXISACCEL].ID    := TO_DINT(2 * 10 + 6);
 _Param[AXISACCEL].Name  := 'Seal Bar Accel';
 _Param[AXISACCEL].Unit  := 'mm/s2';
-_Param[AXISACCEL].Value := 1000;]]></ST>
+_Param[AXISACCEL].Value := 15000;]]></ST>
       </Implementation>
     </Method>
     <Method Name="RaiseAlarm2Args" Id="{50d20dd4-a4f9-4638-962e-3d6308ad4688}" FolderPath="Methods\">
@@ -354,36 +397,6 @@ END_VAR]]></Declaration>
                                  String_3 := String_2);]]></ST>
       </Implementation>
     </Method>
-    <Method Name="Resetting" Id="{3d7d3494-a982-4909-9ba2-fb48d706ca17}" FolderPath="Methods\Acting States\">
-      <Declaration><![CDATA[METHOD PROTECTED Resetting
-VAR_INPUT
-END_VAR]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[CASE _CurrentMode OF
-    (*=================================PRODUCTION MODE==================================
-		only care about the temperature in Production*)
-    E_PMLUnitMode.ePMLUnitMode_Production:
-        CASE SequenceState OF
-            0:
-                NoStateTasksToComplete := FALSE;
-                SealBar.Heat           := TRUE;
-                SequenceState          := SequenceState + 10;
-            10:
-                IF SealBar.InTempRange THEN
-                    SequenceState := SequenceState + 10;
-                END_IF
-            20:
-                StateTasksComplete := TRUE;
-        END_CASE
-
-    //=================================MAINTENANCE & MANUAL MODE==================================
-    E_PMLUnitMode.ePMLUnitMode_Maintenance, E_PMLUnitMode.ePMLUnitMode_Manual:
-        ;
-END_CASE
-
-SUPER^.Resetting();]]></ST>
-      </Implementation>
-    </Method>
     <Method Name="SetParam" Id="{2ddd214a-fa58-4442-aeed-7975c723334a}" FolderPath="Methods\">
       <Declaration><![CDATA[METHOD SetParam
 VAR_INPUT
@@ -396,15 +409,15 @@ CASE ParamID OF
     TEMP: // bar setpoint temperature 
         SealBar.SetTemperature := Parameter.Value;
     OPENPOS: //Axis Open Position 
-        ;
+        _Param[OPENPOS].Value := Parameter.Value;
     CLOSEPOS: // Seal Bar Close Pos 
-        ;
+        _Param[CLOSEPOS].Value := Parameter.Value;
     SEALTIME: // Seal bar sealing time 
-        ;
+        _Param[SEALTIME].Value := Parameter.Value;
     AXISVEL:
-        ;
+        _Param[AXISVEL].Value := Parameter.Value;
     AXISACCEL:
-        ;
+        _Param[AXISVEL].Value := Parameter.Value;
 END_CASE]]></ST>
       </Implementation>
     </Method>
@@ -455,7 +468,7 @@ SUPER^.Starting();]]></ST>
       <LineId Id="6" Count="0" />
     </LineIds>
     <LineIds Name="FB_Sealer.CyclicLogic">
-      <LineId Id="339" Count="25" />
+      <LineId Id="387" Count="22" />
       <LineId Id="278" Count="0" />
     </LineIds>
     <LineIds Name="FB_Sealer.Execute">
@@ -480,12 +493,8 @@ SUPER^.Starting();]]></ST>
       <LineId Id="36" Count="2" />
       <LineId Id="16" Count="0" />
     </LineIds>
-    <LineIds Name="FB_Sealer.Resetting">
-      <LineId Id="112" Count="21" />
-      <LineId Id="5" Count="0" />
-    </LineIds>
     <LineIds Name="FB_Sealer.SetParam">
-      <LineId Id="113" Count="13" />
+      <LineId Id="131" Count="13" />
       <LineId Id="13" Count="0" />
     </LineIds>
     <LineIds Name="FB_Sealer.Starting">

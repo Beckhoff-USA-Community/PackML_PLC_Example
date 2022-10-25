@@ -31,6 +31,11 @@
               <l n="LanguageTexts" t="ArrayList" />
             </o>
             <o>
+              <v n="TextID">"809"</v>
+              <v n="TextDefault">"Clear Unwind"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
               <v n="TextID">"424"</v>
               <v n="TextDefault">"EStop"</v>
               <l n="LanguageTexts" t="ArrayList" />
@@ -76,6 +81,11 @@
               <l n="LanguageTexts" t="ArrayList" />
             </o>
             <o>
+              <v n="TextID">"538"</v>
+              <v n="TextDefault">"Reset Unwind"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
               <v n="TextID">"206"</v>
               <v n="TextDefault">"Simulate 
 All"</v>
@@ -89,6 +99,11 @@ All"</v>
             <o>
               <v n="TextID">"77"</v>
               <v n="TextDefault">"Start"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">"804"</v>
+              <v n="TextDefault">"Start Unwind"</v>
               <l n="LanguageTexts" t="ArrayList" />
             </o>
             <o>

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.11">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
   <POU Name="FB_PullWheel" Id="{496b17f1-4b0a-4954-89f4-eec9ef72b2f5}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK FB_PullWheel EXTENDS FB_PackML_BaseModule
 VAR
@@ -34,7 +34,14 @@ VAR CONSTANT
     FAULT : INT := 1;
 
     //Alarms
-    PULL_WHEELS_ALARM_COUNT : INT := 2;
+    PULL_WHEELS_ALARM_COUNT : INT := 5;
+END_VAR
+
+//Simulation variables for messaging
+VAR
+    ErrorInput : BOOL;
+    WarnInput  : BOOL;
+    InfoInput  : BOOL;
 END_VAR]]></Declaration>
     <Implementation>
       <ST><![CDATA[]]></ST>
@@ -133,7 +140,43 @@ END_IF
 SUPER^.CyclicLogic();
 
 //Set the current alarm severity for this module
-_CurrentAlarmSeverity := F_GetMaxSeverityRaised(Alarms := PullWheelAlarms, CurrentSeverity := _CurrentAlarmSeverity);]]></ST>
+_CurrentAlarmSeverity := F_GetMaxSeverityRaised(Alarms := PullWheelAlarms, CurrentSeverity := _CurrentAlarmSeverity);
+
+//Simulate Alarm Messaging
+CyclicLogic_Simulation();]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="CyclicLogic_Simulation" Id="{848790f4-6965-4320-b33a-fb32f7f918da}" FolderPath="Methods\">
+      <Declaration><![CDATA[METHOD CyclicLogic_Simulation
+VAR_INPUT
+END_VAR
+
+VAR_INST
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[(*	
+This is just for testing. Real hardware can be setup in other places
+Here the alarms will raise and clear on its own if the input changes	
+*)
+
+//Generic Alarms for Testing
+IF ErrorInput AND NOT PullWheelAlarms[E_PullWheels.AlarmMessage].bRaised THEN
+    RaiseAlarm2Args(PullWheelAlarms[E_PullWheels.AlarmMessage], '', '');
+ELSIF NOT ErrorInput AND PullWheelAlarms[E_PullWheels.AlarmMessage].bRaised THEN
+    PullWheelAlarms[E_PullWheels.AlarmMessage].Clear(0, 0);
+END_IF
+
+IF WarnInput AND NOT PullWheelAlarms[E_PullWheels.WarnMessage].bRaised THEN
+    RaiseAlarm2Args(PullWheelAlarms[E_PullWheels.WarnMessage], '', '');
+ELSIF NOT WarnInput AND PullWheelAlarms[E_PullWheels.WarnMessage].bRaised THEN
+    PullWheelAlarms[E_PullWheels.WarnMessage].Clear(0, 0);
+END_IF
+
+IF InfoInput AND NOT PullWheelAlarms[E_PullWheels.InfoMessage].bRaised THEN
+    RaiseAlarm2Args(PullWheelAlarms[E_PullWheels.InfoMessage], '', '');
+ELSIF NOT InfoInput AND PullWheelAlarms[E_PullWheels.InfoMessage].bRaised THEN
+    PullWheelAlarms[E_PullWheels.InfoMessage].Clear(0, 0);
+END_IF]]></ST>
       </Implementation>
     </Method>
     <Method Name="Execute" Id="{24f2a84a-cfe1-4269-89c3-0ab58d2e748b}" FolderPath="Methods\Waiting States\">
@@ -173,11 +216,11 @@ END_VAR
 CASE DescendantSequenceState OF
     0:
         // Define the interfaces to the different subunits (Must take place before SUPER^.initialize call)
-        FOR i := 1 TO PackMLBase.Parameters_PackML_Base.MAX_NO_OF_SUBMODULES DO
+        FOR i := 1 TO SPT_PackMLBase.Parameters_PackML_Base.MAX_NO_OF_SUBMODULES DO
             ipSubModules[i] := ipSubModules_Init[i];
         END_FOR
 
-        FOR i := 1 TO PackMLBase.Parameters_PackML_Base.MAX_NO_OF_COMPONENTS DO
+        FOR i := 1 TO SPT_PackMLBase.Parameters_PackML_Base.MAX_NO_OF_COMPONENTS DO
             ipComponents[i] := ipComponents_Init[i];
         END_FOR
 
@@ -247,7 +290,7 @@ _Param[VEL].Value    := 100;
 _Param[ACC].ID       := TO_DINT(1 * 10 + 3);
 _Param[ACC].Name     := 'Pull Speed';
 _Param[ACC].Unit     := 'mm/s';
-_Param[ACC].Value    := 1000;
+_Param[ACC].Value    := 15000;
 _Report[FAULT].ID    := TO_DINT(1 * 10 + 1);
 _Report[FAULT].Name  := 'Fault ID';
 _Report[FAULT].Unit  := 'n/a';]]></ST>
@@ -406,7 +449,7 @@ SUPER^.Stopping();]]></ST>
       <LineId Id="6" Count="0" />
     </LineIds>
     <LineIds Name="FB_PullWheel.CyclicLogic">
-      <LineId Id="76" Count="7" />
+      <LineId Id="86" Count="10" />
       <LineId Id="70" Count="0" />
     </LineIds>
     <LineIds Name="FB_PullWheel.Execute">
@@ -414,11 +457,11 @@ SUPER^.Stopping();]]></ST>
       <LineId Id="14" Count="0" />
     </LineIds>
     <LineIds Name="FB_PullWheel.Initialize">
-      <LineId Id="617" Count="58" />
+      <LineId Id="685" Count="58" />
       <LineId Id="11" Count="0" />
     </LineIds>
     <LineIds Name="FB_PullWheel.Initialize_TagData">
-      <LineId Id="83" Count="13" />
+      <LineId Id="99" Count="13" />
       <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="FB_PullWheel.RaiseAlarm2Args">
