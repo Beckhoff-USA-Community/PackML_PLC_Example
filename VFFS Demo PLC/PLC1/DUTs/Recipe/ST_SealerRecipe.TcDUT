@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <DUT Name="ST_SealerRecipe" Id="{5efbb8de-476a-442c-ac51-43f16c9d5a2a}">
+    <Declaration><![CDATA[TYPE ST_SealerRecipe :
+    STRUCT
+        Axis           : ST_AxisRecipe;
+        Temp           : LREAL;
+        SealTime       : LREAL;
+        OpenPosition   : LREAL;
+        ClosedPosition : LREAL;
+    END_STRUCT
+END_TYPE]]></Declaration>
+  </DUT>
+</TcPlcObject>

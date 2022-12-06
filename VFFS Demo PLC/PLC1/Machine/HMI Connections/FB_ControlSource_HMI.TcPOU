@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.11">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
   <POU Name="FB_ControlSource_HMI" Id="{13ebaa7c-af24-0bd6-2fec-aa1ce98efad0}" SpecialFunc="None">
-    <Declaration><![CDATA[FUNCTION_BLOCK FINAL FB_ControlSource_HMI EXTENDS FB_CyclicFB IMPLEMENTS I_PackML_ExternalController
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_ControlSource_HMI EXTENDS FB_CyclicFB IMPLEMENTS I_PackML_ExternalController
 VAR_INPUT
 END_VAR
 
@@ -29,7 +29,7 @@ END_VAR]]></Declaration>
       </Set>
     </Property>
     <Method Name="CyclicLogic" Id="{44af9b85-e7ce-0cae-3b5b-4d8d8491eb58}" FolderPath="I_CyclicFB\">
-      <Declaration><![CDATA[METHOD FINAL CyclicLogic
+      <Declaration><![CDATA[METHOD CyclicLogic
 VAR
     i : UDINT;
 END_VAR]]></Declaration>
@@ -46,12 +46,15 @@ FOR i := 1 TO 5 DO
 END_FOR
 
 //Process HMI requests
-R_HMICommand(CLK := (MainPMLControl_Simplified.ClearPressed XOR MainPMLControl_Simplified.ResetPressed XOR MainPMLControl_Simplified.StartPressed XOR MainPMLControl_Simplified.StopPressed) XOR
-                    (MainPMLControl_Standard.StateCommand <> E_PMLCommand.ePMLCommand_Undefined AND ipModule.StateCommand <> MainPMLControl_Standard.StateCommand) XOR
+R_HMICommand(CLK := (MainPMLControl_Simplified.ResetPressed XOR MainPMLControl_Simplified.StartPressed XOR
+                    MainPMLControl_Simplified.StopPressed) XOR
+                    (MainPMLControl_Standard.StateCommand <> E_PMLCommand.ePMLCommand_Undefined AND
+                    ipModule.StateCommand <> MainPMLControl_Standard.StateCommand) XOR
                     (ipModule.ModeCommand <> MainPMLControl_Standard.ModeCommand));
 
 IF R_HMICommand.Q THEN
-    IF MainPMLControl_Simplified.ClearPressed AND MainPMLControl_Simplified.ClearPermissive THEN
+    IF MainPMLControl_Simplified.ResetPressed AND MainPMLControl_Simplified.ResetPermissive AND
+       MainPMLControl_Standard.CurrentState = E_PMLState.ePMLState_Aborted THEN
         ipModule.ChangeState(Tc3_PackML_V2.E_PMLCommand.ePMLCommand_Clear);
     ELSIF MainPMLControl_Simplified.ResetPressed AND MainPMLControl_Simplified.ResetPermissive THEN
         ipModule.ChangeState(Tc3_PackML_V2.E_PMLCommand.ePMLCommand_Reset);
@@ -70,20 +73,21 @@ IF R_HMICommand.Q THEN
     END_IF
 END_IF
 
-
-
 MainPMLControl_Simplified.StartPermissive :=
-    MainPMLControl_Standard.CurrentState = Tc3_PackML_V2.E_PMLState.ePMLState_Idle OR 
-	(MainPMLControl_Standard.CurrentState = Tc3_PackML_V2.E_PMLState.ePMLState_Held AND MAIN.VFFSDemo.Unwind.CurrentState = E_PMLState.ePMLState_Idle);
+    MainPMLControl_Standard.CurrentState = Tc3_PackML_V2.E_PMLState.ePMLState_Idle OR
+    MainPMLControl_Standard.CurrentState = Tc3_PackML_V2.E_PMLState.ePMLState_Held;
 
 MainPMLControl_Simplified.StopPermissive :=
-    (MainPMLControl_Standard.CurrentState <> Tc3_PackML_V2.E_PMLState.ePMLState_Stopped AND MainPMLControl_Standard.CurrentState <> Tc3_PackML_V2.E_PMLState.ePMLState_Clearing AND
-     MainPMLControl_Standard.CurrentState <> Tc3_PackML_V2.E_PMLState.ePMLState_Aborted AND MainPMLControl_Standard.CurrentState <> Tc3_PackML_V2.E_PMLState.ePMLState_Aborting AND
+    (MainPMLControl_Standard.CurrentState <> Tc3_PackML_V2.E_PMLState.ePMLState_Stopped AND
+     MainPMLControl_Standard.CurrentState <> Tc3_PackML_V2.E_PMLState.ePMLState_Clearing AND
+     MainPMLControl_Standard.CurrentState <> Tc3_PackML_V2.E_PMLState.ePMLState_Aborted AND
+     MainPMLControl_Standard.CurrentState <> Tc3_PackML_V2.E_PMLState.ePMLState_Aborting AND
      MainPMLControl_Standard.CurrentState <> Tc3_PackML_V2.E_PMLState.ePMLState_Undefined);
 
-MainPMLControl_Simplified.ClearPermissive := MainPMLControl_Standard.CurrentState = Tc3_PackML_V2.E_PMLState.ePMLState_Aborted;
 MainPMLControl_Simplified.ResetPermissive :=
-    MainPMLControl_Standard.CurrentState = Tc3_PackML_V2.E_PMLState.ePMLState_Complete OR MainPMLControl_Standard.CurrentState = Tc3_PackML_V2.E_PMLState.ePMLState_Stopped;]]></ST>
+    MainPMLControl_Standard.CurrentState = Tc3_PackML_V2.E_PMLState.ePMLState_Complete OR
+    MainPMLControl_Standard.CurrentState = Tc3_PackML_V2.E_PMLState.ePMLState_Stopped OR
+    MainPMLControl_Standard.CurrentState = Tc3_PackML_V2.E_PMLState.ePMLState_Aborted;]]></ST>
       </Implementation>
     </Method>
     <Method Name="Initialize" Id="{f3e8687f-1037-0ff1-3a04-a5974da530c0}">
@@ -129,11 +133,8 @@ END_VAR]]></Declaration>
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_ControlSource_HMI.CyclicLogic">
-      <LineId Id="727" Count="34" />
-      <LineId Id="779" Count="1" />
-      <LineId Id="762" Count="2" />
-      <LineId Id="778" Count="0" />
-      <LineId Id="765" Count="7" />
+      <LineId Id="784" Count="41" />
+      <LineId Id="827" Count="10" />
       <LineId Id="9" Count="0" />
     </LineIds>
     <LineIds Name="FB_ControlSource_HMI.Initialize">

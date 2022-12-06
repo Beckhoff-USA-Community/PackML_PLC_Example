@@ -19,6 +19,18 @@
     <Released>false</Released>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="DUTs\Recipe\ST_AxisRecipe.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUTs\Recipe\ST_PullWheelsRecipe.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUTs\Recipe\ST_SealerRecipe.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUTs\Recipe\ST_UnwindRecipe.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="DUTs\ST_Descriptor2.TcDUT">
       <SubType>Code</SubType>
     </Compile>
@@ -64,10 +76,10 @@
     <Compile Include="Machine\FB_Machine.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Machine\F_PackTagToParam.TcPOU">
+    <Compile Include="Machine\HMI Connections\FB_ControlSource_HMI.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Machine\HMI Connections\FB_ControlSource_HMI.TcPOU">
+    <Compile Include="Machine\HMI Connections\FB_ControlSource_HMI_Machine.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Machine\Templates\FB_EquipmentModuleTemplate.TcPOU">
@@ -96,6 +108,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="DUTs\Recipe" />
     <Folder Include="Machine" />
     <Folder Include="Machine\Components" />
     <Folder Include="Machine\Components\Cylinder" />
@@ -203,6 +216,12 @@
     <PlaceholderReference Include="Tc3_PackML_V2">
       <DefaultResolution>Tc3_PackML_V2, * (Beckhoff Automation GmbH)</DefaultResolution>
       <Namespace>Tc3_PackML_V2</Namespace>
+      <Parameters>
+        <Parameter ListName="GLOBALPARAMETERS" xmlns="">
+          <Key>MAXPRODUCTPROCESSVARIABLES</Key>
+          <Value>11</Value>
+        </Parameter>
+      </Parameters>
     </PlaceholderReference>
     <PlaceholderReference Include="VisuDialogs">
       <DefaultResolution>VisuDialogs, * (System)</DefaultResolution>

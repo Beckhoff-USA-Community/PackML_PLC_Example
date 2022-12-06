@@ -1,11 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.11">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
   <POU Name="MAIN" Id="{0a415e5e-1cd5-4d94-8552-fcd14dfd2571}" SpecialFunc="None">
     <Declaration><![CDATA[PROGRAM MAIN
 VAR
-    ControlSource_HMI : FB_ControlSource_HMI;
+    ControlSource_HMI : FB_ControlSource_HMI_Machine;
     VFFSDemo          : FB_Machine := (Name := 'VFFS Demo');
     InitComplete      : BOOL;
+
+    //Debug testing Recipe manager
+    Value1 : INT;
+    Value2 : INT;
 END_VAR]]></Declaration>
     <Implementation>
       <ST><![CDATA[CyclicLogic();]]></ST>

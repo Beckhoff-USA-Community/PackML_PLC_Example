@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.11">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
   <DUT Name="ST_PackML_Control_Simplified" Id="{132dda0f-f204-45d3-a336-c2181759b91f}">
     <Declaration><![CDATA[TYPE ST_PackML_Control_Simplified :
     STRUCT
-        ClearPermissive : BOOL;
+        //ClearPermissive : BOOL;
         ResetPermissive : BOOL;
         StartPermissive : BOOL;
         StopPermissive  : BOOL;
-        ClearPressed    : BOOL;
+        //ClearPressed    : BOOL;
         ResetPressed    : BOOL;
         StartPressed    : BOOL;
         StopPressed     : BOOL;

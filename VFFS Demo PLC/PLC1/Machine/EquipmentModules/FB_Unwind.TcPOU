@@ -18,16 +18,18 @@ VAR
     //Alarms for this module
     UnwindAlarms : ARRAY[1..UNWIND_ALARM_COUNT] OF FB_TcAlarm;
 
-    //Parameters from PackTags for module
-    _Param  : ARRAY[1..10] OF ST_Descriptor2;
+    //Data for recipe
+    Recipe : ST_UnwindRecipe;
+
+    (*Parameters from PackTags for module
+    //_Param  : ARRAY[1..10] OF ST_Descriptor2;*)
     _Report : ARRAY[1..10] OF ST_Descriptor2;
+
+    //HMI Control for EM
+    fbControlSourceHMI : FB_ControlSource_HMI;
 END_VAR
 
 VAR CONSTANT
-    //Parameters IDs for PackTags
-    VEL : INT := 1;
-    ACC : INT := 2;
-
     //reports 
     FAULT : INT := 1;
 
@@ -49,6 +51,7 @@ END_VAR]]></Declaration>
       <Folder Name="Acting States" Id="{694adf4f-f884-4b0e-ba6d-9f953b81f310}" />
       <Folder Name="AlarmHandling" Id="{70e44d7b-4274-40c4-b74d-565592321484}" />
     </Folder>
+    <Folder Name="Properties" Id="{9ed10d00-9336-4b92-8254-1686c13962e6}" />
     <Method Name="Aborting" Id="{bdb0d746-aea7-4c8d-aad7-79d5f9fbae03}" FolderPath="Methods\Acting States\">
       <Declaration><![CDATA[METHOD PROTECTED Aborting
 VAR_INPUT
@@ -78,6 +81,18 @@ END_CASE
 SUPER^.Aborting();]]></ST>
       </Implementation>
     </Method>
+    <Property Name="Acceleration" Id="{1c2276ee-9cba-4c99-b7d6-1838f1184aea}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY Acceleration : LREAL]]></Declaration>
+      <Set Name="Set" Id="{d411bf23-e43c-40ef-b49c-52a8af7b1701}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Recipe.Axis.Acceleration := Acceleration;
+]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
     <Method Name="Clearing" Id="{f1ec6ac1-684d-4fbb-87f9-9498565943f4}" FolderPath="Methods\Acting States\">
       <Declaration><![CDATA[METHOD PROTECTED Clearing
 VAR_INPUT
@@ -133,13 +148,14 @@ END_IF
 
 SUPER^.CyclicLogic();
 
+//HMI control for EM
+fbControlSourceHMI.CyclicLogic();
+
 //Set the current alarm severity for this module
 _CurrentAlarmSeverity := F_GetMaxSeverityRaised(Alarms := UnwindAlarms, CurrentSeverity := _CurrentAlarmSeverity);
-
 IF _CurrentAlarmSeverity >= TcEventSeverity.Error THEN
-	ChangeState(E_PMLCommand.ePMLCommand_Abort);
+    ChangeState(E_PMLCommand.ePMLCommand_Abort);
 END_IF
-
 
 CyclicLogic_Simulation();]]></ST>
       </Implementation>
@@ -238,6 +254,8 @@ CASE DescendantSequenceState OF
         END_FOR
 
         Initialize_TagData();
+		RegisterExternalController(Controller := fbControlSourceHMI);
+		fbControlSourceHMI.CyclicLogic();
 		
 		//Set the Parent Response here
 		_ParentFaultResponseDefinitions[TcEventSeverity.Error] := E_AlarmResponse.Hold_Immediate;
@@ -257,14 +275,11 @@ END_CASE]]></ST>
 VAR_INPUT
 END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[_Param[VEL].ID      := TO_DINT(3 * 10 + 2);
-_Param[VEL].Name    := 'Unwind Speed';
-_Param[VEL].Unit    := 'mm/s';
-_Param[VEL].Value   := 100;
-_Param[ACC].ID      := TO_DINT(3 * 10 + 3);
-_Param[ACC].Name    := 'Pull Accel';
-_Param[ACC].Unit    := 'mm/s/s';
-_Param[ACC].Value   := 1000;
+        <ST><![CDATA[//Recipe
+Recipe.Axis.Velocity     := 100;
+Recipe.Axis.Acceleration := 1000;
+
+//Report
 _Report[FAULT].ID   := TO_DINT(3 * 10 + 1);
 _Report[FAULT].Name := 'Fault ID';
 _Report[FAULT].Unit := 'n/a';]]></ST>
@@ -287,16 +302,6 @@ END_VAR]]></Declaration>
                                  String_3 := String_2);]]></ST>
       </Implementation>
     </Method>
-    <Method Name="SetParam" Id="{5fb40744-b4e3-4dd6-85d9-abe3ef733252}" FolderPath="Methods\">
-      <Declaration><![CDATA[METHOD SetParam
-VAR_INPUT
-    ParamID   : DINT;
-    Parameter : ST_Descriptor2;
-END_VAR]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[_Param[ParamID] := Parameter;]]></ST>
-      </Implementation>
-    </Method>
     <Method Name="Starting" Id="{df4c4264-8610-42ca-aaef-d7307256e131}" FolderPath="Methods\Acting States\">
       <Declaration><![CDATA[METHOD PROTECTED Starting
 VAR_INPUT
@@ -316,9 +321,9 @@ END_VAR]]></Declaration>
                 SequenceState          := SequenceState + 10;
             10:
                 NoStateTasksToComplete := FALSE;
-                Axis.Velocity          := _Param[VEL].Value;
-                Axis.Acceleration      := _Param[ACC].Value;
-                Axis.MoveVelocity(Velocity := _Param[VEL].Value, AbortPrevious := FALSE);
+                Axis.Velocity          := Recipe.Axis.Velocity;
+                Axis.Acceleration      := Recipe.Axis.Acceleration;
+                Axis.MoveVelocity(Velocity := Recipe.Axis.Velocity, AbortPrevious := FALSE);
                 SequenceState := SequenceState + 10;
             20:
                 IF Axis.Busy THEN
@@ -371,12 +376,28 @@ END_CASE
 SUPER^.Stopping();]]></ST>
       </Implementation>
     </Method>
+    <Property Name="Velocity" Id="{4a353ca3-1dd1-4a51-9960-fbed664b7b4b}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY Velocity : LREAL]]></Declaration>
+      <Set Name="Set" Id="{ad25254f-0304-481d-9e2a-87a66fc50f23}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Recipe.Axis.Velocity := Velocity;
+]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
     <LineIds Name="FB_Unwind">
       <LineId Id="9" Count="0" />
     </LineIds>
     <LineIds Name="FB_Unwind.Aborting">
       <LineId Id="214" Count="20" />
       <LineId Id="71" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Unwind.Acceleration.Set">
+      <LineId Id="2" Count="0" />
+      <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="FB_Unwind.Clearing">
       <LineId Id="165" Count="19" />
@@ -387,27 +408,29 @@ SUPER^.Stopping();]]></ST>
       <LineId Id="6" Count="0" />
     </LineIds>
     <LineIds Name="FB_Unwind.CyclicLogic">
-      <LineId Id="86" Count="14" />
-      <LineId Id="68" Count="0" />
+      <LineId Id="99" Count="15" />
+      <LineId Id="86" Count="0" />
     </LineIds>
     <LineIds Name="FB_Unwind.CyclicLogic_Simulation">
-      <LineId Id="3" Count="21" />
-      <LineId Id="2" Count="0" />
+      <LineId Id="81" Count="3" />
+      <LineId Id="96" Count="17" />
+      <LineId Id="55" Count="0" />
     </LineIds>
     <LineIds Name="FB_Unwind.Initialize">
-      <LineId Id="685" Count="61" />
+      <LineId Id="617" Count="50" />
+      <LineId Id="697" Count="1" />
+      <LineId Id="685" Count="2" />
+      <LineId Id="668" Count="7" />
       <LineId Id="11" Count="0" />
     </LineIds>
     <LineIds Name="FB_Unwind.Initialize_TagData">
-      <LineId Id="71" Count="9" />
+      <LineId Id="87" Count="2" />
+      <LineId Id="91" Count="3" />
       <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="FB_Unwind.RaiseAlarm2Args">
       <LineId Id="36" Count="2" />
       <LineId Id="16" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_Unwind.SetParam">
-      <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="FB_Unwind.Starting">
       <LineId Id="234" Count="32" />
@@ -415,6 +438,10 @@ SUPER^.Stopping();]]></ST>
     </LineIds>
     <LineIds Name="FB_Unwind.Stopping">
       <LineId Id="107" Count="20" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Unwind.Velocity.Set">
+      <LineId Id="2" Count="0" />
       <LineId Id="5" Count="0" />
     </LineIds>
   </POU>

@@ -13,24 +13,24 @@ VAR
     SealBar    : FB_SealBar             := (Name := 'Heat Bar');
 
     // List of Components
-    ipComponents_Init : ARRAY[1..Parameters_PackML_Base.MAX_NO_OF_COMPONENTS] OF I_ComponentBase := [SealerAxis, SealBar];
+    ipComponents_Init :
+        ARRAY[1..Parameters_PackML_Base.MAX_NO_OF_COMPONENTS] OF I_ComponentBase := [SealerAxis, SealBar];
 
     //Alarms for this module
     SealerAlarms : ARRAY[1..SEALER_ALARM_COUNT] OF FB_TcAlarm;
 
-    //Parameters from PackTags for module
-    _Param  : ARRAY[1..10] OF ST_Descriptor2;
+    //Data for recipe
+    Recipe : ST_SealerRecipe;
+
+    (*//Parameters from PackTags for module
+    _Param  : ARRAY[1..10] OF ST_Descriptor2;*)
     _Report : ARRAY[1..10] OF ST_Descriptor2;
+
+    //HMI Control for EM
+    fbControlSourceHMI : FB_ControlSource_HMI;
 END_VAR
 
 VAR CONSTANT
-    // parameter ID's all blocks have parameters these constants give names to the parameters 
-    TEMP      : INT := 1; // bar setpoint temperature 
-    OPENPOS   : INT := 2; //Axis Open Position 
-    CLOSEPOS  : INT := 3; // Seal Bar Close Pos 
-    SEALTIME  : INT := 4; // Seal bar sealing time 
-    AXISVEL   : INT := 5;
-    AXISACCEL : INT := 6;
 
     // Report parameters 
     FAULTID  : INT := 1; //Fault number 
@@ -56,6 +56,7 @@ END_VAR]]></Declaration>
       <Folder Name="Acting States" Id="{83c2fb32-603a-4bf1-b0d3-b82fdb72188e}" />
       <Folder Name="WaitingStates" Id="{c5fb234c-f50f-4161-be0e-18f57c35714d}" />
     </Folder>
+    <Folder Name="Properties" Id="{f36d5a6c-14e3-49a8-bae7-9fd37d1c0349}" />
     <Method Name="Aborting" Id="{b6180b57-df4e-43ee-a76d-c9274b8854f0}" FolderPath="Methods\Acting States\">
       <Declaration><![CDATA[METHOD PROTECTED Aborting
 VAR_INPUT
@@ -86,6 +87,18 @@ END_CASE
 SUPER^.Aborting();]]></ST>
       </Implementation>
     </Method>
+    <Property Name="Acceleration" Id="{daa0dee7-a9eb-47e2-99ea-3fb9b5a6407e}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY Acceleration : LREAL]]></Declaration>
+      <Set Name="Set" Id="{c26780f0-3bf0-41e2-a963-3d1b2ba97499}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Recipe.Axis.Acceleration := Acceleration;
+]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
     <Method Name="Clearing" Id="{15caa36d-4f9c-40b9-b52a-3d58374eb0b3}" FolderPath="Methods\Acting States\">
       <Declaration><![CDATA[METHOD PROTECTED Clearing
 VAR_INPUT
@@ -110,6 +123,25 @@ END_CASE
 SUPER^.Clearing();]]></ST>
       </Implementation>
     </Method>
+    <Property Name="ClosedPos" Id="{68701d47-5346-4cb2-9de1-742627e7e729}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY ClosedPos : LREAL]]></Declaration>
+      <Get Name="Get" Id="{c06b5f0b-e909-4d36-88d6-121b089c55f9}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[ClosedPos := Recipe.ClosedPosition;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{efc7f76a-0a9f-4b42-b34b-b37c43fadacc}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Recipe.ClosedPosition := ClosedPos;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
     <Method Name="CreateEvents" Id="{6e6ca775-6d05-4f9d-acb6-719514de2f41}" FolderPath="Methods\">
       <Declaration><![CDATA[METHOD PROTECTED CreateEvents
 VAR_INPUT
@@ -144,8 +176,10 @@ END_VAR
 END_IF
 
 SUPER^.CyclicLogic();
-
 CyclicLogic_Simulation();
+
+//HMI control for EM
+fbControlSourceHMI.CyclicLogic();
 
 //Set the current alarm severity for this module
 _CurrentAlarmSeverity   := F_GetMaxSeverityRaised(Alarms := SealerAlarms, CurrentSeverity := _CurrentAlarmSeverity);
@@ -159,9 +193,7 @@ IF NOT SealBar.InTempRange AND NOT SealerAlarms[E_Sealer.TemeratureOutOfRange].b
     RaiseAlarm2Args(SealerAlarms[E_Sealer.TemeratureOutOfRange], LowLimit, HighLimit);
 ELSIF SealBar.InTempRange AND SealerAlarms[E_Sealer.TemeratureOutOfRange].bRaised THEN
     SealerAlarms[E_Sealer.TemeratureOutOfRange].Clear(0, 0);
-END_IF
-
-]]></ST>
+END_IF]]></ST>
       </Implementation>
     </Method>
     <Method Name="CyclicLogic_Simulation" Id="{cb7b038b-49dc-4f4e-b388-330c9a9651b1}" FolderPath="Methods\">
@@ -220,15 +252,15 @@ END_VAR]]></Declaration>
             0:
                 IF SealerAxis.InPosition AND NOT SealerAxis.Busy THEN
                     /// SealerAxis needs to do reporting here?? no tags in the components for PackML so should be done with this module
-                    dwellTime(IN := TRUE, PT := LREAL_TO_TIME(_Param[SEALTIME].Value));
+                    dwellTime(IN := TRUE, PT := LREAL_TO_TIME(Recipe.SealTime));
                     SequenceState := SequenceState + 10;
                 END_IF
             10:
                 IF dwellTime.Q THEN
                     dwellTime(IN := FALSE);
-                    SealerAxis.Velocity     := _Param[AXISVEL].Value;
-                    SealerAxis.Acceleration := _Param[AXISACCEL].Value;
-                    SealerAxis.MoveAbsolute(Position := _Param[OPENPOS].Value, FALSE);
+                    SealerAxis.Velocity     := Recipe.Axis.Velocity;    
+                    SealerAxis.Acceleration := Recipe.Axis.Acceleration;
+                    SealerAxis.MoveAbsolute(Position := Recipe.OpenPosition, FALSE);
                     SequenceState := SequenceState + 10;
                 END_IF
             20:
@@ -246,7 +278,7 @@ END_VAR]]></Declaration>
 END_CASE]]></ST>
       </Implementation>
     </Method>
-    <Property Name="Heat" Id="{3bbb6d28-e767-45db-b8a5-70445d97c848}">
+    <Property Name="Heat" Id="{3bbb6d28-e767-45db-b8a5-70445d97c848}" FolderPath="Properties\">
       <Declaration><![CDATA[PROPERTY Heat : BOOL]]></Declaration>
       <Get Name="Get" Id="{46a2d081-1dab-4ce7-8b6f-978d995de8e1}">
         <Declaration><![CDATA[VAR
@@ -326,6 +358,8 @@ CASE DescendantSequenceState OF
         END_FOR
 
         Initialize_TagData();
+		RegisterExternalController(Controller := fbControlSourceHMI);
+		fbControlSourceHMI.CyclicLogic();
         DescendantSequenceState := DescendantSequenceState + 10;
     30:
         //Call the Super
@@ -353,33 +387,34 @@ _Report[CURRTEMP].ID   := TO_DINT(2 * 10 + 3);
 _Report[CURRTEMP].Name := 'Seal Temp';
 _Report[CURRTEMP].Unit := 'C';
 
-// Parameters
-_Param[TEMP].ID         := TO_DINT(2 * 10 + 1);
-_Param[TEMP].Name       := 'Setpoint Temp';
-_Param[TEMP].Unit       := 'C';
-_Param[TEMP].Value      := 100;
-_Param[OPENPOS].ID      := TO_DINT(2 * 10 + 2);
-_Param[OPENPOS].Name    := 'Open Positon';
-_Param[OPENPOS].Unit    := 'mm';
-_Param[OPENPOS].Value   := 105;
-_Param[CLOSEPOS].ID     := TO_DINT(2 * 10 + 3);
-_Param[CLOSEPOS].Name   := 'Seal Position';
-_Param[CLOSEPOS].Unit   := 'mm';
-_Param[CLOSEPOS].Value  := 200;
-_Param[SEALTIME].ID     := TO_DINT(2 * 10 + 4);
-_Param[SEALTIME].Name   := 'Seal Dwell';
-_Param[SEALTIME].Unit   := 'ms';
-_Param[SEALTIME].Value  := 250;
-_Param[AXISVEL].ID      := TO_DINT(2 * 10 + 5);
-_Param[AXISVEL].Name    := 'Seal Bar Speed';
-_Param[AXISVEL].Unit    := 'mm/s';
-_Param[AXISVEL].Value   := 100;
-_Param[AXISACCEL].ID    := TO_DINT(2 * 10 + 6);
-_Param[AXISACCEL].Name  := 'Seal Bar Accel';
-_Param[AXISACCEL].Unit  := 'mm/s2';
-_Param[AXISACCEL].Value := 15000;]]></ST>
+// Recipe
+Recipe.Axis.Velocity     := 100;
+Recipe.Axis.Acceleration := 1000;
+Recipe.ClosedPosition    := 200;
+Recipe.OpenPosition      := 105;
+Recipe.Temp              := 100;
+Recipe.SealTime          := 250;]]></ST>
       </Implementation>
     </Method>
+    <Property Name="OpenPos" Id="{f80892fd-0de7-4951-a1c3-9a2675bea75d}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY OpenPos : LREAL]]></Declaration>
+      <Get Name="Get" Id="{cc65af72-d546-43b6-8e91-4313a8c1faff}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[OpenPos := Recipe.OpenPosition;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{c927aad9-2e51-4c56-bacc-1e989b479fa0}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Recipe.OpenPosition := OpenPos;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
     <Method Name="RaiseAlarm2Args" Id="{50d20dd4-a4f9-4638-962e-3d6308ad4688}" FolderPath="Methods\">
       <Declaration><![CDATA[METHOD RaiseAlarm2Args
 VAR_IN_OUT
@@ -397,30 +432,26 @@ END_VAR]]></Declaration>
                                  String_3 := String_2);]]></ST>
       </Implementation>
     </Method>
-    <Method Name="SetParam" Id="{2ddd214a-fa58-4442-aeed-7975c723334a}" FolderPath="Methods\">
-      <Declaration><![CDATA[METHOD SetParam
-VAR_INPUT
-    ParamID   : DINT;
-    Parameter : ST_Descriptor2;
-END_VAR]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[_Param[ParamID] := Parameter;
-CASE ParamID OF
-    TEMP: // bar setpoint temperature 
-        SealBar.SetTemperature := Parameter.Value;
-    OPENPOS: //Axis Open Position 
-        _Param[OPENPOS].Value := Parameter.Value;
-    CLOSEPOS: // Seal Bar Close Pos 
-        _Param[CLOSEPOS].Value := Parameter.Value;
-    SEALTIME: // Seal bar sealing time 
-        _Param[SEALTIME].Value := Parameter.Value;
-    AXISVEL:
-        _Param[AXISVEL].Value := Parameter.Value;
-    AXISACCEL:
-        _Param[AXISVEL].Value := Parameter.Value;
-END_CASE]]></ST>
-      </Implementation>
-    </Method>
+    <Property Name="SealTime" Id="{9e06eaf2-efc2-4fc7-bea7-d2c9244a59b5}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY SealTime : LREAL]]></Declaration>
+      <Get Name="Get" Id="{012f31e5-11ae-4a29-93bb-9fb67f60939c}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[SealTime := Recipe.SealTime;
+]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{5f0e1a8f-33da-416f-b952-1dddfa44d7e0}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Recipe.SealTime := SealTime;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
     <Method Name="Starting" Id="{d8069b32-aac5-4160-8750-2cb4e87a420f}" FolderPath="Methods\Acting States\">
       <Declaration><![CDATA[METHOD PROTECTED Starting
 VAR_INPUT
@@ -434,9 +465,9 @@ END_VAR]]></Declaration>
                 NoStateTasksToComplete := FALSE;
                 SequenceState          := SequenceState + 10;
             10:
-                SealerAxis.Velocity     := _Param[AXISVEL].Value;
-                SealerAxis.Acceleration := _Param[AXISACCEL].Value;
-                SealerAxis.MoveAbsolute(Position := _Param[CLOSEPOS].Value, FALSE);
+                SealerAxis.Velocity     := Recipe.Axis.Velocity;
+                SealerAxis.Acceleration := Recipe.Axis.Acceleration;
+                SealerAxis.MoveAbsolute(Position := Recipe.ClosedPosition, FALSE);
                 SequenceState := SequenceState + 10;
             20:
                 IF SealerAxis.Busy THEN
@@ -452,6 +483,38 @@ END_CASE
 SUPER^.Starting();]]></ST>
       </Implementation>
     </Method>
+    <Property Name="Temp" Id="{75cb2623-9ee1-491d-a300-c94bd0c0a581}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY Temp : LREAL]]></Declaration>
+      <Get Name="Get" Id="{60c0dab2-2395-4335-80da-14e31abceed6}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Temp := Recipe.Temp;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{fea897ac-3069-449a-926e-882752ac4fa8}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Recipe.Temp := Temp;
+SealBar.SetTemperature := Recipe.Temp;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="Velocity" Id="{82c39321-7609-4946-b7fc-d3898485c4c7}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY Velocity : LREAL]]></Declaration>
+      <Set Name="Set" Id="{c6fdb1c6-b663-4277-b18d-e2c9a4196149}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Recipe.Axis.Velocity := Velocity;
+]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
     <LineIds Name="FB_Sealer">
       <LineId Id="9" Count="0" />
     </LineIds>
@@ -459,17 +522,34 @@ SUPER^.Starting();]]></ST>
       <LineId Id="160" Count="21" />
       <LineId Id="48" Count="0" />
     </LineIds>
+    <LineIds Name="FB_Sealer.Acceleration.Set">
+      <LineId Id="2" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
     <LineIds Name="FB_Sealer.Clearing">
       <LineId Id="132" Count="15" />
       <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Sealer.ClosedPos.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Sealer.ClosedPos.Set">
+      <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_Sealer.CreateEvents">
       <LineId Id="67" Count="6" />
       <LineId Id="6" Count="0" />
     </LineIds>
     <LineIds Name="FB_Sealer.CyclicLogic">
-      <LineId Id="387" Count="22" />
+      <LineId Id="393" Count="22" />
       <LineId Id="278" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Sealer.CyclicLogic_Simulation">
+      <LineId Id="81" Count="3" />
+      <LineId Id="96" Count="17" />
+      <LineId Id="55" Count="0" />
+      <LineId Id="120" Count="5" />
+      <LineId Id="119" Count="0" />
     </LineIds>
     <LineIds Name="FB_Sealer.Execute">
       <LineId Id="280" Count="29" />
@@ -482,23 +562,46 @@ SUPER^.Starting();]]></ST>
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_Sealer.Initialize">
-      <LineId Id="671" Count="58" />
+      <LineId Id="671" Count="50" />
+      <LineId Id="739" Count="1" />
+      <LineId Id="722" Count="7" />
       <LineId Id="11" Count="0" />
     </LineIds>
     <LineIds Name="FB_Sealer.Initialize_TagData">
-      <LineId Id="212" Count="34" />
+      <LineId Id="256" Count="13" />
+      <LineId Id="271" Count="2" />
       <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Sealer.OpenPos.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Sealer.OpenPos.Set">
+      <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_Sealer.RaiseAlarm2Args">
       <LineId Id="36" Count="2" />
       <LineId Id="16" Count="0" />
     </LineIds>
-    <LineIds Name="FB_Sealer.SetParam">
-      <LineId Id="131" Count="13" />
-      <LineId Id="13" Count="0" />
+    <LineIds Name="FB_Sealer.SealTime.Get">
+      <LineId Id="2" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Sealer.SealTime.Set">
+      <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_Sealer.Starting">
       <LineId Id="158" Count="22" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Sealer.Temp.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Sealer.Temp.Set">
+      <LineId Id="2" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Sealer.Velocity.Set">
+      <LineId Id="2" Count="0" />
       <LineId Id="5" Count="0" />
     </LineIds>
   </POU>
