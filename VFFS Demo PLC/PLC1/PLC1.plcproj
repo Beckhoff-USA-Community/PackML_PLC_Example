@@ -19,9 +19,6 @@
     <Released>false</Released>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Class Diagram.TcCD">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="DUTs\ST_Descriptor2.TcDUT">
       <SubType>Code</SubType>
     </Compile>
@@ -280,6 +277,9 @@
     <PlaceholderResolution Include="SPT Component Base">
       <Resolution>SPT Component Base, * (Beckhoff Automation LLC)</Resolution>
     </PlaceholderResolution>
+    <PlaceholderResolution Include="SPT Components">
+      <Resolution>SPT Components, * (Beckhoff Automation LLC)</Resolution>
+    </PlaceholderResolution>
     <PlaceholderResolution Include="SPT Event Logger">
       <Resolution>SPT Event Logger, * (Beckhoff Automation LLC)</Resolution>
     </PlaceholderResolution>
@@ -316,11 +316,29 @@
     <PlaceholderResolution Include="SysTarget">
       <Resolution>SysTarget, 3.5.5.0 (System)</Resolution>
     </PlaceholderResolution>
+    <PlaceholderResolution Include="System_VisuElemMeter">
+      <Resolution>VisuElemMeter, * (System)</Resolution>
+    </PlaceholderResolution>
     <PlaceholderResolution Include="System_VisuElems">
-      <Resolution>VisuElems, 3.5.13.40 (System)</Resolution>
+      <Resolution>VisuElems, * (System)</Resolution>
+    </PlaceholderResolution>
+    <PlaceholderResolution Include="System_VisuElemsSpecialControls">
+      <Resolution>VisuElemsSpecialControls, * (System)</Resolution>
+    </PlaceholderResolution>
+    <PlaceholderResolution Include="System_VisuElemsWinControls">
+      <Resolution>VisuElemsWinControls, * (System)</Resolution>
+    </PlaceholderResolution>
+    <PlaceholderResolution Include="System_VisuElemTextEditor">
+      <Resolution>VisuElemTextEditor, * (System)</Resolution>
     </PlaceholderResolution>
     <PlaceholderResolution Include="System_VisuInputs">
       <Resolution>VisuInputs, 3.5.13.0 (System)</Resolution>
+    </PlaceholderResolution>
+    <PlaceholderResolution Include="system_visuinputs">
+      <Resolution>VisuInputs, * (System)</Resolution>
+    </PlaceholderResolution>
+    <PlaceholderResolution Include="System_VisuNativeControl">
+      <Resolution>VisuNativeControl, * (System)</Resolution>
     </PlaceholderResolution>
     <PlaceholderResolution Include="SysTime">
       <Resolution>SysTime, 3.5.9.0 (System)</Resolution>
@@ -332,31 +350,34 @@
       <Resolution>SysTimeRtc, 3.5.5.0 (System)</Resolution>
     </PlaceholderResolution>
     <PlaceholderResolution Include="Tc2_EtherCAT">
-      <Resolution>Tc2_EtherCAT, 3.3.20.0 (Beckhoff Automation GmbH)</Resolution>
+      <Resolution>Tc2_EtherCAT, * (Beckhoff Automation GmbH)</Resolution>
     </PlaceholderResolution>
     <PlaceholderResolution Include="Tc2_Standard">
-      <Resolution>Tc2_Standard, 3.3.3.0 (Beckhoff Automation GmbH)</Resolution>
+      <Resolution>Tc2_Standard, * (Beckhoff Automation GmbH)</Resolution>
     </PlaceholderResolution>
     <PlaceholderResolution Include="Tc2_System">
-      <Resolution>Tc2_System, 3.4.25.0 (Beckhoff Automation GmbH)</Resolution>
+      <Resolution>Tc2_System, * (Beckhoff Automation GmbH)</Resolution>
     </PlaceholderResolution>
     <PlaceholderResolution Include="Tc2_Utilities">
       <Resolution>Tc2_Utilities, 3.3.52.0 (Beckhoff Automation GmbH)</Resolution>
     </PlaceholderResolution>
     <PlaceholderResolution Include="Tc3_EventLogger">
-      <Resolution>Tc3_EventLogger, 3.1.30.0 (Beckhoff Automation GmbH)</Resolution>
+      <Resolution>Tc3_EventLogger, * (Beckhoff Automation GmbH)</Resolution>
     </PlaceholderResolution>
     <PlaceholderResolution Include="Tc3_Module">
-      <Resolution>Tc3_Module, 3.3.21.0 (Beckhoff Automation GmbH)</Resolution>
+      <Resolution>Tc3_Module, * (Beckhoff Automation GmbH)</Resolution>
     </PlaceholderResolution>
     <PlaceholderResolution Include="Tc3_PackML_V2">
-      <Resolution>Tc3_PackML_V2, 3.3.15.0 (Beckhoff Automation GmbH)</Resolution>
+      <Resolution>Tc3_PackML_V2, * (Beckhoff Automation GmbH)</Resolution>
     </PlaceholderResolution>
     <PlaceholderResolution Include="Tc3_System">
       <Resolution>Tc3_System, 3.1.0.3 (Beckhoff Automation GmbH)</Resolution>
     </PlaceholderResolution>
     <PlaceholderResolution Include="Util">
       <Resolution>Util, 3.5.11.0 (System)</Resolution>
+    </PlaceholderResolution>
+    <PlaceholderResolution Include="VisuDialogs">
+      <Resolution>VisuDialogs, * (System)</Resolution>
     </PlaceholderResolution>
   </ItemGroup>
   <ProjectExtensions>
