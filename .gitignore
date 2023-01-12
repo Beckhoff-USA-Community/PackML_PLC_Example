@@ -46,7 +46,7 @@ ScopeData
 
 .tmcRefac
 
-*.library
+#*.library
 
 
 ## Ignore TwinCAT HMI temporary files, build results, and
