@@ -311,11 +311,11 @@ END_VAR
 CASE DescendantSequenceState OF
     0:
         // Define the interfaces to the different subunits (Must take place before SUPER^.initialize call)
-        FOR i := 1 TO SPT_PackMLBase.Parameters_PackML_Base.MAX_NO_OF_SUBMODULES DO
+        FOR i := 1 TO SPT_BaseTypes.Parameters_PackML_Base.MAX_NO_OF_SUBMODULES DO
             ipSubModules[i] := ipSubModules_Init[i];
         END_FOR
 
-        FOR i := 1 TO SPT_PackMLBase.Parameters_PackML_Base.MAX_NO_OF_COMPONENTS DO
+        FOR i := 1 TO SPT_BaseTypes.Parameters_PackML_Base.MAX_NO_OF_COMPONENTS DO
             ipComponents[i] := ipComponents_Init[i];
         END_FOR
 

@@ -125,16 +125,6 @@
       <DefaultResolution>SPT Base Types, * (Beckhoff Automation LLC)</DefaultResolution>
       <Namespace>SPT_BaseTypes</Namespace>
     </PlaceholderReference>
-    <PlaceholderReference Include="SPT Component Base">
-      <DefaultResolution>SPT Component Base, * (Beckhoff Automation LLC)</DefaultResolution>
-      <Namespace>SPT_ComponentBase</Namespace>
-      <Parameters>
-        <Parameter ListName="PARAMETERS_BASECOMPONENT" xmlns="">
-          <Key>COMPONENT_BASE_ALARM_COUNT</Key>
-          <Value>16</Value>
-        </Parameter>
-      </Parameters>
-    </PlaceholderReference>
     <PlaceholderReference Include="SPT Components">
       <DefaultResolution>SPT Components, * (Beckhoff Automation LLC)</DefaultResolution>
       <Namespace>SPT_Components</Namespace>
@@ -142,10 +132,6 @@
     <PlaceholderReference Include="SPT Event Logger">
       <DefaultResolution>SPT Event Logger, * (Beckhoff Automation LLC)</DefaultResolution>
       <Namespace>SPT_EventLogger</Namespace>
-    </PlaceholderReference>
-    <PlaceholderReference Include="SPT PackML Base">
-      <DefaultResolution>SPT PackML Base, * (Beckhoff Automation LLC)</DefaultResolution>
-      <Namespace>SPT_PackMLBase</Namespace>
     </PlaceholderReference>
     <PlaceholderReference Include="SPT Utilities">
       <DefaultResolution>SPT Utilities, * (Beckhoff Automation LLC)</DefaultResolution>
@@ -293,17 +279,11 @@
     <PlaceholderResolution Include="SPT Base Types">
       <Resolution>SPT Base Types, * (Beckhoff Automation LLC)</Resolution>
     </PlaceholderResolution>
-    <PlaceholderResolution Include="SPT Component Base">
-      <Resolution>SPT Component Base, * (Beckhoff Automation LLC)</Resolution>
-    </PlaceholderResolution>
     <PlaceholderResolution Include="SPT Components">
       <Resolution>SPT Components, * (Beckhoff Automation LLC)</Resolution>
     </PlaceholderResolution>
     <PlaceholderResolution Include="SPT Event Logger">
       <Resolution>SPT Event Logger, * (Beckhoff Automation LLC)</Resolution>
-    </PlaceholderResolution>
-    <PlaceholderResolution Include="SPT PackML Base">
-      <Resolution>SPT PackML Base, * (Beckhoff Automation LLC)</Resolution>
     </PlaceholderResolution>
     <PlaceholderResolution Include="SPT Utilities">
       <Resolution>SPT Utilities, * (Beckhoff Automation LLC)</Resolution>

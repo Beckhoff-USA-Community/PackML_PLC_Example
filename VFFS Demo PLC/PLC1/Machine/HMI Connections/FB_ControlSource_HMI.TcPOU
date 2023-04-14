@@ -20,7 +20,7 @@ END_VAR]]></Declaration>
     <Folder Name="I_CyclicFB" Id="{da96ee3d-3a26-0760-3308-bd5f0e74cb8f}" />
     <Folder Name="I_PackML_ExternalController" Id="{ee5784bf-99d0-0814-3e65-18ae759a9978}" />
     <Property Name="Control" Id="{cce055b3-e7d5-0d5f-0873-78bf8c3fed60}" FolderPath="I_PackML_ExternalController\">
-      <Declaration><![CDATA[PROPERTY Control : SPT_PackMLBase.I_PackML_Control]]></Declaration>
+      <Declaration><![CDATA[PROPERTY Control : SPT_BaseTypes.I_PackML_Control]]></Declaration>
       <Set Name="Set" Id="{baa4d435-ef43-0143-346d-f1ba06e17768}">
         <Declaration><![CDATA[]]></Declaration>
         <Implementation>
@@ -101,7 +101,7 @@ END_IF]]></ST>
     <Method Name="ModeChanged" Id="{e837e8f8-b20d-086a-0e4c-5aefa38c717b}" FolderPath="I_PackML_ExternalController\">
       <Declaration><![CDATA[METHOD FINAL ModeChanged
 VAR_INPUT
-    NewMode : SPT_PackMLBase.E_PMLUnitMode;
+    NewMode : SPT_BaseTypes.E_PMLUnitMode;
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[MainPMLControl_Standard.ModeCommand := NewMode;]]></ST>
@@ -120,7 +120,7 @@ END_VAR]]></Declaration>
     <Method Name="StateChanged" Id="{bb670118-8e4e-0208-05d7-955914bf17c7}" FolderPath="I_PackML_ExternalController\">
       <Declaration><![CDATA[METHOD FINAL StateChanged
 VAR_INPUT
-    NewState : SPT_PackMLBase.E_PMLCommand;
+    NewState : SPT_BaseTypes.E_PMLCommand;
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[MainPMLControl_Standard.StateCommand := NewState;]]></ST>
