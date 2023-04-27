@@ -357,9 +357,6 @@
     <PlaceholderResolution Include="Tc2_System">
       <Resolution>Tc2_System, * (Beckhoff Automation GmbH)</Resolution>
     </PlaceholderResolution>
-    <PlaceholderResolution Include="Tc2_Utilities">
-      <Resolution>Tc2_Utilities, 3.3.52.0 (Beckhoff Automation GmbH)</Resolution>
-    </PlaceholderResolution>
     <PlaceholderResolution Include="Tc3_EventLogger">
       <Resolution>Tc3_EventLogger, * (Beckhoff Automation GmbH)</Resolution>
     </PlaceholderResolution>
@@ -368,9 +365,6 @@
     </PlaceholderResolution>
     <PlaceholderResolution Include="Tc3_PackML_V2">
       <Resolution>Tc3_PackML_V2, * (Beckhoff Automation GmbH)</Resolution>
-    </PlaceholderResolution>
-    <PlaceholderResolution Include="Tc3_System">
-      <Resolution>Tc3_System, 3.1.0.3 (Beckhoff Automation GmbH)</Resolution>
     </PlaceholderResolution>
     <PlaceholderResolution Include="Util">
       <Resolution>Util, 3.5.11.0 (System)</Resolution>
