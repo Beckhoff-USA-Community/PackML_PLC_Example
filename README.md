@@ -1,7 +1,7 @@
 # Introduction 
 The purpose of this project is to serve as an example of how to setup a PLC project using the current PackML base framework it is provided publically under the License in the repository.
 
-This sample is created by Beckhoff Automation LLC., and is provided as-is under the Zero-Clause BSD license.
+This sample is created by Beckhoff Automation LLC., and is provided as-is under the MIT license.
 
 # Getting Started
 Once the Repository has been cloned the user will need to install project libraries.
