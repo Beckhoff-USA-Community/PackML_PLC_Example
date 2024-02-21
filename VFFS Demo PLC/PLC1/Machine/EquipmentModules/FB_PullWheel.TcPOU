@@ -13,10 +13,6 @@ VAR
     RightPullWheel    : FB_Component_BasicSlaveAxis := (Name := 'Right');
     PullWheelCylinder : FB_Cylinder                 := (Name := 'Cylinder');
 
-    // List of Components
-    ipComponents_Init : ARRAY[1..Parameters_PackML_Base.MAX_NO_OF_COMPONENTS] OF I_ComponentBase
-        := [LeftPullWheel, RightPullWheel, PullWheelCylinder];
-
     //Alarms for this module
     PullWheelAlarms : ARRAY[1..PULL_WHEELS_ALARM_COUNT] OF FB_TcAlarm;
 
@@ -233,15 +229,10 @@ END_VAR
         <ST><![CDATA[Initialize := FALSE;
 CASE DescendantSequenceState OF
     0:
-        // Define the interfaces to the different subunits (Must take place before SUPER^.initialize call)
-        FOR i := 1 TO SPT_BaseTypes.Parameters_PackML_Base.MAX_NO_OF_SUBMODULES DO
-            ipSubModules[i] := ipSubModules_Init[i];
-        END_FOR
-
-        FOR i := 1 TO SPT_BaseTypes.Parameters_PackML_Base.MAX_NO_OF_COMPONENTS DO
-            ipComponents[i] := ipComponents_Init[i];
-        END_FOR
-
+		RegisterComponent(LeftPullWheel);
+		RegisterComponent(RightPullWheel);		
+		RegisterComponent(PullWheelCylinder);
+		
         _LogModeChanges         := FALSE;
         _LogStateChanges        := FALSE;
         DescendantSequenceState := DescendantSequenceState + 10;
@@ -508,9 +499,7 @@ Recipe.RightAxis.Velocity := Velocity;]]></ST>
       <LineId Id="14" Count="0" />
     </LineIds>
     <LineIds Name="FB_PullWheel.Initialize">
-      <LineId Id="617" Count="50" />
-      <LineId Id="685" Count="1" />
-      <LineId Id="668" Count="7" />
+      <LineId Id="696" Count="55" />
       <LineId Id="11" Count="0" />
     </LineIds>
     <LineIds Name="FB_PullWheel.Initialize_TagData">

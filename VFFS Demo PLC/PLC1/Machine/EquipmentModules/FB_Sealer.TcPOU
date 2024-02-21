@@ -12,10 +12,6 @@ VAR
     SealerAxis : FB_Component_BasicAxis := (Name := 'Axis');
     SealBar    : FB_SealBar             := (Name := 'Heat Bar');
 
-    // List of Components
-    ipComponents_Init :
-        ARRAY[1..Parameters_PackML_Base.MAX_NO_OF_COMPONENTS] OF I_ComponentBase := [SealerAxis, SealBar];
-
     //Alarms for this module
     SealerAlarms : ARRAY[1..SEALER_ALARM_COUNT] OF FB_TcAlarm;
 
@@ -310,15 +306,9 @@ END_VAR
         <ST><![CDATA[Initialize := FALSE;
 CASE DescendantSequenceState OF
     0:
-        // Define the interfaces to the different subunits (Must take place before SUPER^.initialize call)
-        FOR i := 1 TO SPT_BaseTypes.Parameters_PackML_Base.MAX_NO_OF_SUBMODULES DO
-            ipSubModules[i] := ipSubModules_Init[i];
-        END_FOR
-
-        FOR i := 1 TO SPT_BaseTypes.Parameters_PackML_Base.MAX_NO_OF_COMPONENTS DO
-            ipComponents[i] := ipComponents_Init[i];
-        END_FOR
-
+		RegisterComponent(SealerAxis);
+		RegisterComponent(SealBar);
+		
         _LogModeChanges         := FALSE;
         _LogStateChanges        := FALSE;
         DescendantSequenceState := DescendantSequenceState + 10;
@@ -562,9 +552,7 @@ END_VAR
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_Sealer.Initialize">
-      <LineId Id="671" Count="50" />
-      <LineId Id="739" Count="1" />
-      <LineId Id="722" Count="7" />
+      <LineId Id="750" Count="54" />
       <LineId Id="11" Count="0" />
     </LineIds>
     <LineIds Name="FB_Sealer.Initialize_TagData">

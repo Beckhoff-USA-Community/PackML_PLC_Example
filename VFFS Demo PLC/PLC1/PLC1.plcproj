@@ -277,16 +277,16 @@
       <Resolution>FloatingPointUtils, 3.5.9.0 (System)</Resolution>
     </PlaceholderResolution>
     <PlaceholderResolution Include="SPT Base Types">
-      <Resolution>SPT Base Types, * (Beckhoff Automation LLC)</Resolution>
+      <Resolution>SPT Base Types, 3.2.9.1 (Beckhoff Automation LLC)</Resolution>
     </PlaceholderResolution>
     <PlaceholderResolution Include="SPT Components">
-      <Resolution>SPT Components, * (Beckhoff Automation LLC)</Resolution>
+      <Resolution>SPT Components, 3.2.6.1 (Beckhoff Automation LLC)</Resolution>
     </PlaceholderResolution>
     <PlaceholderResolution Include="SPT Event Logger">
-      <Resolution>SPT Event Logger, * (Beckhoff Automation LLC)</Resolution>
+      <Resolution>SPT Event Logger, 3.2.0 (Beckhoff Automation LLC)</Resolution>
     </PlaceholderResolution>
     <PlaceholderResolution Include="SPT Utilities">
-      <Resolution>SPT Utilities, * (Beckhoff Automation LLC)</Resolution>
+      <Resolution>SPT Utilities, 3.2.2 (Beckhoff Automation LLC)</Resolution>
     </PlaceholderResolution>
     <PlaceholderResolution Include="Standard">
       <Resolution>Tc2_Standard, 3.3.3.0 (Beckhoff Automation GmbH)</Resolution>

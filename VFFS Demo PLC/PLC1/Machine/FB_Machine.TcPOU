@@ -8,10 +8,6 @@ VAR
     Sealer     : FB_Sealer    := (Name := 'Sealer', LogStateChanges := TRUE);
     Unwind     : FB_Unwind    := (Name := 'Unwind', LogStateChanges := TRUE);
 
-    //Initial List of SubModules
-    ipSubModules_Init :
-        ARRAY[1..Parameters_PackML_Base.MAX_NO_OF_SUBMODULES] OF I_PackML_BaseModule := [PullWheels, Sealer, Unwind];
-
     // Components
 
     //Initial List of Components
@@ -318,15 +314,10 @@ END_VAR]]></Declaration>
         <ST><![CDATA[Initialize := FALSE;
 CASE DescendantSequenceState OF
     0:
-        // Define the interfaces to the different subunits (Must take place before SUPER^.initialize call)
-        FOR i := 1 TO SPT_BaseTypes.Parameters_PackML_Base.MAX_NO_OF_SUBMODULES DO
-            ipSubModules[i] := ipSubModules_Init[i];
-        END_FOR
-
-        FOR i := 1 TO SPT_BaseTypes.Parameters_PackML_Base.MAX_NO_OF_COMPONENTS DO
-            ipComponents[i] := ipComponents_Init[i];
-        END_FOR
-
+		RegisterSubmodule(PullWheels);
+		RegisterSubmodule(Sealer);
+		RegisterSubmodule(Unwind);
+		
         _LogModeChanges         := FALSE;
         _LogStateChanges        := FALSE;
         DescendantSequenceState := DescendantSequenceState + 10;
@@ -945,7 +936,7 @@ END_IF]]></ST>
       <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="FB_Machine.Initialize">
-      <LineId Id="775" Count="61" />
+      <LineId Id="840" Count="56" />
       <LineId Id="28" Count="0" />
     </LineIds>
     <LineIds Name="FB_Machine.Initialize_Recipes">

@@ -12,9 +12,6 @@ VAR
     Axis   : FB_Component_BasicAxis := (Name := 'Axis');
     Sensor : FB_DigitalSensor       := (Name := 'Sensor');
 
-    // List of Components
-    ipComponents_Init : ARRAY[1..Parameters_PackML_Base.MAX_NO_OF_COMPONENTS] OF I_ComponentBase := [Axis, Sensor];
-
     //Alarms for this module
     UnwindAlarms : ARRAY[1..UNWIND_ALARM_COUNT] OF FB_TcAlarm;
 
@@ -206,15 +203,8 @@ END_VAR
         <ST><![CDATA[Initialize := FALSE;
 CASE DescendantSequenceState OF
     0:
-        // Define the interfaces to the different subunits (Must take place before SUPER^.initialize call)
-        FOR i := 1 TO SPT_BaseTypes.Parameters_PackML_Base.MAX_NO_OF_SUBMODULES DO
-            ipSubModules[i] := ipSubModules_Init[i];
-        END_FOR
-
-        FOR i := 1 TO SPT_BaseTypes.Parameters_PackML_Base.MAX_NO_OF_COMPONENTS DO
-            ipComponents[i] := ipComponents_Init[i];
-        END_FOR
-
+		RegisterComponent(Axis);
+		RegisterComponent(Sensor);
         _LogModeChanges         := FALSE;
         _LogStateChanges        := FALSE;
         DescendantSequenceState := DescendantSequenceState + 10;
@@ -417,10 +407,7 @@ END_VAR
       <LineId Id="55" Count="0" />
     </LineIds>
     <LineIds Name="FB_Unwind.Initialize">
-      <LineId Id="617" Count="50" />
-      <LineId Id="697" Count="1" />
-      <LineId Id="685" Count="2" />
-      <LineId Id="668" Count="7" />
+      <LineId Id="708" Count="56" />
       <LineId Id="11" Count="0" />
     </LineIds>
     <LineIds Name="FB_Unwind.Initialize_TagData">
