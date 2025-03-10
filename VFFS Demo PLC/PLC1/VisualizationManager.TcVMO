@@ -1,10 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.11">
   <VisuManager Name="VisualizationManager" Id="{967f4175-b297-4fd3-abac-9811d8a48de6}">
     <XmlArchive>
       <Data>
         <o xml:space="preserve" t="VisualManagerObject">
           <v n="UseUnicodeStrings" t="UnicodeSupport">Undefined</v>
+          <v n="UseOverlay" t="OverlaySupport">Undefined</v>
           <o n="ViewSettings" t="VisualManagerViewSettings">
             <v n="StartVisu">""</v>
             <v n="StartVisu33">""</v>
@@ -27,6 +28,7 @@
             <v n="InputWithLimitsDialog">"VisuDialogs.TextinputWithLimits"</v>
             <v n="UseInputWithLimits">false</v>
             <v n="TouchHandlingActive">false</v>
+            <v n="TouchScrollbarsActive">false</v>
             <v n="SemiTransparentDrawingActive">true</v>
             <v n="UpdateColorvariablesAfterActivationDone">true</v>
             <v n="TransferSvgAndConvertedImages">false</v>
@@ -42,8 +44,17 @@
               <n n="PositionX" />
               <n n="PositionY" />
             </o>
+            <v n="UseBackgroundForModalDialog">true</v>
+            <v n="AnimationDuration">200</v>
             <v n="ConvertImages">false</v>
             <v n="ConversionType">""</v>
+            <v n="BackImage">""</v>
+            <v n="BackImageTop">0</v>
+            <v n="BackImageLeft">0</v>
+            <v n="BackImageBot">0</v>
+            <v n="BackImageRight">0</v>
+            <v n="BackImageWarning">true</v>
+            <v n="BackImageLimit">true</v>
           </o>
           <o n="RegisterDesc" t="GenericFbDescription">
             <d n="FbMethods" t="CaseInsensitiveHashtable" ckt="String" cvt="Guid">
@@ -54,6 +65,7 @@
               <v>FB_Reinit</v>
               <v>6a60575c-b0bb-4623-9993-15c15457bc6c</v>
             </d>
+            <d n="FbProperties" t="CaseInsensitiveHashtable" />
             <v n="FbName">"NotImportant"</v>
             <v n="FbGuid">{854c49c2-54ae-4de9-be8d-38deb8dfe8e6}</v>
           </o>
@@ -62,7 +74,7 @@
               <v n="Modifiers">7</v>
               <v n="DevType">4096</v>
               <v n="DevId">"1002 0004"</v>
-              <v n="DevVersion">"1.0.0.6"</v>
+              <v n="DevVersion">"1.0.0.7"</v>
               <v n="BaseProvider">{cb73a13e-6ccc-4bc6-8859-f5aa98bb116b}</v>
               <l n="Keys" t="ArrayList" cet="DeviceBasedHotkeyItem">
                 <o>
@@ -505,6 +517,7 @@
               <v>Initialize</v>
               <v>13b70d1f-9098-4520-b787-fee5868056ff</v>
             </d>
+            <d n="FbProperties" t="CaseInsensitiveHashtable" />
             <v n="FbName">"NotImportant"</v>
             <v n="FbGuid">{be6f5a52-7289-4452-849a-b1daa8fc1461}</v>
           </o>
@@ -563,6 +576,7 @@
         <Type n="HotkeyConfiguration">{6b108d46-58af-4e41-a3f4-174d8f160cc4}</Type>
         <Type n="Int32">System.Int32</Type>
         <Type n="Int64">System.Int64</Type>
+        <Type n="OverlaySupport">{05125339-dc8c-4673-b403-e21bec548370}</Type>
         <Type n="String">System.String</Type>
         <Type n="UnicodeSupport">{19611221-ebd3-4607-86d2-9822fbe84c30}</Type>
         <Type n="VisualClientSizeMode">{c37fe731-4f69-4d98-82fe-4f9aefbe200d}</Type>
