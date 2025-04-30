@@ -3,70 +3,70 @@
   <POU Name="FB_Machine" Id="{d5c1a520-7f34-4388-b108-926928c14741}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK FB_Machine EXTENDS FB_PackML_BaseModule // IMPLEMENTS I_ControlsProductionRate
 VAR
-    // Sub Modules
-    PullWheels : FB_PullWheel := (Name := 'Pull Wheel', LogStateChanges := TRUE);
-    Sealer     : FB_Sealer    := (Name := 'Sealer', LogStateChanges := TRUE);
-    Unwind     : FB_Unwind    := (Name := 'Unwind', LogStateChanges := TRUE);
+	// Sub Modules
+	PullWheels : FB_PullWheel := (Name := 'Pull Wheel', LogStateChanges := TRUE);
+	Sealer	   : FB_Sealer	  := (Name := 'Sealer', LogStateChanges := TRUE);
+	Unwind	   : FB_Unwind	  := (Name := 'Unwind', LogStateChanges := TRUE);
 
-    // Components
+	// Components
 
-    //Initial List of Components
-    ipComponents_Init : ARRAY[1..Parameters_PackML_Base.MAX_NO_OF_COMPONENTS] OF I_ComponentBase := [];
+	//Initial List of Components
+	ipComponents_Init : ARRAY[1..Parameters_PackML_Base.MAX_NO_OF_COMPONENTS] OF I_ComponentBase := [];
 
-    //Alarms for this module
-    MachineAlarms : ARRAY[1..MACHINE_ALARM_COUNT] OF FB_TcAlarm;
-	
+	//Alarms for this module
+	MachineAlarms : ARRAY[1..MACHINE_ALARM_COUNT] OF FB_TcAlarm;
+
 	//Current Recipe Name
 	CurrentRecipeName : STRING;
 
-    //Get Data From PackML? Else RecipeManager is running
-    DataFromPackML : BOOL := TRUE;
+	//Get Data From PackML? Else RecipeManager is running
+	DataFromPackML : BOOL := TRUE;
 
-    //Data 
-    sealTimeStart : ULINT;
-    sealTimeEnd   : ULINT;
-    sealingTime   : LREAL;
-    sealTrig      : R_TRIG;
-    pullTimeStart : ULINT;
-    pullTimeEnd   : ULINT;
-    pullingTime   : LREAL;
-    pulltrig      : R_TRIG;
-    partTimeStart : ULINT;
-    partTimeEnd   : ULINT;
-    partTime      : LREAL;
-    parts         : DINT;
-    product       : DINT;
+	//Data 
+	sealTimeStart : ULINT;
+	sealTimeEnd	  : ULINT;
+	sealingTime	  : LREAL;
+	sealTrig	  : R_TRIG;
+	pullTimeStart : ULINT;
+	pullTimeEnd	  : ULINT;
+	pullingTime	  : LREAL;
+	pulltrig	  : R_TRIG;
+	partTimeStart : ULINT;
+	partTimeEnd	  : ULINT;
+	partTime	  : LREAL;
+	parts		  : DINT;
+	product		  : DINT;
 
-    //Pack Tags for System
-    {attribute 'OPC.UA.DA' := '1'}
-    _PackTags : ST_PackMLv30Ext; //ST_PackMLv30 is obsolete in Tc3_PackML_V2
+	//Pack Tags for System
+	{attribute 'OPC.UA.DA' := '1'}
+	_PackTags : ST_PackMLv30Ext; //ST_PackMLv30 is obsolete in Tc3_PackML_V2
 END_VAR
 
 VAR CONSTANT
-    //PackTag parameter IDs
-    LENGTH         : INT := 1;
-    SEALTEMP       : INT := 2;
-    SEALTIME       : INT := 3;
-    PULLWHEELS_VEL : INT := 4;
-    PULLWHEELS_ACC : INT := 5;
-    SEALER_VEL     : INT := 6;
-    SEALER_ACC     : INT := 7;
-    UNWIND_VEL     : INT := 8;
-    UNWIND_ACC     : INT := 9;
-    OPEN_POS       : INT := 10;
-    CLOSED_POS     : INT := 11;
+	//PackTag parameter IDs
+	LENGTH		   : INT := 1;
+	SEALTEMP	   : INT := 2;
+	SEALTIME	   : INT := 3;
+	PULLWHEELS_VEL : INT := 4;
+	PULLWHEELS_ACC : INT := 5;
+	SEALER_VEL	   : INT := 6;
+	SEALER_ACC	   : INT := 7;
+	UNWIND_VEL	   : INT := 8;
+	UNWIND_ACC	   : INT := 9;
+	OPEN_POS	   : INT := 10;
+	CLOSED_POS	   : INT := 11;
 
-    //Alarm count constant
-    MACHINE_ALARM_COUNT : INT := 6;
+	//Alarm count constant
+	MACHINE_ALARM_COUNT : INT := 6;
 END_VAR
 
 // Simulation variables
 VAR
-    EstopInput  : BOOL;
-    LowAirInput : BOOL;
-    ErrorInput  : BOOL;
-    WarnInput   : BOOL;
-    InfoInput   : BOOL;
+	EstopInput	: BOOL;
+	LowAirInput : BOOL;
+	ErrorInput	: BOOL;
+	WarnInput	: BOOL;
+	InfoInput	: BOOL;
 END_VAR]]></Declaration>
     <Implementation>
       <ST><![CDATA[]]></ST>
@@ -85,11 +85,12 @@ VAR_INPUT
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[CASE _CurrentMode OF
-    //=================================PRODUCTION MODE==================================
-    E_PMLUnitMode.ePMLUnitMode_Production:
-        StateComplete();
-    E_PMLUnitMode.ePMLUnitMode_Maintenance, E_PMLUnitMode.ePMLUnitMode_Manual:
-        SUPER^.Completing();
+	//=================================PRODUCTION MODE==================================
+	E_PMLUnitMode.ePMLUnitMode_Production:
+		StateComplete();
+
+	E_PMLUnitMode.ePMLUnitMode_Maintenance, E_PMLUnitMode.ePMLUnitMode_Manual:
+		SUPER^.Completing();
 END_CASE]]></ST>
       </Implementation>
     </Method>
@@ -99,10 +100,10 @@ VAR_INPUT
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[// Add your event creation here
-F_CreateAllEventsInClass(Alarms     := MachineAlarms,
-                         ClassSize  := SIZEOF(TC_Events.VFFSDemo),
-                         pInitEvent := ADR(TC_EVENTS.VFFSDemo.InitReferenceEvent),
-                         Prefix     := Name);
+F_CreateAllEventsInClass(Alarms		:= MachineAlarms,
+						 ClassSize	:= SIZEOF(TC_Events.VFFSDemo),
+						 pInitEvent := ADR(TC_EVENTS.VFFSDemo.InitReferenceEvent),
+						 Prefix		:= Name);
 
 // Super call to base
 SUPER^.CreateEvents();]]></ST>
@@ -114,14 +115,14 @@ VAR_INPUT
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[IF NOT _InitComplete THEN
-    _InitComplete := Initialize();
-    RETURN;
+	_InitComplete := Initialize();
+	RETURN;
 END_IF
 
 SUPER^.CyclicLogic();
 
 // Fill in the PackTags for the machine output
-_PackTags.Status.StateCurrent    := _CurrentState;
+_PackTags.Status.StateCurrent	 := _CurrentState;
 _PackTags.Status.UnitModeCurrent := _CurrentMode;
 UpdateModeTimers();
 
@@ -142,34 +143,34 @@ This is just for testing. Real hardware can be setup in other places
 Here the alarms will raise and clear on its own if the input changes	
 *)
 IF EstopInput AND NOT MachineAlarms[E_VFFSDemo.EmergencyStop].bRaised THEN
-    RaiseAlarm2Args(MachineAlarms[E_VFFSDemo.EmergencyStop], '', '');
+	RaiseAlarm2Args(MachineAlarms[E_VFFSDemo.EmergencyStop], '', '');
 ELSIF NOT EstopInput AND MachineAlarms[E_VFFSDemo.EmergencyStop].bRaised THEN
-    MachineAlarms[E_VFFSDemo.EmergencyStop].Clear(0, 0);
+	MachineAlarms[E_VFFSDemo.EmergencyStop].Clear(0, 0);
 END_IF
 
 IF LowAirInput AND NOT MachineAlarms[E_VFFSDemo.LowAir].bRaised THEN
-    RaiseAlarm2Args(MachineAlarms[E_VFFSDemo.LowAir], '', '');
+	RaiseAlarm2Args(MachineAlarms[E_VFFSDemo.LowAir], '', '');
 ELSIF NOT LowAirInput AND MachineAlarms[E_VFFSDemo.LowAir].bRaised THEN
-    MachineAlarms[E_VFFSDemo.LowAir].Clear(0, 0);
+	MachineAlarms[E_VFFSDemo.LowAir].Clear(0, 0);
 END_IF
 
 //Generic Alarms for Testing
 IF ErrorInput AND NOT MachineAlarms[E_VFFSDemo.AlarmMessage].bRaised THEN
-    RaiseAlarm2Args(MachineAlarms[E_VFFSDemo.AlarmMessage], '', '');
+	RaiseAlarm2Args(MachineAlarms[E_VFFSDemo.AlarmMessage], '', '');
 ELSIF NOT ErrorInput AND MachineAlarms[E_VFFSDemo.AlarmMessage].bRaised THEN
-    MachineAlarms[E_VFFSDemo.AlarmMessage].Clear(0, 0);
+	MachineAlarms[E_VFFSDemo.AlarmMessage].Clear(0, 0);
 END_IF
 
 IF WarnInput AND NOT MachineAlarms[E_VFFSDemo.WarnMessage].bRaised THEN
-    RaiseAlarm2Args(MachineAlarms[E_VFFSDemo.WarnMessage], '', '');
+	RaiseAlarm2Args(MachineAlarms[E_VFFSDemo.WarnMessage], '', '');
 ELSIF NOT WarnInput AND MachineAlarms[E_VFFSDemo.WarnMessage].bRaised THEN
-    MachineAlarms[E_VFFSDemo.WarnMessage].Clear(0, 0);
+	MachineAlarms[E_VFFSDemo.WarnMessage].Clear(0, 0);
 END_IF
 
 IF InfoInput AND NOT MachineAlarms[E_VFFSDemo.InfoMessage].bRaised THEN
-    RaiseAlarm2Args(MachineAlarms[E_VFFSDemo.InfoMessage], '', '');
+	RaiseAlarm2Args(MachineAlarms[E_VFFSDemo.InfoMessage], '', '');
 ELSIF NOT InfoInput AND MachineAlarms[E_VFFSDemo.InfoMessage].bRaised THEN
-    MachineAlarms[E_VFFSDemo.InfoMessage].Clear(0, 0);
+	MachineAlarms[E_VFFSDemo.InfoMessage].Clear(0, 0);
 END_IF]]></ST>
       </Implementation>
     </Method>
@@ -179,22 +180,22 @@ VAR_INPUT
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[CASE _CurrentMode OF
-    //=================================PRODUCTION MODE==================================
-    E_PMLUnitMode.ePMLUnitMode_Production:
-        (* Run the sequence to make products 
+	//=================================PRODUCTION MODE==================================
+	E_PMLUnitMode.ePMLUnitMode_Production:
+		(* Run the sequence to make products 
 		 Unwind Runs Slowly 
 		 Pull Wheels Run 
 		 Jaws Seal, and Repeat until production reached*)
-        sealTrig(CLK := SequenceState = 10);
-        IF sealTrig.Q THEN
-            partTimeStart := F_GetActualDcTime64();
-            sealTimeStart := partTimeStart;
-        END_IF
+		sealTrig(CLK := SequenceState = 10);
+		IF sealTrig.Q THEN
+			partTimeStart := F_GetActualDcTime64();
+			sealTimeStart := partTimeStart;
+		END_IF
 
-        pulltrig(CLK := SequenceState = 20);
-        IF pulltrig.Q THEN
-            pullTimeStart := F_GetActualDcTime64();
-        END_IF
+		pulltrig(CLK := SequenceState = 20);
+		IF pulltrig.Q THEN
+			pullTimeStart := F_GetActualDcTime64();
+		END_IF
 
 		IF THIS^.Sealer.sealbar.InTempRange THEN
 			CASE SequenceState OF
@@ -203,19 +204,21 @@ END_VAR]]></Declaration>
 					IF Unwind.CurrentState = E_PMLState.ePMLState_Execute THEN
 						SequenceState := SequenceState + 10;
 					END_IF
+
 				10: // SEAL First
 					Sealer.ChangeState(E_PMLCommand.ePMLCommand_Start);
 					IF Sealer.CurrentState = E_PMLState.ePMLState_Complete THEN
 						Sealer.ChangeState(E_PMLCommand.ePMLCommand_Reset);
 						SequenceState := SequenceState + 10;
-						SealTimeEnd   := F_GetActualDcTime64();
-						sealingTime   := ULINT_TO_LREAL(sealtimeEnd - sealTimeStart) * 1E-9;
+						SealTimeEnd	  := F_GetActualDcTime64();
+						sealingTime	  := ULINT_TO_LREAL(sealtimeEnd - sealTimeStart) * 1E-9;
 					END_IF
+
 				20: // Run Pullwheels
 					PullWheels.ChangeState(E_PMLCommand.ePMLCommand_Start);
 					IF PullWheels.CurrentState = E_PMLState.ePMLState_Complete THEN
-						partTimeEnd   := F_GetActualDcTime64();
-						parts         := parts + 1;
+						partTimeEnd	  := F_GetActualDcTime64();
+						parts		  := parts + 1;
 						SequenceState := 10;
 						PullWheels.ChangeState(E_PMLCommand.ePMLCommand_Reset);
 						pullTimeEnd := F_GetActualDcTime64();
@@ -225,22 +228,21 @@ END_VAR]]></Declaration>
 		ELSE
 			ChangeState(E_PMLCommand.ePMLCommand_Suspend);
 		END_IF
-			
-    //=================================MAINTENANCE MODE==================================	
-    E_PMLUnitMode.ePMLUnitMode_Maintenance:
-        ;
 
-    //=================================MANUAL MODE==================================
-    E_PMLUnitMode.ePMLUnitMode_Manual:
-        ;
+	//=================================MAINTENANCE MODE==================================	
+	E_PMLUnitMode.ePMLUnitMode_Maintenance:
+		;
+
+	//=================================MANUAL MODE==================================
+	E_PMLUnitMode.ePMLUnitMode_Manual:
+		;
 END_CASE]]></ST>
       </Implementation>
     </Method>
     <Method Name="Held" Id="{13e9b32f-9ecf-4d05-ad5c-588ebbf60926}" FolderPath="Methods\Waiting States\">
       <Declaration><![CDATA[METHOD PROTECTED Held
 VAR_INPUT
-END_VAR
-]]></Declaration>
+END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[]]></ST>
       </Implementation>
@@ -252,38 +254,40 @@ END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[//General Mode Based Monitoring and handling of HMI control
 CASE _CurrentMode OF
-    E_PMLUnitMode.ePMLUnitMode_Production:
-        CASE _CurrentState OF
-            E_PMLState.ePMLState_Stopped:
-                AllowHMIControl(ThisModuleOnly := TRUE); //Allow control for recovery
-            E_PMLState.ePMLState_Idle:
-                //BlockHMIControl();
+	E_PMLUnitMode.ePMLUnitMode_Production:
+		CASE _CurrentState OF
+			E_PMLState.ePMLState_Stopped:
 				AllowHMIControl(ThisModuleOnly := TRUE); //Allow control for recovery
-            E_PMLState.ePMLState_Suspended:
-                BlockHMIControl();
-            E_PMLState.ePMLState_Execute:
-                BlockHMIControl();
-            E_PMLState.ePMLState_Aborted:
-                AllowHMIControl(ThisModuleOnly := TRUE); //Allow control for recovery
-            E_PMLState.ePMLState_Held:
-                AllowHMIControl(ThisModuleOnly := TRUE); //Allow control for recovery
-            E_PMLState.ePMLState_Complete:
-                BlockHMIControl();
-        END_CASE
-		
-        //AllowHMIControl(ThisModuleOnly := FALSE);
-    E_PMLUnitMode.ePMLUnitMode_Manual:
-        AllowHMIControl(ThisModuleOnly := FALSE);
-    E_PMLUnitMode.ePMLUnitMode_Maintenance:
-        AllowHMIControl(ThisModuleOnly := FALSE);
+			E_PMLState.ePMLState_Idle:
+				//BlockHMIControl();
+				AllowHMIControl(ThisModuleOnly := TRUE); //Allow control for recovery
+			E_PMLState.ePMLState_Suspended:
+				BlockHMIControl();
+
+			E_PMLState.ePMLState_Execute:
+				BlockHMIControl();
+
+			E_PMLState.ePMLState_Aborted:
+				AllowHMIControl(ThisModuleOnly := TRUE); //Allow control for recovery
+			E_PMLState.ePMLState_Held:
+				AllowHMIControl(ThisModuleOnly := TRUE); //Allow control for recovery
+			E_PMLState.ePMLState_Complete:
+				BlockHMIControl();
+		END_CASE
+
+	//AllowHMIControl(ThisModuleOnly := FALSE);
+	E_PMLUnitMode.ePMLUnitMode_Manual:
+		AllowHMIControl(ThisModuleOnly := FALSE);
+
+	E_PMLUnitMode.ePMLUnitMode_Maintenance:
+		AllowHMIControl(ThisModuleOnly := FALSE);
 END_CASE]]></ST>
       </Implementation>
     </Method>
     <Method Name="HoldImmediate" Id="{84b7ed94-99a4-4ce2-a25d-701c2131ac5b}" FolderPath="Methods\AlarmHandling\">
       <Declaration><![CDATA[METHOD PROTECTED HoldImmediate
 VAR_INPUT
-END_VAR
-]]></Declaration>
+END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[ChangeState(E_PMLCommand.ePMLCommand_Hold);]]></ST>
       </Implementation>
@@ -294,37 +298,37 @@ VAR_INPUT
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[CASE _CurrentMode OF
-    //=================================PRODUCTION MODE==================================
-    E_PMLUnitMode.ePMLUnitMode_Production:
-        IF (Sealer.CurrentState = E_PMLState.ePMLState_Complete OR Sealer.CurrentState = E_PMLState.ePMLState_Idle) AND
-           (PullWheels.CurrentState = E_PMLState.ePMLState_Complete OR PullWheels.CurrentState = E_PMLState.ePMLState_Idle) THEN
-            StateComplete();
-        END_IF
-    E_PMLUnitMode.ePMLUnitMode_Maintenance, E_PMLUnitMode.ePMLUnitMode_Manual:
-        SUPER^.Holding();
+	//=================================PRODUCTION MODE==================================
+	E_PMLUnitMode.ePMLUnitMode_Production:
+		IF (Sealer.CurrentState = E_PMLState.ePMLState_Complete OR Sealer.CurrentState = E_PMLState.ePMLState_Idle) AND (PullWheels.CurrentState = E_PMLState.ePMLState_Complete OR PullWheels.CurrentState = E_PMLState.ePMLState_Idle) THEN
+			StateComplete();
+		END_IF
+
+	E_PMLUnitMode.ePMLUnitMode_Maintenance, E_PMLUnitMode.ePMLUnitMode_Manual:
+		SUPER^.Holding();
 END_CASE]]></ST>
       </Implementation>
     </Method>
     <Method Name="Initialize" Id="{c8e5bfb3-7a5f-4315-8e43-29ab3e5bd8c9}" FolderPath="Methods\">
       <Declaration><![CDATA[METHOD PROTECTED Initialize : BOOL
 VAR
-    i : UDINT; //Generic iteration value
+	i : UDINT; //Generic iteration value
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[Initialize := FALSE;
 CASE DescendantSequenceState OF
-    0:
+	0:
 		RegisterSubmodule(PullWheels);
 		RegisterSubmodule(Sealer);
 		RegisterSubmodule(Unwind);
-		
-        _LogModeChanges         := FALSE;
-        _LogStateChanges        := FALSE;
-        DescendantSequenceState := DescendantSequenceState + 10;
-    10:
-        //Setup Custom modes here
+		_LogModeChanges			:= FALSE;
+		_LogStateChanges		:= FALSE;
+		DescendantSequenceState := DescendantSequenceState + 10;
 
-        (*CustomModes(eMode                          :=,
+	10:
+		//Setup Custom modes here
+
+		(*CustomModes(eMode                          :=,
                     sName                          :=,
                     bDisableClearing               :=,
                     bDisableStarting               :=,
@@ -349,25 +353,29 @@ CASE DescendantSequenceState OF
                     bEnableUnitModeChangeComplete  :=,
                     bError                         =>,
                     nErrorId                       =>);*)
-        DescendantSequenceState := DescendantSequenceState + 10;
-    20:
-        //Copy Mode names
-        FOR i := 1 TO 3 DO
-            ModeNames[i] := F_UnitModeToString(UDINT_TO_DINT(i));
-        END_FOR
+		DescendantSequenceState := DescendantSequenceState + 10;
 
-        DescendantSequenceState := DescendantSequenceState + 10;
-    30:
-        // Initialize Recipes 
-        Initialize_Recipes();
-        DescendantSequenceState := DescendantSequenceState + 10;
-    40:
-        //Call the Super
-        IF SUPER^.Initialize() THEN
-            DescendantSequenceState := DescendantSequenceState + 10;
-        END_IF
-    50:
-        Initialize := TRUE;
+	20:
+		//Copy Mode names
+		FOR i := 1 TO 3 DO
+			ModeNames[i] := F_UnitModeToString(UDINT_TO_DINT(i));
+		END_FOR
+
+		DescendantSequenceState := DescendantSequenceState + 10;
+
+	30:
+		// Initialize Recipes 
+		Initialize_Recipes();
+		DescendantSequenceState := DescendantSequenceState + 10;
+
+	40:
+		//Call the Super
+		IF SUPER^.Initialize() THEN
+			DescendantSequenceState := DescendantSequenceState + 10;
+		END_IF
+
+	50:
+		Initialize := TRUE;
 END_CASE]]></ST>
       </Implementation>
     </Method>
@@ -377,297 +385,295 @@ VAR_INPUT
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[// configuration of parameters Max Speed
-_packTags.Command.Parameter[1].ID    := 1;
-_packTags.Command.Parameter[1].Name  := 'Max Speed';
-_packTags.Command.Parameter[1].Unit  := '/min';
+_packTags.Command.Parameter[1].ID	 := 1;
+_packTags.Command.Parameter[1].Name	 := 'Max Speed';
+_packTags.Command.Parameter[1].Unit	 := '/min';
 _packTags.Command.Parameter[1].Value := 180;
-_packTags.Command.Parameter[2].ID    := 2;
-_packTags.Command.Parameter[2].Name  := 'Product to Run';
-_packTags.Command.Parameter[2].Unit  := '';
+_packTags.Command.Parameter[2].ID	 := 2;
+_packTags.Command.Parameter[2].Name	 := 'Product to Run';
+_packTags.Command.Parameter[2].Unit	 := '';
 _packTags.Command.Parameter[2].Value := 1;
 
 // Recipe Product 1
-_PackTags.Command.Product[1].ProductID                              := 100;
-_PackTags.Command.Product[1].Ingredients[1].IngredientID            := 1;
-_PackTags.Command.Product[1].Ingredients[1].Parameter[1].ID         := _PackTags.Command.Product[1].ProductID * 10 + 1;
-_PackTags.Command.Product[1].Ingredients[1].Parameter[1].Name       := 'Material Type';
-_PackTags.Command.Product[1].Ingredients[1].Parameter[1].Unit       := 'n/a';
-_PackTags.Command.Product[1].Ingredients[1].Parameter[1].Value      := 5;
-_PackTags.Command.Product[1].Ingredients[1].Parameter[2].ID         := _PackTags.Command.Product[1].ProductID * 10 + 2;
-_PackTags.Command.Product[1].Ingredients[1].Parameter[2].Name       := 'Material Thickness';
-_PackTags.Command.Product[1].Ingredients[1].Parameter[2].Unit       := 'um';
-_PackTags.Command.Product[1].Ingredients[1].Parameter[2].Value      := 240;
-_PackTags.Command.Product[1].ProcessVariables[LENGTH].ID            := _PackTags.Command.Product[1].ProductID * 20 + 1;
-_PackTags.Command.Product[1].ProcessVariables[LENGTH].Name          := 'Length';
-_PackTags.Command.Product[1].ProcessVariables[LENGTH].Unit          := 'mm';
-_PackTags.Command.Product[1].ProcessVariables[LENGTH].Value         := 100;
-_PackTags.Command.Product[1].ProcessVariables[SEALTEMP].ID          := _PackTags.Command.Product[1].ProductID * 20 + 2;
-_PackTags.Command.Product[1].ProcessVariables[SEALTEMP].Name        := 'Sealing Temp';
-_PackTags.Command.Product[1].ProcessVariables[SEALTEMP].Unit        := 'C';
-_PackTags.Command.Product[1].ProcessVariables[SEALTEMP].Value       := 100;
-_PackTags.Command.Product[1].ProcessVariables[SEALTIME].ID          := _PackTags.Command.Product[1].ProductID * 20 + 3;
-_PackTags.Command.Product[1].ProcessVariables[SEALTIME].Name        := 'Sealing Time';
-_PackTags.Command.Product[1].ProcessVariables[SEALTIME].Unit        := 'ms';
-_PackTags.Command.Product[1].ProcessVariables[SEALTIME].Value       := 50;
-_PackTags.Command.Product[1].ProcessVariables[PULLWHEELS_VEL].ID    := _PackTags.Command.Product[1].ProductID * 20 + 4;
-_PackTags.Command.Product[1].ProcessVariables[PULLWHEELS_VEL].Name  := 'Pull Wheels Vel';
-_PackTags.Command.Product[1].ProcessVariables[PULLWHEELS_VEL].Unit  := 'mm/s';
+_PackTags.Command.Product[1].ProductID								:= 100;
+_PackTags.Command.Product[1].Ingredients[1].IngredientID			:= 1;
+_PackTags.Command.Product[1].Ingredients[1].Parameter[1].ID			:= _PackTags.Command.Product[1].ProductID * 10 + 1;
+_PackTags.Command.Product[1].Ingredients[1].Parameter[1].Name		:= 'Material Type';
+_PackTags.Command.Product[1].Ingredients[1].Parameter[1].Unit		:= 'n/a';
+_PackTags.Command.Product[1].Ingredients[1].Parameter[1].Value		:= 5;
+_PackTags.Command.Product[1].Ingredients[1].Parameter[2].ID			:= _PackTags.Command.Product[1].ProductID * 10 + 2;
+_PackTags.Command.Product[1].Ingredients[1].Parameter[2].Name		:= 'Material Thickness';
+_PackTags.Command.Product[1].Ingredients[1].Parameter[2].Unit		:= 'um';
+_PackTags.Command.Product[1].Ingredients[1].Parameter[2].Value		:= 240;
+_PackTags.Command.Product[1].ProcessVariables[LENGTH].ID			:= _PackTags.Command.Product[1].ProductID * 20 + 1;
+_PackTags.Command.Product[1].ProcessVariables[LENGTH].Name			:= 'Length';
+_PackTags.Command.Product[1].ProcessVariables[LENGTH].Unit			:= 'mm';
+_PackTags.Command.Product[1].ProcessVariables[LENGTH].Value			:= 100;
+_PackTags.Command.Product[1].ProcessVariables[SEALTEMP].ID			:= _PackTags.Command.Product[1].ProductID * 20 + 2;
+_PackTags.Command.Product[1].ProcessVariables[SEALTEMP].Name		:= 'Sealing Temp';
+_PackTags.Command.Product[1].ProcessVariables[SEALTEMP].Unit		:= 'C';
+_PackTags.Command.Product[1].ProcessVariables[SEALTEMP].Value		:= 100;
+_PackTags.Command.Product[1].ProcessVariables[SEALTIME].ID			:= _PackTags.Command.Product[1].ProductID * 20 + 3;
+_PackTags.Command.Product[1].ProcessVariables[SEALTIME].Name		:= 'Sealing Time';
+_PackTags.Command.Product[1].ProcessVariables[SEALTIME].Unit		:= 'ms';
+_PackTags.Command.Product[1].ProcessVariables[SEALTIME].Value		:= 50;
+_PackTags.Command.Product[1].ProcessVariables[PULLWHEELS_VEL].ID	:= _PackTags.Command.Product[1].ProductID * 20 + 4;
+_PackTags.Command.Product[1].ProcessVariables[PULLWHEELS_VEL].Name	:= 'Pull Wheels Vel';
+_PackTags.Command.Product[1].ProcessVariables[PULLWHEELS_VEL].Unit	:= 'mm/s';
 _PackTags.Command.Product[1].ProcessVariables[PULLWHEELS_VEL].Value := 100;
-_PackTags.Command.Product[1].ProcessVariables[PULLWHEELS_ACC].ID    := _PackTags.Command.Product[1].ProductID * 20 + 5;
-_PackTags.Command.Product[1].ProcessVariables[PULLWHEELS_ACC].Name  := 'Pull Wheels Acc';
-_PackTags.Command.Product[1].ProcessVariables[PULLWHEELS_ACC].Unit  := 'mm/s2';
+_PackTags.Command.Product[1].ProcessVariables[PULLWHEELS_ACC].ID	:= _PackTags.Command.Product[1].ProductID * 20 + 5;
+_PackTags.Command.Product[1].ProcessVariables[PULLWHEELS_ACC].Name	:= 'Pull Wheels Acc';
+_PackTags.Command.Product[1].ProcessVariables[PULLWHEELS_ACC].Unit	:= 'mm/s2';
 _PackTags.Command.Product[1].ProcessVariables[PULLWHEELS_ACC].Value := 1000;
-_PackTags.Command.Product[1].ProcessVariables[OPEN_POS].ID          := _PackTags.Command.Product[1].ProductID * 20 + 6;
-_PackTags.Command.Product[1].ProcessVariables[OPEN_POS].Name        := 'Sealer Open Position';
-_PackTags.Command.Product[1].ProcessVariables[OPEN_POS].Unit        := 'mm';
-_PackTags.Command.Product[1].ProcessVariables[OPEN_POS].Value       := 105;
-_PackTags.Command.Product[1].ProcessVariables[CLOSED_POS].ID        := _PackTags.Command.Product[1].ProductID * 20 + 7;
-_PackTags.Command.Product[1].ProcessVariables[CLOSED_POS].Name      := 'Sealer Closed Position';
-_PackTags.Command.Product[1].ProcessVariables[CLOSED_POS].Unit      := 'mm';
-_PackTags.Command.Product[1].ProcessVariables[CLOSED_POS].Value     := 250;
-_PackTags.Command.Product[1].ProcessVariables[SEALER_VEL].ID        := _PackTags.Command.Product[1].ProductID * 20 + 8;
-_PackTags.Command.Product[1].ProcessVariables[SEALER_VEL].Name      := 'Sealer Vel';
-_PackTags.Command.Product[1].ProcessVariables[SEALER_VEL].Unit      := 'mm/s';
-_PackTags.Command.Product[1].ProcessVariables[SEALER_VEL].Value     := 100;
-_PackTags.Command.Product[1].ProcessVariables[SEALER_ACC].ID        := _PackTags.Command.Product[1].ProductID * 20 + 9;
-_PackTags.Command.Product[1].ProcessVariables[SEALER_ACC].Name      := 'Sealer Acc';
-_PackTags.Command.Product[1].ProcessVariables[SEALER_ACC].Unit      := 'mm/s2';
-_PackTags.Command.Product[1].ProcessVariables[SEALER_ACC].Value     := 1000;
-_PackTags.Command.Product[1].ProcessVariables[UNWIND_VEL].ID        := _PackTags.Command.Product[1].ProductID * 20 + 10;
-_PackTags.Command.Product[1].ProcessVariables[UNWIND_VEL].Name      := 'Unwind Vel';
-_PackTags.Command.Product[1].ProcessVariables[UNWIND_VEL].Unit      := 'mm/s';
-_PackTags.Command.Product[1].ProcessVariables[UNWIND_VEL].Value     := 100;
-_PackTags.Command.Product[1].ProcessVariables[UNWIND_ACC].ID        := _PackTags.Command.Product[1].ProductID * 20 + 11;
-_PackTags.Command.Product[1].ProcessVariables[UNWIND_ACC].Name      := 'Unwind Acc';
-_PackTags.Command.Product[1].ProcessVariables[UNWIND_ACC].Unit      := 'mm/s2';
-_PackTags.Command.Product[1].ProcessVariables[UNWIND_ACC].Value     := 1000;
+_PackTags.Command.Product[1].ProcessVariables[OPEN_POS].ID			:= _PackTags.Command.Product[1].ProductID * 20 + 6;
+_PackTags.Command.Product[1].ProcessVariables[OPEN_POS].Name		:= 'Sealer Open Position';
+_PackTags.Command.Product[1].ProcessVariables[OPEN_POS].Unit		:= 'mm';
+_PackTags.Command.Product[1].ProcessVariables[OPEN_POS].Value		:= 105;
+_PackTags.Command.Product[1].ProcessVariables[CLOSED_POS].ID		:= _PackTags.Command.Product[1].ProductID * 20 + 7;
+_PackTags.Command.Product[1].ProcessVariables[CLOSED_POS].Name		:= 'Sealer Closed Position';
+_PackTags.Command.Product[1].ProcessVariables[CLOSED_POS].Unit		:= 'mm';
+_PackTags.Command.Product[1].ProcessVariables[CLOSED_POS].Value		:= 250;
+_PackTags.Command.Product[1].ProcessVariables[SEALER_VEL].ID		:= _PackTags.Command.Product[1].ProductID * 20 + 8;
+_PackTags.Command.Product[1].ProcessVariables[SEALER_VEL].Name		:= 'Sealer Vel';
+_PackTags.Command.Product[1].ProcessVariables[SEALER_VEL].Unit		:= 'mm/s';
+_PackTags.Command.Product[1].ProcessVariables[SEALER_VEL].Value		:= 100;
+_PackTags.Command.Product[1].ProcessVariables[SEALER_ACC].ID		:= _PackTags.Command.Product[1].ProductID * 20 + 9;
+_PackTags.Command.Product[1].ProcessVariables[SEALER_ACC].Name		:= 'Sealer Acc';
+_PackTags.Command.Product[1].ProcessVariables[SEALER_ACC].Unit		:= 'mm/s2';
+_PackTags.Command.Product[1].ProcessVariables[SEALER_ACC].Value		:= 1000;
+_PackTags.Command.Product[1].ProcessVariables[UNWIND_VEL].ID		:= _PackTags.Command.Product[1].ProductID * 20 + 10;
+_PackTags.Command.Product[1].ProcessVariables[UNWIND_VEL].Name		:= 'Unwind Vel';
+_PackTags.Command.Product[1].ProcessVariables[UNWIND_VEL].Unit		:= 'mm/s';
+_PackTags.Command.Product[1].ProcessVariables[UNWIND_VEL].Value		:= 100;
+_PackTags.Command.Product[1].ProcessVariables[UNWIND_ACC].ID		:= _PackTags.Command.Product[1].ProductID * 20 + 11;
+_PackTags.Command.Product[1].ProcessVariables[UNWIND_ACC].Name		:= 'Unwind Acc';
+_PackTags.Command.Product[1].ProcessVariables[UNWIND_ACC].Unit		:= 'mm/s2';
+_PackTags.Command.Product[1].ProcessVariables[UNWIND_ACC].Value		:= 1000;
 
 // Product 2
-_PackTags.Command.Product[2].ProductID                         := 100;
-_PackTags.Command.Product[2].Ingredients[1].IngredientID       := 1;
-_PackTags.Command.Product[2].Ingredients[1].Parameter[1].ID    := _PackTags.Command.Product[1].ProductID * 10 + 1;
-_PackTags.Command.Product[2].Ingredients[1].Parameter[1].Name  := 'Material Type';
-_PackTags.Command.Product[2].Ingredients[1].Parameter[1].Unit  := 'n/a';
-_PackTags.Command.Product[2].Ingredients[1].Parameter[1].Value := 2;
-_PackTags.Command.Product[2].Ingredients[1].Parameter[2].ID    := _PackTags.Command.Product[1].ProductID * 10 + 2;
-_PackTags.Command.Product[2].Ingredients[1].Parameter[2].Name  := 'Material Thickness';
-_PackTags.Command.Product[2].Ingredients[1].Parameter[2].Unit  := 'um';
-_PackTags.Command.Product[2].Ingredients[1].Parameter[2].Value := 220;
-_PackTags.Command.Product[2].ProcessVariables[LENGTH].ID       := _PackTags.Command.Product[1].ProductID * 20 + 1;
-_PackTags.Command.Product[2].ProcessVariables[LENGTH].Name     := 'Length';
-_PackTags.Command.Product[2].ProcessVariables[LENGTH].Unit     := 'mm';
-_PackTags.Command.Product[2].ProcessVariables[LENGTH].Value    := 55;
-_PackTags.Command.Product[2].ProcessVariables[SEALTEMP].ID     := _PackTags.Command.Product[1].ProductID * 20 + 2;
-_PackTags.Command.Product[2].ProcessVariables[SEALTEMP].Name   := 'Sealing Temp';
-_PackTags.Command.Product[2].ProcessVariables[SEALTEMP].Unit   := 'C';
-_PackTags.Command.Product[2].ProcessVariables[SEALTEMP].Value  := 110;
-_PackTags.Command.Product[2].ProcessVariables[SEALTIME].ID     := _PackTags.Command.Product[1].ProductID * 20 + 3;
-_PackTags.Command.Product[2].ProcessVariables[SEALTIME].Name   := 'Sealing Time';
-_PackTags.Command.Product[2].ProcessVariables[SEALTIME].Unit   := 'ms';
-_PackTags.Command.Product[2].ProcessVariables[SEALTIME].Value  := 100;
-_PackTags.Command.Product[2].ProcessVariables[PULLWHEELS_VEL].ID    := _PackTags.Command.Product[1].ProductID * 20 + 4;
-_PackTags.Command.Product[2].ProcessVariables[PULLWHEELS_VEL].Name  := 'Pull Wheels Vel';
-_PackTags.Command.Product[2].ProcessVariables[PULLWHEELS_VEL].Unit  := 'mm/s';
+_PackTags.Command.Product[2].ProductID								:= 100;
+_PackTags.Command.Product[2].Ingredients[1].IngredientID			:= 1;
+_PackTags.Command.Product[2].Ingredients[1].Parameter[1].ID			:= _PackTags.Command.Product[1].ProductID * 10 + 1;
+_PackTags.Command.Product[2].Ingredients[1].Parameter[1].Name		:= 'Material Type';
+_PackTags.Command.Product[2].Ingredients[1].Parameter[1].Unit		:= 'n/a';
+_PackTags.Command.Product[2].Ingredients[1].Parameter[1].Value		:= 2;
+_PackTags.Command.Product[2].Ingredients[1].Parameter[2].ID			:= _PackTags.Command.Product[1].ProductID * 10 + 2;
+_PackTags.Command.Product[2].Ingredients[1].Parameter[2].Name		:= 'Material Thickness';
+_PackTags.Command.Product[2].Ingredients[1].Parameter[2].Unit		:= 'um';
+_PackTags.Command.Product[2].Ingredients[1].Parameter[2].Value		:= 220;
+_PackTags.Command.Product[2].ProcessVariables[LENGTH].ID			:= _PackTags.Command.Product[1].ProductID * 20 + 1;
+_PackTags.Command.Product[2].ProcessVariables[LENGTH].Name			:= 'Length';
+_PackTags.Command.Product[2].ProcessVariables[LENGTH].Unit			:= 'mm';
+_PackTags.Command.Product[2].ProcessVariables[LENGTH].Value			:= 55;
+_PackTags.Command.Product[2].ProcessVariables[SEALTEMP].ID			:= _PackTags.Command.Product[1].ProductID * 20 + 2;
+_PackTags.Command.Product[2].ProcessVariables[SEALTEMP].Name		:= 'Sealing Temp';
+_PackTags.Command.Product[2].ProcessVariables[SEALTEMP].Unit		:= 'C';
+_PackTags.Command.Product[2].ProcessVariables[SEALTEMP].Value		:= 110;
+_PackTags.Command.Product[2].ProcessVariables[SEALTIME].ID			:= _PackTags.Command.Product[1].ProductID * 20 + 3;
+_PackTags.Command.Product[2].ProcessVariables[SEALTIME].Name		:= 'Sealing Time';
+_PackTags.Command.Product[2].ProcessVariables[SEALTIME].Unit		:= 'ms';
+_PackTags.Command.Product[2].ProcessVariables[SEALTIME].Value		:= 100;
+_PackTags.Command.Product[2].ProcessVariables[PULLWHEELS_VEL].ID	:= _PackTags.Command.Product[1].ProductID * 20 + 4;
+_PackTags.Command.Product[2].ProcessVariables[PULLWHEELS_VEL].Name	:= 'Pull Wheels Vel';
+_PackTags.Command.Product[2].ProcessVariables[PULLWHEELS_VEL].Unit	:= 'mm/s';
 _PackTags.Command.Product[2].ProcessVariables[PULLWHEELS_VEL].Value := 200;
-_PackTags.Command.Product[2].ProcessVariables[PULLWHEELS_ACC].ID    := _PackTags.Command.Product[1].ProductID * 20 + 5;
-_PackTags.Command.Product[2].ProcessVariables[PULLWHEELS_ACC].Name  := 'Pull Wheels Acc';
-_PackTags.Command.Product[2].ProcessVariables[PULLWHEELS_ACC].Unit  := 'mm/s2';
+_PackTags.Command.Product[2].ProcessVariables[PULLWHEELS_ACC].ID	:= _PackTags.Command.Product[1].ProductID * 20 + 5;
+_PackTags.Command.Product[2].ProcessVariables[PULLWHEELS_ACC].Name	:= 'Pull Wheels Acc';
+_PackTags.Command.Product[2].ProcessVariables[PULLWHEELS_ACC].Unit	:= 'mm/s2';
 _PackTags.Command.Product[2].ProcessVariables[PULLWHEELS_ACC].Value := 2000;
-_PackTags.Command.Product[2].ProcessVariables[OPEN_POS].ID          := _PackTags.Command.Product[1].ProductID * 20 + 6;
-_PackTags.Command.Product[2].ProcessVariables[OPEN_POS].Name        := 'Sealer Open Position';
-_PackTags.Command.Product[2].ProcessVariables[OPEN_POS].Unit        := 'mm';
-_PackTags.Command.Product[2].ProcessVariables[OPEN_POS].Value       := 60;
-_PackTags.Command.Product[2].ProcessVariables[CLOSED_POS].ID        := _PackTags.Command.Product[1].ProductID * 20 + 7;
-_PackTags.Command.Product[2].ProcessVariables[CLOSED_POS].Name      := 'Sealer Closed Position';
-_PackTags.Command.Product[2].ProcessVariables[CLOSED_POS].Unit      := 'mm';
-_PackTags.Command.Product[2].ProcessVariables[CLOSED_POS].Value     := 253;
-_PackTags.Command.Product[2].ProcessVariables[SEALER_VEL].ID        := _PackTags.Command.Product[1].ProductID * 20 + 8;
-_PackTags.Command.Product[2].ProcessVariables[SEALER_VEL].Name      := 'Sealer Vel';
-_PackTags.Command.Product[2].ProcessVariables[SEALER_VEL].Unit      := 'mm/s';
-_PackTags.Command.Product[2].ProcessVariables[SEALER_VEL].Value     := 200;
-_PackTags.Command.Product[2].ProcessVariables[SEALER_ACC].ID        := _PackTags.Command.Product[1].ProductID * 20 + 9;
-_PackTags.Command.Product[2].ProcessVariables[SEALER_ACC].Name      := 'Sealer Acc';
-_PackTags.Command.Product[2].ProcessVariables[SEALER_ACC].Unit      := 'mm/s2';
-_PackTags.Command.Product[2].ProcessVariables[SEALER_ACC].Value     := 2000;
-_PackTags.Command.Product[2].ProcessVariables[UNWIND_VEL].ID        := _PackTags.Command.Product[1].ProductID * 20 + 10;
-_PackTags.Command.Product[2].ProcessVariables[UNWIND_VEL].Name      := 'Unwind Vel';
-_PackTags.Command.Product[2].ProcessVariables[UNWIND_VEL].Unit      := 'mm/s';
-_PackTags.Command.Product[2].ProcessVariables[UNWIND_VEL].Value     := 200;
-_PackTags.Command.Product[2].ProcessVariables[UNWIND_ACC].ID        := _PackTags.Command.Product[1].ProductID * 20 + 11;
-_PackTags.Command.Product[2].ProcessVariables[UNWIND_ACC].Name      := 'Unwind Acc';
-_PackTags.Command.Product[2].ProcessVariables[UNWIND_ACC].Unit      := 'mm/s2';
-_PackTags.Command.Product[2].ProcessVariables[UNWIND_ACC].Value     := 2000;
+_PackTags.Command.Product[2].ProcessVariables[OPEN_POS].ID			:= _PackTags.Command.Product[1].ProductID * 20 + 6;
+_PackTags.Command.Product[2].ProcessVariables[OPEN_POS].Name		:= 'Sealer Open Position';
+_PackTags.Command.Product[2].ProcessVariables[OPEN_POS].Unit		:= 'mm';
+_PackTags.Command.Product[2].ProcessVariables[OPEN_POS].Value		:= 60;
+_PackTags.Command.Product[2].ProcessVariables[CLOSED_POS].ID		:= _PackTags.Command.Product[1].ProductID * 20 + 7;
+_PackTags.Command.Product[2].ProcessVariables[CLOSED_POS].Name		:= 'Sealer Closed Position';
+_PackTags.Command.Product[2].ProcessVariables[CLOSED_POS].Unit		:= 'mm';
+_PackTags.Command.Product[2].ProcessVariables[CLOSED_POS].Value		:= 253;
+_PackTags.Command.Product[2].ProcessVariables[SEALER_VEL].ID		:= _PackTags.Command.Product[1].ProductID * 20 + 8;
+_PackTags.Command.Product[2].ProcessVariables[SEALER_VEL].Name		:= 'Sealer Vel';
+_PackTags.Command.Product[2].ProcessVariables[SEALER_VEL].Unit		:= 'mm/s';
+_PackTags.Command.Product[2].ProcessVariables[SEALER_VEL].Value		:= 200;
+_PackTags.Command.Product[2].ProcessVariables[SEALER_ACC].ID		:= _PackTags.Command.Product[1].ProductID * 20 + 9;
+_PackTags.Command.Product[2].ProcessVariables[SEALER_ACC].Name		:= 'Sealer Acc';
+_PackTags.Command.Product[2].ProcessVariables[SEALER_ACC].Unit		:= 'mm/s2';
+_PackTags.Command.Product[2].ProcessVariables[SEALER_ACC].Value		:= 2000;
+_PackTags.Command.Product[2].ProcessVariables[UNWIND_VEL].ID		:= _PackTags.Command.Product[1].ProductID * 20 + 10;
+_PackTags.Command.Product[2].ProcessVariables[UNWIND_VEL].Name		:= 'Unwind Vel';
+_PackTags.Command.Product[2].ProcessVariables[UNWIND_VEL].Unit		:= 'mm/s';
+_PackTags.Command.Product[2].ProcessVariables[UNWIND_VEL].Value		:= 200;
+_PackTags.Command.Product[2].ProcessVariables[UNWIND_ACC].ID		:= _PackTags.Command.Product[1].ProductID * 20 + 11;
+_PackTags.Command.Product[2].ProcessVariables[UNWIND_ACC].Name		:= 'Unwind Acc';
+_PackTags.Command.Product[2].ProcessVariables[UNWIND_ACC].Unit		:= 'mm/s2';
+_PackTags.Command.Product[2].ProcessVariables[UNWIND_ACC].Value		:= 2000;
 
 //Product 3
-_PackTags.Command.Product[3].ProductID                         := 307;
-_PackTags.Command.Product[3].Ingredients[1].IngredientID       := 1;
-_PackTags.Command.Product[3].Ingredients[1].Parameter[1].ID    := _PackTags.Command.Product[1].ProductID * 10 + 1;
-_PackTags.Command.Product[3].Ingredients[1].Parameter[1].Name  := 'Material Type';
-_PackTags.Command.Product[3].Ingredients[1].Parameter[1].Unit  := 'n/a';
-_PackTags.Command.Product[3].Ingredients[1].Parameter[1].Value := 2;
-_PackTags.Command.Product[3].Ingredients[1].Parameter[2].ID    := _PackTags.Command.Product[1].ProductID * 10 + 2;
-_PackTags.Command.Product[3].Ingredients[1].Parameter[2].Name  := 'Material Thickness';
-_PackTags.Command.Product[3].Ingredients[1].Parameter[2].Unit  := 'um';
-_PackTags.Command.Product[3].Ingredients[1].Parameter[2].Value := 220;
-_PackTags.Command.Product[3].ProcessVariables[LENGTH].ID       := _PackTags.Command.Product[1].ProductID * 20 + 1;
-_PackTags.Command.Product[3].ProcessVariables[LENGTH].Name     := 'Length';
-_PackTags.Command.Product[3].ProcessVariables[LENGTH].Unit     := 'mm';
-_PackTags.Command.Product[3].ProcessVariables[LENGTH].Value    := 85;
-_PackTags.Command.Product[3].ProcessVariables[SEALTEMP].ID     := _PackTags.Command.Product[1].ProductID * 20 + 2;
-_PackTags.Command.Product[3].ProcessVariables[SEALTEMP].Name   := 'Sealing Temp';
-_PackTags.Command.Product[3].ProcessVariables[SEALTEMP].Unit   := 'C';
-_PackTags.Command.Product[3].ProcessVariables[SEALTEMP].Value  := 95;
-_PackTags.Command.Product[3].ProcessVariables[SEALTIME].ID     := _PackTags.Command.Product[1].ProductID * 20 + 3;
-_PackTags.Command.Product[3].ProcessVariables[SEALTIME].Name   := 'Sealing Time';
-_PackTags.Command.Product[3].ProcessVariables[SEALTIME].Unit   := 'ms';
-_PackTags.Command.Product[3].ProcessVariables[SEALTIME].Value  := 20;
-_PackTags.Command.Product[3].ProcessVariables[PULLWHEELS_VEL].ID    := _PackTags.Command.Product[1].ProductID * 20 + 4;
-_PackTags.Command.Product[3].ProcessVariables[PULLWHEELS_VEL].Name  := 'Pull Wheels Vel';
-_PackTags.Command.Product[3].ProcessVariables[PULLWHEELS_VEL].Unit  := 'mm/s';
+_PackTags.Command.Product[3].ProductID								:= 307;
+_PackTags.Command.Product[3].Ingredients[1].IngredientID			:= 1;
+_PackTags.Command.Product[3].Ingredients[1].Parameter[1].ID			:= _PackTags.Command.Product[1].ProductID * 10 + 1;
+_PackTags.Command.Product[3].Ingredients[1].Parameter[1].Name		:= 'Material Type';
+_PackTags.Command.Product[3].Ingredients[1].Parameter[1].Unit		:= 'n/a';
+_PackTags.Command.Product[3].Ingredients[1].Parameter[1].Value		:= 2;
+_PackTags.Command.Product[3].Ingredients[1].Parameter[2].ID			:= _PackTags.Command.Product[1].ProductID * 10 + 2;
+_PackTags.Command.Product[3].Ingredients[1].Parameter[2].Name		:= 'Material Thickness';
+_PackTags.Command.Product[3].Ingredients[1].Parameter[2].Unit		:= 'um';
+_PackTags.Command.Product[3].Ingredients[1].Parameter[2].Value		:= 220;
+_PackTags.Command.Product[3].ProcessVariables[LENGTH].ID			:= _PackTags.Command.Product[1].ProductID * 20 + 1;
+_PackTags.Command.Product[3].ProcessVariables[LENGTH].Name			:= 'Length';
+_PackTags.Command.Product[3].ProcessVariables[LENGTH].Unit			:= 'mm';
+_PackTags.Command.Product[3].ProcessVariables[LENGTH].Value			:= 85;
+_PackTags.Command.Product[3].ProcessVariables[SEALTEMP].ID			:= _PackTags.Command.Product[1].ProductID * 20 + 2;
+_PackTags.Command.Product[3].ProcessVariables[SEALTEMP].Name		:= 'Sealing Temp';
+_PackTags.Command.Product[3].ProcessVariables[SEALTEMP].Unit		:= 'C';
+_PackTags.Command.Product[3].ProcessVariables[SEALTEMP].Value		:= 95;
+_PackTags.Command.Product[3].ProcessVariables[SEALTIME].ID			:= _PackTags.Command.Product[1].ProductID * 20 + 3;
+_PackTags.Command.Product[3].ProcessVariables[SEALTIME].Name		:= 'Sealing Time';
+_PackTags.Command.Product[3].ProcessVariables[SEALTIME].Unit		:= 'ms';
+_PackTags.Command.Product[3].ProcessVariables[SEALTIME].Value		:= 20;
+_PackTags.Command.Product[3].ProcessVariables[PULLWHEELS_VEL].ID	:= _PackTags.Command.Product[1].ProductID * 20 + 4;
+_PackTags.Command.Product[3].ProcessVariables[PULLWHEELS_VEL].Name	:= 'Pull Wheels Vel';
+_PackTags.Command.Product[3].ProcessVariables[PULLWHEELS_VEL].Unit	:= 'mm/s';
 _PackTags.Command.Product[3].ProcessVariables[PULLWHEELS_VEL].Value := 300;
-_PackTags.Command.Product[3].ProcessVariables[PULLWHEELS_ACC].ID    := _PackTags.Command.Product[1].ProductID * 20 + 5;
-_PackTags.Command.Product[3].ProcessVariables[PULLWHEELS_ACC].Name  := 'Pull Wheels Acc';
-_PackTags.Command.Product[3].ProcessVariables[PULLWHEELS_ACC].Unit  := 'mm/s2';
+_PackTags.Command.Product[3].ProcessVariables[PULLWHEELS_ACC].ID	:= _PackTags.Command.Product[1].ProductID * 20 + 5;
+_PackTags.Command.Product[3].ProcessVariables[PULLWHEELS_ACC].Name	:= 'Pull Wheels Acc';
+_PackTags.Command.Product[3].ProcessVariables[PULLWHEELS_ACC].Unit	:= 'mm/s2';
 _PackTags.Command.Product[3].ProcessVariables[PULLWHEELS_ACC].Value := 3000;
-_PackTags.Command.Product[3].ProcessVariables[OPEN_POS].ID          := _PackTags.Command.Product[1].ProductID * 20 + 6;
-_PackTags.Command.Product[3].ProcessVariables[OPEN_POS].Name        := 'Sealer Open Position';
-_PackTags.Command.Product[3].ProcessVariables[OPEN_POS].Unit        := 'mm';
-_PackTags.Command.Product[3].ProcessVariables[OPEN_POS].Value       := 56;
-_PackTags.Command.Product[3].ProcessVariables[CLOSED_POS].ID        := _PackTags.Command.Product[1].ProductID * 20 + 7;
-_PackTags.Command.Product[3].ProcessVariables[CLOSED_POS].Name      := 'Sealer Closed Position';
-_PackTags.Command.Product[3].ProcessVariables[CLOSED_POS].Unit      := 'mm';
-_PackTags.Command.Product[3].ProcessVariables[CLOSED_POS].Value     := 265;
-_PackTags.Command.Product[3].ProcessVariables[SEALER_VEL].ID        := _PackTags.Command.Product[1].ProductID * 20 + 8;
-_PackTags.Command.Product[3].ProcessVariables[SEALER_VEL].Name      := 'Sealer Vel';
-_PackTags.Command.Product[3].ProcessVariables[SEALER_VEL].Unit      := 'mm/s';
-_PackTags.Command.Product[3].ProcessVariables[SEALER_VEL].Value     := 300;
-_PackTags.Command.Product[3].ProcessVariables[SEALER_ACC].ID        := _PackTags.Command.Product[1].ProductID * 20 + 9;
-_PackTags.Command.Product[3].ProcessVariables[SEALER_ACC].Name      := 'Sealer Acc';
-_PackTags.Command.Product[3].ProcessVariables[SEALER_ACC].Unit      := 'mm/s2';
-_PackTags.Command.Product[3].ProcessVariables[SEALER_ACC].Value     := 3000;
-_PackTags.Command.Product[3].ProcessVariables[UNWIND_VEL].ID        := _PackTags.Command.Product[1].ProductID * 20 + 10;
-_PackTags.Command.Product[3].ProcessVariables[UNWIND_VEL].Name      := 'Unwind Vel';
-_PackTags.Command.Product[3].ProcessVariables[UNWIND_VEL].Unit      := 'mm/s';
-_PackTags.Command.Product[3].ProcessVariables[UNWIND_VEL].Value     := 300;
-_PackTags.Command.Product[3].ProcessVariables[UNWIND_ACC].ID        := _PackTags.Command.Product[1].ProductID * 20 + 11;
-_PackTags.Command.Product[3].ProcessVariables[UNWIND_ACC].Name      := 'Unwind Acc';
-_PackTags.Command.Product[3].ProcessVariables[UNWIND_ACC].Unit      := 'mm/s2';
-_PackTags.Command.Product[3].ProcessVariables[UNWIND_ACC].Value     := 3000;
+_PackTags.Command.Product[3].ProcessVariables[OPEN_POS].ID			:= _PackTags.Command.Product[1].ProductID * 20 + 6;
+_PackTags.Command.Product[3].ProcessVariables[OPEN_POS].Name		:= 'Sealer Open Position';
+_PackTags.Command.Product[3].ProcessVariables[OPEN_POS].Unit		:= 'mm';
+_PackTags.Command.Product[3].ProcessVariables[OPEN_POS].Value		:= 56;
+_PackTags.Command.Product[3].ProcessVariables[CLOSED_POS].ID		:= _PackTags.Command.Product[1].ProductID * 20 + 7;
+_PackTags.Command.Product[3].ProcessVariables[CLOSED_POS].Name		:= 'Sealer Closed Position';
+_PackTags.Command.Product[3].ProcessVariables[CLOSED_POS].Unit		:= 'mm';
+_PackTags.Command.Product[3].ProcessVariables[CLOSED_POS].Value		:= 265;
+_PackTags.Command.Product[3].ProcessVariables[SEALER_VEL].ID		:= _PackTags.Command.Product[1].ProductID * 20 + 8;
+_PackTags.Command.Product[3].ProcessVariables[SEALER_VEL].Name		:= 'Sealer Vel';
+_PackTags.Command.Product[3].ProcessVariables[SEALER_VEL].Unit		:= 'mm/s';
+_PackTags.Command.Product[3].ProcessVariables[SEALER_VEL].Value		:= 300;
+_PackTags.Command.Product[3].ProcessVariables[SEALER_ACC].ID		:= _PackTags.Command.Product[1].ProductID * 20 + 9;
+_PackTags.Command.Product[3].ProcessVariables[SEALER_ACC].Name		:= 'Sealer Acc';
+_PackTags.Command.Product[3].ProcessVariables[SEALER_ACC].Unit		:= 'mm/s2';
+_PackTags.Command.Product[3].ProcessVariables[SEALER_ACC].Value		:= 3000;
+_PackTags.Command.Product[3].ProcessVariables[UNWIND_VEL].ID		:= _PackTags.Command.Product[1].ProductID * 20 + 10;
+_PackTags.Command.Product[3].ProcessVariables[UNWIND_VEL].Name		:= 'Unwind Vel';
+_PackTags.Command.Product[3].ProcessVariables[UNWIND_VEL].Unit		:= 'mm/s';
+_PackTags.Command.Product[3].ProcessVariables[UNWIND_VEL].Value		:= 300;
+_PackTags.Command.Product[3].ProcessVariables[UNWIND_ACC].ID		:= _PackTags.Command.Product[1].ProductID * 20 + 11;
+_PackTags.Command.Product[3].ProcessVariables[UNWIND_ACC].Name		:= 'Unwind Acc';
+_PackTags.Command.Product[3].ProcessVariables[UNWIND_ACC].Unit		:= 'mm/s2';
+_PackTags.Command.Product[3].ProcessVariables[UNWIND_ACC].Value		:= 3000;
 
 //Product 4
-_PackTags.Command.Product[4].ProductID                         := 401;
-_PackTags.Command.Product[4].Ingredients[1].IngredientID       := 1;
-_PackTags.Command.Product[4].Ingredients[1].Parameter[1].ID    := _PackTags.Command.Product[1].ProductID * 10 + 1;
-_PackTags.Command.Product[4].Ingredients[1].Parameter[1].Name  := 'Material Type';
-_PackTags.Command.Product[4].Ingredients[1].Parameter[1].Unit  := 'n/a';
-_PackTags.Command.Product[4].Ingredients[1].Parameter[1].Value := 2;
-_PackTags.Command.Product[4].Ingredients[1].Parameter[2].ID    := _PackTags.Command.Product[1].ProductID * 10 + 2;
-_PackTags.Command.Product[4].Ingredients[1].Parameter[2].Name  := 'Material Thickness';
-_PackTags.Command.Product[4].Ingredients[1].Parameter[2].Unit  := 'um';
-_PackTags.Command.Product[4].Ingredients[1].Parameter[2].Value := 220;
-_PackTags.Command.Product[4].ProcessVariables[LENGTH].ID       := _PackTags.Command.Product[1].ProductID * 20 + 1;
-_PackTags.Command.Product[4].ProcessVariables[LENGTH].Name     := 'Length';
-_PackTags.Command.Product[4].ProcessVariables[LENGTH].Unit     := 'mm';
-_PackTags.Command.Product[4].ProcessVariables[LENGTH].Value    := 85;
-_PackTags.Command.Product[4].ProcessVariables[SEALTEMP].ID     := _PackTags.Command.Product[1].ProductID * 20 + 2;
-_PackTags.Command.Product[4].ProcessVariables[SEALTEMP].Name   := 'Sealing Temp';
-_PackTags.Command.Product[4].ProcessVariables[SEALTEMP].Unit   := 'C';
-_PackTags.Command.Product[4].ProcessVariables[SEALTEMP].Value  := 95;
-_PackTags.Command.Product[4].ProcessVariables[SEALTIME].ID     := _PackTags.Command.Product[1].ProductID * 20 + 3;
-_PackTags.Command.Product[4].ProcessVariables[SEALTIME].Name   := 'Sealing Time';
-_PackTags.Command.Product[4].ProcessVariables[SEALTIME].Unit   := 'ms';
-_PackTags.Command.Product[4].ProcessVariables[SEALTIME].Value  := 80;
-_PackTags.Command.Product[4].ProcessVariables[PULLWHEELS_VEL].ID    := _PackTags.Command.Product[1].ProductID * 20 + 4;
-_PackTags.Command.Product[4].ProcessVariables[PULLWHEELS_VEL].Name  := 'Pull Wheels Vel';
-_PackTags.Command.Product[4].ProcessVariables[PULLWHEELS_VEL].Unit  := 'mm/s';
+_PackTags.Command.Product[4].ProductID								:= 401;
+_PackTags.Command.Product[4].Ingredients[1].IngredientID			:= 1;
+_PackTags.Command.Product[4].Ingredients[1].Parameter[1].ID			:= _PackTags.Command.Product[1].ProductID * 10 + 1;
+_PackTags.Command.Product[4].Ingredients[1].Parameter[1].Name		:= 'Material Type';
+_PackTags.Command.Product[4].Ingredients[1].Parameter[1].Unit		:= 'n/a';
+_PackTags.Command.Product[4].Ingredients[1].Parameter[1].Value		:= 2;
+_PackTags.Command.Product[4].Ingredients[1].Parameter[2].ID			:= _PackTags.Command.Product[1].ProductID * 10 + 2;
+_PackTags.Command.Product[4].Ingredients[1].Parameter[2].Name		:= 'Material Thickness';
+_PackTags.Command.Product[4].Ingredients[1].Parameter[2].Unit		:= 'um';
+_PackTags.Command.Product[4].Ingredients[1].Parameter[2].Value		:= 220;
+_PackTags.Command.Product[4].ProcessVariables[LENGTH].ID			:= _PackTags.Command.Product[1].ProductID * 20 + 1;
+_PackTags.Command.Product[4].ProcessVariables[LENGTH].Name			:= 'Length';
+_PackTags.Command.Product[4].ProcessVariables[LENGTH].Unit			:= 'mm';
+_PackTags.Command.Product[4].ProcessVariables[LENGTH].Value			:= 85;
+_PackTags.Command.Product[4].ProcessVariables[SEALTEMP].ID			:= _PackTags.Command.Product[1].ProductID * 20 + 2;
+_PackTags.Command.Product[4].ProcessVariables[SEALTEMP].Name		:= 'Sealing Temp';
+_PackTags.Command.Product[4].ProcessVariables[SEALTEMP].Unit		:= 'C';
+_PackTags.Command.Product[4].ProcessVariables[SEALTEMP].Value		:= 95;
+_PackTags.Command.Product[4].ProcessVariables[SEALTIME].ID			:= _PackTags.Command.Product[1].ProductID * 20 + 3;
+_PackTags.Command.Product[4].ProcessVariables[SEALTIME].Name		:= 'Sealing Time';
+_PackTags.Command.Product[4].ProcessVariables[SEALTIME].Unit		:= 'ms';
+_PackTags.Command.Product[4].ProcessVariables[SEALTIME].Value		:= 80;
+_PackTags.Command.Product[4].ProcessVariables[PULLWHEELS_VEL].ID	:= _PackTags.Command.Product[1].ProductID * 20 + 4;
+_PackTags.Command.Product[4].ProcessVariables[PULLWHEELS_VEL].Name	:= 'Pull Wheels Vel';
+_PackTags.Command.Product[4].ProcessVariables[PULLWHEELS_VEL].Unit	:= 'mm/s';
 _PackTags.Command.Product[4].ProcessVariables[PULLWHEELS_VEL].Value := 100;
-_PackTags.Command.Product[4].ProcessVariables[PULLWHEELS_ACC].ID    := _PackTags.Command.Product[1].ProductID * 20 + 5;
-_PackTags.Command.Product[4].ProcessVariables[PULLWHEELS_ACC].Name  := 'Pull Wheels Acc';
-_PackTags.Command.Product[4].ProcessVariables[PULLWHEELS_ACC].Unit  := 'mm/s2';
+_PackTags.Command.Product[4].ProcessVariables[PULLWHEELS_ACC].ID	:= _PackTags.Command.Product[1].ProductID * 20 + 5;
+_PackTags.Command.Product[4].ProcessVariables[PULLWHEELS_ACC].Name	:= 'Pull Wheels Acc';
+_PackTags.Command.Product[4].ProcessVariables[PULLWHEELS_ACC].Unit	:= 'mm/s2';
 _PackTags.Command.Product[4].ProcessVariables[PULLWHEELS_ACC].Value := 1000;
-_PackTags.Command.Product[4].ProcessVariables[OPEN_POS].ID          := _PackTags.Command.Product[1].ProductID * 20 + 6;
-_PackTags.Command.Product[4].ProcessVariables[OPEN_POS].Name        := 'Sealer Open Position';
-_PackTags.Command.Product[4].ProcessVariables[OPEN_POS].Unit        := 'mm';
-_PackTags.Command.Product[4].ProcessVariables[OPEN_POS].Value       := 105;
-_PackTags.Command.Product[4].ProcessVariables[CLOSED_POS].ID        := _PackTags.Command.Product[1].ProductID * 20 + 7;
-_PackTags.Command.Product[4].ProcessVariables[CLOSED_POS].Name      := 'Sealer Closed Position';
-_PackTags.Command.Product[4].ProcessVariables[CLOSED_POS].Unit      := 'mm';
-_PackTags.Command.Product[4].ProcessVariables[CLOSED_POS].Value     := 250;
-_PackTags.Command.Product[4].ProcessVariables[SEALER_VEL].ID        := _PackTags.Command.Product[1].ProductID * 20 + 8;
-_PackTags.Command.Product[4].ProcessVariables[SEALER_VEL].Name      := 'Sealer Vel';
-_PackTags.Command.Product[4].ProcessVariables[SEALER_VEL].Unit      := 'mm/s';
-_PackTags.Command.Product[4].ProcessVariables[SEALER_VEL].Value     := 100;
-_PackTags.Command.Product[4].ProcessVariables[SEALER_ACC].ID        := _PackTags.Command.Product[1].ProductID * 20 + 9;
-_PackTags.Command.Product[4].ProcessVariables[SEALER_ACC].Name      := 'Sealer Acc';
-_PackTags.Command.Product[4].ProcessVariables[SEALER_ACC].Unit      := 'mm/s2';
-_PackTags.Command.Product[4].ProcessVariables[SEALER_ACC].Value     := 1000;
-_PackTags.Command.Product[4].ProcessVariables[UNWIND_VEL].ID        := _PackTags.Command.Product[1].ProductID * 20 + 10;
-_PackTags.Command.Product[4].ProcessVariables[UNWIND_VEL].Name      := 'Unwind Vel';
-_PackTags.Command.Product[4].ProcessVariables[UNWIND_VEL].Unit      := 'mm/s';
-_PackTags.Command.Product[4].ProcessVariables[UNWIND_VEL].Value     := 100;
-_PackTags.Command.Product[4].ProcessVariables[UNWIND_ACC].ID        := _PackTags.Command.Product[1].ProductID * 20 + 11;
-_PackTags.Command.Product[4].ProcessVariables[UNWIND_ACC].Name      := 'Unwind Acc';
-_PackTags.Command.Product[4].ProcessVariables[UNWIND_ACC].Unit      := 'mm/s2';
-_PackTags.Command.Product[4].ProcessVariables[UNWIND_ACC].Value     := 1000;
+_PackTags.Command.Product[4].ProcessVariables[OPEN_POS].ID			:= _PackTags.Command.Product[1].ProductID * 20 + 6;
+_PackTags.Command.Product[4].ProcessVariables[OPEN_POS].Name		:= 'Sealer Open Position';
+_PackTags.Command.Product[4].ProcessVariables[OPEN_POS].Unit		:= 'mm';
+_PackTags.Command.Product[4].ProcessVariables[OPEN_POS].Value		:= 105;
+_PackTags.Command.Product[4].ProcessVariables[CLOSED_POS].ID		:= _PackTags.Command.Product[1].ProductID * 20 + 7;
+_PackTags.Command.Product[4].ProcessVariables[CLOSED_POS].Name		:= 'Sealer Closed Position';
+_PackTags.Command.Product[4].ProcessVariables[CLOSED_POS].Unit		:= 'mm';
+_PackTags.Command.Product[4].ProcessVariables[CLOSED_POS].Value		:= 250;
+_PackTags.Command.Product[4].ProcessVariables[SEALER_VEL].ID		:= _PackTags.Command.Product[1].ProductID * 20 + 8;
+_PackTags.Command.Product[4].ProcessVariables[SEALER_VEL].Name		:= 'Sealer Vel';
+_PackTags.Command.Product[4].ProcessVariables[SEALER_VEL].Unit		:= 'mm/s';
+_PackTags.Command.Product[4].ProcessVariables[SEALER_VEL].Value		:= 100;
+_PackTags.Command.Product[4].ProcessVariables[SEALER_ACC].ID		:= _PackTags.Command.Product[1].ProductID * 20 + 9;
+_PackTags.Command.Product[4].ProcessVariables[SEALER_ACC].Name		:= 'Sealer Acc';
+_PackTags.Command.Product[4].ProcessVariables[SEALER_ACC].Unit		:= 'mm/s2';
+_PackTags.Command.Product[4].ProcessVariables[SEALER_ACC].Value		:= 1000;
+_PackTags.Command.Product[4].ProcessVariables[UNWIND_VEL].ID		:= _PackTags.Command.Product[1].ProductID * 20 + 10;
+_PackTags.Command.Product[4].ProcessVariables[UNWIND_VEL].Name		:= 'Unwind Vel';
+_PackTags.Command.Product[4].ProcessVariables[UNWIND_VEL].Unit		:= 'mm/s';
+_PackTags.Command.Product[4].ProcessVariables[UNWIND_VEL].Value		:= 100;
+_PackTags.Command.Product[4].ProcessVariables[UNWIND_ACC].ID		:= _PackTags.Command.Product[1].ProductID * 20 + 11;
+_PackTags.Command.Product[4].ProcessVariables[UNWIND_ACC].Name		:= 'Unwind Acc';
+_PackTags.Command.Product[4].ProcessVariables[UNWIND_ACC].Unit		:= 'mm/s2';
+_PackTags.Command.Product[4].ProcessVariables[UNWIND_ACC].Value		:= 1000;
 
 //Product 5
-_PackTags.Command.Product[5].ProductID                         := 522;
-_PackTags.Command.Product[5].Ingredients[1].IngredientID       := 1;
-_PackTags.Command.Product[5].Ingredients[1].Parameter[1].ID    := _PackTags.Command.Product[1].ProductID * 10 + 1;
-_PackTags.Command.Product[5].Ingredients[1].Parameter[1].Name  := 'Material Type';
-_PackTags.Command.Product[5].Ingredients[1].Parameter[1].Unit  := 'n/a';
-_PackTags.Command.Product[5].Ingredients[1].Parameter[1].Value := 2;
-_PackTags.Command.Product[5].Ingredients[1].Parameter[2].ID    := _PackTags.Command.Product[1].ProductID * 10 + 2;
-_PackTags.Command.Product[5].Ingredients[1].Parameter[2].Name  := 'Material Thickness';
-_PackTags.Command.Product[5].Ingredients[1].Parameter[2].Unit  := 'um';
-_PackTags.Command.Product[5].Ingredients[1].Parameter[2].Value := 520;
-_PackTags.Command.Product[5].ProcessVariables[LENGTH].ID       := _PackTags.Command.Product[1].ProductID * 20 + 1;
-_PackTags.Command.Product[5].ProcessVariables[LENGTH].Name     := 'Length';
-_PackTags.Command.Product[5].ProcessVariables[LENGTH].Unit     := 'mm';
-_PackTags.Command.Product[5].ProcessVariables[LENGTH].Value    := 200;
-_PackTags.Command.Product[5].ProcessVariables[SEALTEMP].ID     := _PackTags.Command.Product[1].ProductID * 20 + 2;
-_PackTags.Command.Product[5].ProcessVariables[SEALTEMP].Name   := 'Sealing Temp';
-_PackTags.Command.Product[5].ProcessVariables[SEALTEMP].Unit   := 'C';
-_PackTags.Command.Product[5].ProcessVariables[SEALTEMP].Value  := 130;
-_PackTags.Command.Product[5].ProcessVariables[SEALTIME].ID     := _PackTags.Command.Product[1].ProductID * 20 + 3;
-_PackTags.Command.Product[5].ProcessVariables[SEALTIME].Name   := 'Sealing Time';
-_PackTags.Command.Product[5].ProcessVariables[SEALTIME].Unit   := 'ms';
-_PackTags.Command.Product[5].ProcessVariables[SEALTIME].Value  := 200;
-_PackTags.Command.Product[5].ProcessVariables[PULLWHEELS_VEL].ID    := _PackTags.Command.Product[1].ProductID * 20 + 4;
-_PackTags.Command.Product[5].ProcessVariables[PULLWHEELS_VEL].Name  := 'Pull Wheels Vel';
-_PackTags.Command.Product[5].ProcessVariables[PULLWHEELS_VEL].Unit  := 'mm/s';
+_PackTags.Command.Product[5].ProductID								:= 522;
+_PackTags.Command.Product[5].Ingredients[1].IngredientID			:= 1;
+_PackTags.Command.Product[5].Ingredients[1].Parameter[1].ID			:= _PackTags.Command.Product[1].ProductID * 10 + 1;
+_PackTags.Command.Product[5].Ingredients[1].Parameter[1].Name		:= 'Material Type';
+_PackTags.Command.Product[5].Ingredients[1].Parameter[1].Unit		:= 'n/a';
+_PackTags.Command.Product[5].Ingredients[1].Parameter[1].Value		:= 2;
+_PackTags.Command.Product[5].Ingredients[1].Parameter[2].ID			:= _PackTags.Command.Product[1].ProductID * 10 + 2;
+_PackTags.Command.Product[5].Ingredients[1].Parameter[2].Name		:= 'Material Thickness';
+_PackTags.Command.Product[5].Ingredients[1].Parameter[2].Unit		:= 'um';
+_PackTags.Command.Product[5].Ingredients[1].Parameter[2].Value		:= 520;
+_PackTags.Command.Product[5].ProcessVariables[LENGTH].ID			:= _PackTags.Command.Product[1].ProductID * 20 + 1;
+_PackTags.Command.Product[5].ProcessVariables[LENGTH].Name			:= 'Length';
+_PackTags.Command.Product[5].ProcessVariables[LENGTH].Unit			:= 'mm';
+_PackTags.Command.Product[5].ProcessVariables[LENGTH].Value			:= 200;
+_PackTags.Command.Product[5].ProcessVariables[SEALTEMP].ID			:= _PackTags.Command.Product[1].ProductID * 20 + 2;
+_PackTags.Command.Product[5].ProcessVariables[SEALTEMP].Name		:= 'Sealing Temp';
+_PackTags.Command.Product[5].ProcessVariables[SEALTEMP].Unit		:= 'C';
+_PackTags.Command.Product[5].ProcessVariables[SEALTEMP].Value		:= 130;
+_PackTags.Command.Product[5].ProcessVariables[SEALTIME].ID			:= _PackTags.Command.Product[1].ProductID * 20 + 3;
+_PackTags.Command.Product[5].ProcessVariables[SEALTIME].Name		:= 'Sealing Time';
+_PackTags.Command.Product[5].ProcessVariables[SEALTIME].Unit		:= 'ms';
+_PackTags.Command.Product[5].ProcessVariables[SEALTIME].Value		:= 200;
+_PackTags.Command.Product[5].ProcessVariables[PULLWHEELS_VEL].ID	:= _PackTags.Command.Product[1].ProductID * 20 + 4;
+_PackTags.Command.Product[5].ProcessVariables[PULLWHEELS_VEL].Name	:= 'Pull Wheels Vel';
+_PackTags.Command.Product[5].ProcessVariables[PULLWHEELS_VEL].Unit	:= 'mm/s';
 _PackTags.Command.Product[5].ProcessVariables[PULLWHEELS_VEL].Value := 100;
-_PackTags.Command.Product[5].ProcessVariables[PULLWHEELS_ACC].ID    := _PackTags.Command.Product[1].ProductID * 20 + 5;
-_PackTags.Command.Product[5].ProcessVariables[PULLWHEELS_ACC].Name  := 'Pull Wheels Acc';
-_PackTags.Command.Product[5].ProcessVariables[PULLWHEELS_ACC].Unit  := 'mm/s2';
+_PackTags.Command.Product[5].ProcessVariables[PULLWHEELS_ACC].ID	:= _PackTags.Command.Product[1].ProductID * 20 + 5;
+_PackTags.Command.Product[5].ProcessVariables[PULLWHEELS_ACC].Name	:= 'Pull Wheels Acc';
+_PackTags.Command.Product[5].ProcessVariables[PULLWHEELS_ACC].Unit	:= 'mm/s2';
 _PackTags.Command.Product[5].ProcessVariables[PULLWHEELS_ACC].Value := 1000;
-_PackTags.Command.Product[5].ProcessVariables[OPEN_POS].ID          := _PackTags.Command.Product[1].ProductID * 20 + 6;
-_PackTags.Command.Product[5].ProcessVariables[OPEN_POS].Name        := 'Sealer Open Position';
-_PackTags.Command.Product[5].ProcessVariables[OPEN_POS].Unit        := 'mm';
-_PackTags.Command.Product[5].ProcessVariables[OPEN_POS].Value       := 105;
-_PackTags.Command.Product[5].ProcessVariables[CLOSED_POS].ID        := _PackTags.Command.Product[1].ProductID * 20 + 7;
-_PackTags.Command.Product[5].ProcessVariables[CLOSED_POS].Name      := 'Sealer Closed Position';
-_PackTags.Command.Product[5].ProcessVariables[CLOSED_POS].Unit      := 'mm';
-_PackTags.Command.Product[5].ProcessVariables[CLOSED_POS].Value     := 250;
-_PackTags.Command.Product[5].ProcessVariables[SEALER_VEL].ID        := _PackTags.Command.Product[1].ProductID * 20 + 8;
-_PackTags.Command.Product[5].ProcessVariables[SEALER_VEL].Name      := 'Sealer Vel';
-_PackTags.Command.Product[5].ProcessVariables[SEALER_VEL].Unit      := 'mm/s';
-_PackTags.Command.Product[5].ProcessVariables[SEALER_VEL].Value     := 100;
-_PackTags.Command.Product[5].ProcessVariables[SEALER_ACC].ID        := _PackTags.Command.Product[1].ProductID * 20 + 9;
-_PackTags.Command.Product[5].ProcessVariables[SEALER_ACC].Name      := 'Sealer Acc';
-_PackTags.Command.Product[5].ProcessVariables[SEALER_ACC].Unit      := 'mm/s2';
-_PackTags.Command.Product[5].ProcessVariables[SEALER_ACC].Value     := 1000;
-_PackTags.Command.Product[5].ProcessVariables[UNWIND_VEL].ID        := _PackTags.Command.Product[1].ProductID * 20 + 10;
-_PackTags.Command.Product[5].ProcessVariables[UNWIND_VEL].Name      := 'Unwind Vel';
-_PackTags.Command.Product[5].ProcessVariables[UNWIND_VEL].Unit      := 'mm/s';
-_PackTags.Command.Product[5].ProcessVariables[UNWIND_VEL].Value     := 100;
-_PackTags.Command.Product[5].ProcessVariables[UNWIND_ACC].ID        := _PackTags.Command.Product[1].ProductID * 20 + 11;
-_PackTags.Command.Product[5].ProcessVariables[UNWIND_ACC].Name      := 'Unwind Acc';
-_PackTags.Command.Product[5].ProcessVariables[UNWIND_ACC].Unit      := 'mm/s2';
-_PackTags.Command.Product[5].ProcessVariables[UNWIND_ACC].Value     := 1000;
-
-
-CurrentRecipeName := 'From PackTags';]]></ST>
+_PackTags.Command.Product[5].ProcessVariables[OPEN_POS].ID			:= _PackTags.Command.Product[1].ProductID * 20 + 6;
+_PackTags.Command.Product[5].ProcessVariables[OPEN_POS].Name		:= 'Sealer Open Position';
+_PackTags.Command.Product[5].ProcessVariables[OPEN_POS].Unit		:= 'mm';
+_PackTags.Command.Product[5].ProcessVariables[OPEN_POS].Value		:= 105;
+_PackTags.Command.Product[5].ProcessVariables[CLOSED_POS].ID		:= _PackTags.Command.Product[1].ProductID * 20 + 7;
+_PackTags.Command.Product[5].ProcessVariables[CLOSED_POS].Name		:= 'Sealer Closed Position';
+_PackTags.Command.Product[5].ProcessVariables[CLOSED_POS].Unit		:= 'mm';
+_PackTags.Command.Product[5].ProcessVariables[CLOSED_POS].Value		:= 250;
+_PackTags.Command.Product[5].ProcessVariables[SEALER_VEL].ID		:= _PackTags.Command.Product[1].ProductID * 20 + 8;
+_PackTags.Command.Product[5].ProcessVariables[SEALER_VEL].Name		:= 'Sealer Vel';
+_PackTags.Command.Product[5].ProcessVariables[SEALER_VEL].Unit		:= 'mm/s';
+_PackTags.Command.Product[5].ProcessVariables[SEALER_VEL].Value		:= 100;
+_PackTags.Command.Product[5].ProcessVariables[SEALER_ACC].ID		:= _PackTags.Command.Product[1].ProductID * 20 + 9;
+_PackTags.Command.Product[5].ProcessVariables[SEALER_ACC].Name		:= 'Sealer Acc';
+_PackTags.Command.Product[5].ProcessVariables[SEALER_ACC].Unit		:= 'mm/s2';
+_PackTags.Command.Product[5].ProcessVariables[SEALER_ACC].Value		:= 1000;
+_PackTags.Command.Product[5].ProcessVariables[UNWIND_VEL].ID		:= _PackTags.Command.Product[1].ProductID * 20 + 10;
+_PackTags.Command.Product[5].ProcessVariables[UNWIND_VEL].Name		:= 'Unwind Vel';
+_PackTags.Command.Product[5].ProcessVariables[UNWIND_VEL].Unit		:= 'mm/s';
+_PackTags.Command.Product[5].ProcessVariables[UNWIND_VEL].Value		:= 100;
+_PackTags.Command.Product[5].ProcessVariables[UNWIND_ACC].ID		:= _PackTags.Command.Product[1].ProductID * 20 + 11;
+_PackTags.Command.Product[5].ProcessVariables[UNWIND_ACC].Name		:= 'Unwind Acc';
+_PackTags.Command.Product[5].ProcessVariables[UNWIND_ACC].Unit		:= 'mm/s2';
+_PackTags.Command.Product[5].ProcessVariables[UNWIND_ACC].Value		:= 1000;
+CurrentRecipeName													:= 'From PackTags';]]></ST>
       </Implementation>
     </Method>
     <Property Name="PackTags" Id="{9aa9f3a3-b6cb-4acf-9b63-fe5316f02b44}" FolderPath="Properties\">
@@ -683,18 +689,18 @@ END_VAR]]></Declaration>
     <Method Name="RaiseAlarm2Args" Id="{45171f7d-6922-46eb-a058-ee14fb1eff75}" FolderPath="Methods\">
       <Declaration><![CDATA[METHOD RaiseAlarm2Args
 VAR_IN_OUT
-    Alarm : FB_TcAlarm; //Alarm to be raised
+	Alarm : FB_TcAlarm; //Alarm to be raised
 END_VAR
 
 VAR_INPUT
-    String_1 : STRING; //First String Parameter (The Name of this component will be applied first automatically)
-    String_2 : STRING; //Second String Parameter
+	String_1 : STRING; //First String Parameter (The Name of this component will be applied first automatically)
+	String_2 : STRING; //Second String Parameter
 END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[F_RaiseAlarmWithStringParameters(Alarm    := Alarm,
-                                 String_1 := Name,
-                                 String_2 := String_1,
-                                 String_3 := String_2);]]></ST>
+        <ST><![CDATA[F_RaiseAlarmWithStringParameters(Alarm	  := Alarm,
+								 String_1 := Name,
+								 String_2 := String_1,
+								 String_3 := String_2);]]></ST>
       </Implementation>
     </Method>
     <Method Name="Resetting" Id="{aeda498c-b83e-4e24-9b7b-9da626a34940}" FolderPath="Methods\Acting States\">
@@ -703,25 +709,25 @@ VAR_INPUT
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[CASE _CurrentMode OF
-    //=================================PRODUCTION MODE==================================
-    E_PMLUnitMode.ePMLUnitMode_Production:
-        IF DataFromPackML THEN
-            product           := LREAL_TO_INT(_PackTags.Command.Parameter[2].Value);
-            PullWheels.Length := _PackTags.Command.Product[product].ProcessVariables[LENGTH].Value;
-			PullWheels.Velocity := _PackTags.Command.Product[product].ProcessVariables[PULLWHEELS_VEL].Value;
+	//=================================PRODUCTION MODE==================================
+	E_PMLUnitMode.ePMLUnitMode_Production:
+		IF DataFromPackML THEN
+			product					:= LREAL_TO_INT(_PackTags.Command.Parameter[2].Value);
+			PullWheels.Length		:= _PackTags.Command.Product[product].ProcessVariables[LENGTH].Value;
+			PullWheels.Velocity		:= _PackTags.Command.Product[product].ProcessVariables[PULLWHEELS_VEL].Value;
 			PullWheels.Acceleration := _PackTags.Command.Product[product].ProcessVariables[PULLWHEELS_ACC].Value;
-            Sealer.SealTime   := _PackTags.Command.Product[product].ProcessVariables[SEALTIME].Value;
-            Sealer.Temp       := _PackTags.Command.Product[product].ProcessVariables[SEALTEMP].Value;
-			Sealer.OpenPos := _PackTags.Command.Product[product].ProcessVariables[OPEN_POS].Value;
-			Sealer.ClosedPos := _PackTags.Command.Product[product].ProcessVariables[CLOSED_POS].Value;
-			Sealer.Velocity := _PackTags.Command.Product[product].ProcessVariables[SEALER_VEL].Value;
-			Sealer.Acceleration := _PackTags.Command.Product[product].ProcessVariables[SEALER_ACC].Value;
-			Unwind.Velocity := _PackTags.Command.Product[product].ProcessVariables[UNWIND_VEL].Value;
-			Unwind.Acceleration := _PackTags.Command.Product[product].ProcessVariables[UNWIND_ACC].Value;
-        END_IF
+			Sealer.SealTime			:= _PackTags.Command.Product[product].ProcessVariables[SEALTIME].Value;
+			Sealer.Temp				:= _PackTags.Command.Product[product].ProcessVariables[SEALTEMP].Value;
+			Sealer.OpenPos			:= _PackTags.Command.Product[product].ProcessVariables[OPEN_POS].Value;
+			Sealer.ClosedPos		:= _PackTags.Command.Product[product].ProcessVariables[CLOSED_POS].Value;
+			Sealer.Velocity			:= _PackTags.Command.Product[product].ProcessVariables[SEALER_VEL].Value;
+			Sealer.Acceleration		:= _PackTags.Command.Product[product].ProcessVariables[SEALER_ACC].Value;
+			Unwind.Velocity			:= _PackTags.Command.Product[product].ProcessVariables[UNWIND_VEL].Value;
+			Unwind.Acceleration		:= _PackTags.Command.Product[product].ProcessVariables[UNWIND_ACC].Value;
+		END_IF
 
-    E_PMLUnitMode.ePMLUnitMode_Maintenance, E_PMLUnitMode.ePMLUnitMode_Manual:
-        ;
+	E_PMLUnitMode.ePMLUnitMode_Maintenance, E_PMLUnitMode.ePMLUnitMode_Manual:
+		;
 END_CASE
 
 SUPER^.Resetting();]]></ST>
@@ -733,20 +739,21 @@ VAR_INPUT
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[CASE _CurrentMode OF
-    //=================================PRODUCTION MODE==================================
-    E_PMLUnitMode.ePMLUnitMode_Production:
-        // The seal bar can go to Execute, the others will be run in Mahcine Execute
-        Sealer.Heat := TRUE;
-        StateComplete();
-    E_PMLUnitMode.ePMLUnitMode_Maintenance, E_PMLUnitMode.ePMLUnitMode_Manual:
-        SUPER^.Starting();
+	//=================================PRODUCTION MODE==================================
+	E_PMLUnitMode.ePMLUnitMode_Production:
+		// The seal bar can go to Execute, the others will be run in Mahcine Execute
+		Sealer.Heat := TRUE;
+		StateComplete();
+
+	E_PMLUnitMode.ePMLUnitMode_Maintenance, E_PMLUnitMode.ePMLUnitMode_Manual:
+		SUPER^.Starting();
 END_CASE]]></ST>
       </Implementation>
     </Method>
     <Method Name="SubModuleMonitor" Id="{dcbc78eb-4598-4276-aefb-1642881bb3aa}" FolderPath="Methods\">
       <Declaration><![CDATA[METHOD PROTECTED SubModuleMonitor : BOOL
 VAR
-    AlarmResponses : ARRAY[0..4] OF E_AlarmResponse; //Temporary response array	
+	AlarmResponses : ARRAY[0..4] OF E_AlarmResponse; //Temporary response array	
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[// Check the sub Modules for Alarm Severity
@@ -756,45 +763,52 @@ SUPER^.SubModuleMonitor();
 _CurrentAlarmSeverity := F_GetMaxSeverityRaised(Alarms := MachineAlarms, CurrentSeverity := _CurrentAlarmSeverity);
 
 //Check the severity of the machine level alarms
-IF _CurrentState <> E_PMLState.ePMLState_Aborted AND _CurrentState <> E_PMLState.ePMLState_Aborting AND _CurrentState <> E_PMLState.ePMLState_Clearing AND
-   _CurrentState <> E_PMLState.ePMLState_Stopped AND _CurrentState <> E_PMLState.ePMLState_Stopping THEN
-    AlarmResponses := _ParentFaultResponseDefinitions;
-    CASE AlarmResponses[CurrentAlarmSeverity] OF
-        E_AlarmResponse.Abort_ImmediateError:
-            AbortImmediateError(Name, TRUE);
-        E_AlarmResponse.Abort_Immediate:
-            AbortImmediate();
-        E_AlarmResponse.Stop_Immediate:
-            StopImmediate();
-        E_AlarmResponse.Stop_Controlled:
-            StopControlled();
-        E_AlarmResponse.Hold_Immediate:
-            HoldImmediate();
-        E_AlarmResponse.Suspend_Immediate:
-            SuspendImmediate();
-        E_AlarmResponse.Suspend_Controlled:
-            SuspendControlled();
-        E_AlarmResponse.NoResponse:
-            ;
-    END_CASE
+IF _CurrentState <> E_PMLState.ePMLState_Aborted AND _CurrentState <> E_PMLState.ePMLState_Aborting AND _CurrentState <> E_PMLState.ePMLState_Clearing AND _CurrentState <> E_PMLState.ePMLState_Stopped AND _CurrentState <> E_PMLState.ePMLState_Stopping THEN
+	AlarmResponses := _ParentFaultResponseDefinitions;
+	CASE AlarmResponses[CurrentAlarmSeverity] OF
+		E_AlarmResponse.Abort_ImmediateError:
+			AbortImmediateError(Name, TRUE);
+
+		E_AlarmResponse.Abort_Immediate:
+			AbortImmediate();
+
+		E_AlarmResponse.Stop_Immediate:
+			StopImmediate();
+
+		E_AlarmResponse.Stop_Controlled:
+			StopControlled();
+
+		E_AlarmResponse.Hold_Immediate:
+			HoldImmediate();
+
+		E_AlarmResponse.Suspend_Immediate:
+			SuspendImmediate();
+
+		E_AlarmResponse.Suspend_Controlled:
+			SuspendControlled();
+
+		E_AlarmResponse.NoResponse:
+			;
+	END_CASE
 ELSIF _CurrentState = E_PMLState.ePMLState_Stopped OR _CurrentState = E_PMLState.ePMLState_Stopping THEN
-    AlarmResponses := _ParentFaultResponseDefinitions;
-    CASE AlarmResponses[CurrentAlarmSeverity] OF
-        E_AlarmResponse.Abort_ImmediateError:
-            AbortImmediateError(Name, TRUE);
-        E_AlarmResponse.Abort_Immediate:
-            AbortImmediate();
-        E_AlarmResponse.NoResponse:
-            ;
-    END_CASE
+	AlarmResponses := _ParentFaultResponseDefinitions;
+	CASE AlarmResponses[CurrentAlarmSeverity] OF
+		E_AlarmResponse.Abort_ImmediateError:
+			AbortImmediateError(Name, TRUE);
+
+		E_AlarmResponse.Abort_Immediate:
+			AbortImmediate();
+
+		E_AlarmResponse.NoResponse:
+			;
+	END_CASE
 END_IF]]></ST>
       </Implementation>
     </Method>
     <Method Name="Suspended" Id="{79ca3bdc-9375-4f6d-9d45-57cd5f6a0884}" FolderPath="Methods\Waiting States\">
       <Declaration><![CDATA[METHOD PROTECTED Suspended
 VAR_INPUT
-END_VAR
-]]></Declaration>
+END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[IF THIS^.Sealer.sealbar.InTempRange THEN
 	ChangeState(E_PMLCommand.ePMLCommand_Unsuspend);
@@ -807,14 +821,14 @@ VAR_INPUT
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[CASE _CurrentMode OF
-    //=================================PRODUCTION MODE==================================
-    E_PMLUnitMode.ePMLUnitMode_Production:
-        IF (Sealer.CurrentState = E_PMLState.ePMLState_Complete OR Sealer.CurrentState = E_PMLState.ePMLState_Idle) AND
-           (PullWheels.CurrentState = E_PMLState.ePMLState_Complete OR PullWheels.CurrentState = E_PMLState.ePMLState_Idle) THEN
-            StateComplete();
-        END_IF
-    E_PMLUnitMode.ePMLUnitMode_Maintenance, E_PMLUnitMode.ePMLUnitMode_Manual:
-        SUPER^.Suspending();
+	//=================================PRODUCTION MODE==================================
+	E_PMLUnitMode.ePMLUnitMode_Production:
+		IF (Sealer.CurrentState = E_PMLState.ePMLState_Complete OR Sealer.CurrentState = E_PMLState.ePMLState_Idle) AND (PullWheels.CurrentState = E_PMLState.ePMLState_Complete OR PullWheels.CurrentState = E_PMLState.ePMLState_Idle) THEN
+			StateComplete();
+		END_IF
+
+	E_PMLUnitMode.ePMLUnitMode_Maintenance, E_PMLUnitMode.ePMLUnitMode_Manual:
+		SUPER^.Suspending();
 END_CASE]]></ST>
       </Implementation>
     </Method>
@@ -824,11 +838,12 @@ VAR_INPUT
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[CASE _CurrentMode OF
-    //=================================PRODUCTION MODE==================================
-    E_PMLUnitMode.ePMLUnitMode_Production:
-        StateComplete();
-    E_PMLUnitMode.ePMLUnitMode_Maintenance, E_PMLUnitMode.ePMLUnitMode_Manual:
-        SUPER^.Unholding();
+	//=================================PRODUCTION MODE==================================
+	E_PMLUnitMode.ePMLUnitMode_Production:
+		StateComplete();
+
+	E_PMLUnitMode.ePMLUnitMode_Maintenance, E_PMLUnitMode.ePMLUnitMode_Manual:
+		SUPER^.Unholding();
 END_CASE]]></ST>
       </Implementation>
     </Method>
@@ -838,166 +853,52 @@ VAR_INPUT
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[CASE _CurrentMode OF
-    //=================================PRODUCTION MODE==================================
-    E_PMLUnitMode.ePMLUnitMode_Production:
-        StateComplete();
-    E_PMLUnitMode.ePMLUnitMode_Maintenance, E_PMLUnitMode.ePMLUnitMode_Manual:
-        SUPER^.Unsuspending();
+	//=================================PRODUCTION MODE==================================
+	E_PMLUnitMode.ePMLUnitMode_Production:
+		StateComplete();
+
+	E_PMLUnitMode.ePMLUnitMode_Maintenance, E_PMLUnitMode.ePMLUnitMode_Manual:
+		SUPER^.Unsuspending();
 END_CASE]]></ST>
       </Implementation>
     </Method>
     <Method Name="UpdateModeTimers" Id="{7cb1f824-a369-47d2-b77a-03aae7321075}" FolderPath="Methods\">
       <Declaration><![CDATA[METHOD UpdateModeTimers
 VAR
-    currentTime  : T_DCTIME64;
-    timeToUpdate : LREAL;
+	currentTime	 : T_DCTIME64;
+	timeToUpdate : LREAL;
 END_VAR
 
 VAR_INST
-    lastTime  : T_DCTIME64 := F_GetActualDcTime64();
-    lastState : DINT;
-    lastMode  : DINT;
+	lastTime  : T_DCTIME64 := F_GetActualDcTime64();
+	lastState : DINT;
+	lastMode  : DINT;
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[IF _PackTags.Status.StateCurrent <> lastState THEN
-    MEMSET(ADR(_PackTags.Admin.StateCurrentTime), 0, SIZEOF(_PackTags.Admin.StateCurrentTime));
-    lastState := _PackTags.Status.StateCurrent;
+	MEMSET(ADR(_PackTags.Admin.StateCurrentTime), 0, SIZEOF(_PackTags.Admin.StateCurrentTime));
+	lastState := _PackTags.Status.StateCurrent;
 END_IF
 
 IF _PackTags.Status.UnitModeCurrent <> lastMode THEN
-    MEMSET(ADR(_PackTags.Admin.ModeCurrentTime), 0, SIZEOF(_PackTags.Admin.ModeCurrentTime));
-    lastMode := _PackTags.Status.UnitModeCurrent;
+	MEMSET(ADR(_PackTags.Admin.ModeCurrentTime), 0, SIZEOF(_PackTags.Admin.ModeCurrentTime));
+	lastMode := _PackTags.Status.UnitModeCurrent;
 END_IF
 
 currentTime := F_GetActualDcTime64();
 IF lastTime <> 0 THEN
-    timeToUpdate := ULINT_TO_LREAL(currentTime - lastTime) / 1_000_000_000.0;
+	timeToUpdate := ULINT_TO_LREAL(currentTime - lastTime) / 1_000_000_000.0;
 END_IF
 
 // only seconds get added to the cumulative timers 
 IF timeToUpdate > 1 THEN
-    _PackTags.Admin.ModeCummulativeTime[_PackTags.Status.UnitModeCurrent] := _PackTags.Admin.ModeCummulativeTime[_PackTags.Status.UnitModeCurrent] + LREAL_TO_DINT(timeToUpdate);
-    _PackTags.Admin.ModeCurrentTime[_PackTags.Status.UnitModeCurrent]     := _PackTags.Admin.ModeCurrentTime[_PackTags.Status.UnitModeCurrent] + LREAL_TO_DINT(timeToUpdate);
-    _PackTags.Admin.StateCummulativeTime[_PackTags.Status.UnitModeCurrent, _PackTags.Status.StateCurrent]
-        := _PackTags.Admin.StateCummulativeTime[_PackTags.Status.UnitModeCurrent, _PackTags.Status.StateCurrent] + LREAL_TO_DINT(timeToUpdate);
-
-    _PackTags.Admin.StateCurrentTime[_PackTags.Status.UnitModeCurrent, _PackTags.Status.StateCurrent] :=
-        _PackTags.Admin.StateCurrentTime[_PackTags.Status.UnitModeCurrent, _PackTags.Status.StateCurrent] + LREAL_TO_DINT(timeToUpdate);
-
-    lastTime := currentTime;
+	_PackTags.Admin.ModeCummulativeTime[_PackTags.Status.UnitModeCurrent]								  := _PackTags.Admin.ModeCummulativeTime[_PackTags.Status.UnitModeCurrent] + LREAL_TO_DINT(timeToUpdate);
+	_PackTags.Admin.ModeCurrentTime[_PackTags.Status.UnitModeCurrent]									  := _PackTags.Admin.ModeCurrentTime[_PackTags.Status.UnitModeCurrent] + LREAL_TO_DINT(timeToUpdate);
+	_PackTags.Admin.StateCummulativeTime[_PackTags.Status.UnitModeCurrent, _PackTags.Status.StateCurrent] := _PackTags.Admin.StateCummulativeTime[_PackTags.Status.UnitModeCurrent, _PackTags.Status.StateCurrent] + LREAL_TO_DINT(timeToUpdate);
+	_PackTags.Admin.StateCurrentTime[_PackTags.Status.UnitModeCurrent, _PackTags.Status.StateCurrent]	  := _PackTags.Admin.StateCurrentTime[_PackTags.Status.UnitModeCurrent, _PackTags.Status.StateCurrent] + LREAL_TO_DINT(timeToUpdate);
+	lastTime																							  := currentTime;
 END_IF]]></ST>
       </Implementation>
     </Method>
-    <LineIds Name="FB_Machine">
-      <LineId Id="9" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_Machine.Completing">
-      <LineId Id="47" Count="5" />
-      <LineId Id="5" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_Machine.CreateEvents">
-      <LineId Id="67" Count="6" />
-      <LineId Id="6" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_Machine.CyclicLogic">
-      <LineId Id="145" Count="12" />
-      <LineId Id="112" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_Machine.CyclicLogic_Simulation">
-      <LineId Id="81" Count="32" />
-      <LineId Id="55" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_Machine.Execute">
-      <LineId Id="594" Count="16" />
-      <LineId Id="647" Count="0" />
-      <LineId Id="611" Count="0" />
-      <LineId Id="651" Count="25" />
-      <LineId Id="678" Count="0" />
-      <LineId Id="677" Count="0" />
-      <LineId Id="637" Count="7" />
-      <LineId Id="105" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_Machine.Held">
-      <LineId Id="7" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_Machine.HMIPermissions">
-      <LineId Id="203" Count="7" />
-      <LineId Id="232" Count="0" />
-      <LineId Id="211" Count="10" />
-      <LineId Id="229" Count="0" />
-      <LineId Id="222" Count="4" />
-      <LineId Id="5" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_Machine.HoldImmediate">
-      <LineId Id="5" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_Machine.Holding">
-      <LineId Id="72" Count="8" />
-      <LineId Id="5" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_Machine.Initialize">
-      <LineId Id="840" Count="56" />
-      <LineId Id="28" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_Machine.Initialize_Recipes">
-      <LineId Id="1114" Count="56" />
-      <LineId Id="1266" Count="7" />
-      <LineId Id="1171" Count="23" />
-      <LineId Id="1274" Count="31" />
-      <LineId Id="1195" Count="23" />
-      <LineId Id="1306" Count="31" />
-      <LineId Id="1219" Count="23" />
-      <LineId Id="1338" Count="31" />
-      <LineId Id="1243" Count="22" />
-      <LineId Id="5" Count="0" />
-      <LineId Id="1371" Count="31" />
-      <LineId Id="1405" Count="1" />
-      <LineId Id="1370" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_Machine.PackTags.Get">
-      <LineId Id="2" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_Machine.RaiseAlarm2Args">
-      <LineId Id="36" Count="2" />
-      <LineId Id="16" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_Machine.Resetting">
-      <LineId Id="128" Count="5" />
-      <LineId Id="145" Count="1" />
-      <LineId Id="134" Count="1" />
-      <LineId Id="142" Count="1" />
-      <LineId Id="148" Count="1" />
-      <LineId Id="151" Count="1" />
-      <LineId Id="136" Count="5" />
-      <LineId Id="5" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_Machine.Starting">
-      <LineId Id="57" Count="7" />
-      <LineId Id="14" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_Machine.SubModuleMonitor">
-      <LineId Id="58" Count="37" />
-      <LineId Id="37" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_Machine.Suspended">
-      <LineId Id="6" Count="1" />
-      <LineId Id="5" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_Machine.Suspending">
-      <LineId Id="59" Count="8" />
-      <LineId Id="5" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_Machine.Unholding">
-      <LineId Id="56" Count="5" />
-      <LineId Id="5" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_Machine.Unsuspending">
-      <LineId Id="47" Count="5" />
-      <LineId Id="5" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_Machine.UpdateModeTimers">
-      <LineId Id="206" Count="25" />
-      <LineId Id="5" Count="0" />
-    </LineIds>
   </POU>
 </TcPlcObject>

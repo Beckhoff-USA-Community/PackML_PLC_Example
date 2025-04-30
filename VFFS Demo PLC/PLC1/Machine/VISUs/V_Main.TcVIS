@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.11">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
   <Visu Name="V_Main" Id="{a820fc1e-d71f-479f-a200-f2cc0d18dc0b}">
     <XmlArchive>
       <Data>
@@ -169,10 +169,10 @@
                               <o n="TypeNodeAttributes" t="TypeNodeAttributes2">
                                 <v n="AttrFlags">0UL</v>
                                 <d n="TypeNodeAttributesData" t="CaseInsensitiveHashtable" ckt="String" cvt="String">
-                                  <v>ieccodeconversion_useexistinginterface</v>
-                                  <v>_3S.CoDeSys.VisuGenerated.IVisualisationIEC</v>
                                   <v>conditionalshow</v>
                                   <v>visu_elemdev</v>
+                                  <v>ieccodeconversion_useexistinginterface</v>
+                                  <v>_3S.CoDeSys.VisuGenerated.IVisualisationIEC</v>
                                   <v>''NORMAL__COMMENT</v>
                                   <v> interface contains additional methods to IVisualElement</v>
                                 </d>
@@ -204,8 +204,8 @@
                                     <l n="TypeNodeChildren" t="ArrayList" />
                                     <o n="TypeNodeType" t="TypeNodeType">
                                       <v n="TypeClass" t="TypeClass">Reference</v>
-                                      <v n="QualifiedName">"ST_PackMLModuleBase_HMI"</v>
-                                      <v n="Name">"ST_PackMLModuleBase_HMI"</v>
+                                      <v n="QualifiedName">"ST_PackMLBaseModule_HMI"</v>
+                                      <v n="Name">"ST_PackMLBaseModule_HMI"</v>
                                     </o>
                                     <v n="TypeNodeName">"HMI"</v>
                                     <o n="TypeNodeAttributes" t="TypeNodeAttributes2">
@@ -230,10 +230,10 @@
                                 <o n="TypeNodeAttributes" t="TypeNodeAttributes2">
                                   <v n="AttrFlags">0UL</v>
                                   <d n="TypeNodeAttributesData" t="CaseInsensitiveHashtable" ckt="String" cvt="String">
-                                    <v>ieccodeconversion_useexistinginterface</v>
-                                    <v>_3S.CoDeSys.VisuGenerated.IVisualisationIEC</v>
                                     <v>conditionalshow</v>
                                     <v>visu_elemdev</v>
+                                    <v>ieccodeconversion_useexistinginterface</v>
+                                    <v>_3S.CoDeSys.VisuGenerated.IVisualisationIEC</v>
                                     <v>''NORMAL__COMMENT</v>
                                     <v> interface contains additional methods to IVisualElement</v>
                                   </d>
@@ -256,17 +256,17 @@
                             <o n="TypeNodeAttributes" t="TypeNodeAttributes2">
                               <v n="AttrFlags">1048577UL</v>
                               <d n="TypeNodeAttributesData" t="CaseInsensitiveHashtable" ckt="String" cvt="String">
-                                <v>Visible</v>
-                                <v>False</v>
                                 <v>DefaultArraySize</v>
                                 <v>5</v>
-                                <v>VisibleChildren</v>
-                                <v>True</v>
                                 <v>ieccodeconversion_array</v>
                                 <v></v>
                                 <v>''NORMAL__COMMENT</v>
                                 <v> We hide this node to prevent having two References nodes
  Nevertheless we want to make sure that the children are displayed</v>
+                                <v>Visible</v>
+                                <v>False</v>
+                                <v>VisibleChildren</v>
+                                <v>True</v>
                               </d>
                               <v n="ConvDone">true</v>
                             </o>
@@ -319,24 +319,24 @@
                         <o n="TypeNodeAttributes" t="TypeNodeAttributes2">
                           <v n="AttrFlags">81920UL</v>
                           <d n="TypeNodeAttributesData" t="CaseInsensitiveHashtable" ckt="String" cvt="String">
-                            <v>DisplayFrameReferencesConfiguration</v>
-                            <v></v>
-                            <v>DescriptionTextId</v>
-                            <v>TL_ElementProperties.Desc_ReferencedVisus</v>
-                            <v>SortFlag</v>
-                            <v>80</v>
                             <v>AssignDestination</v>
                             <v>Init</v>
                             <v>Category</v>
                             <v>Simple|Standard</v>
-                            <v>DynamicArray</v>
-                            <v></v>
                             <v>conditionalshow</v>
                             <v>visu_elemdev</v>
-                            <v>FrameReferences</v>
+                            <v>DescriptionTextId</v>
+                            <v>TL_ElementProperties.Desc_ReferencedVisus</v>
+                            <v>DisplayFrameReferencesConfiguration</v>
                             <v></v>
                             <v>DisplayTextId</v>
                             <v>TL_ElementProperties.References</v>
+                            <v>DynamicArray</v>
+                            <v></v>
+                            <v>FrameReferences</v>
+                            <v></v>
+                            <v>SortFlag</v>
+                            <v>80</v>
                             <v>Storable</v>
                             <v>True</v>
                           </d>
@@ -413,8 +413,8 @@
                             <l n="TypeNodeChildren" t="ArrayList" />
                             <o n="TypeNodeType" t="TypeNodeType">
                               <v n="TypeClass" t="TypeClass">Reference</v>
-                              <v n="QualifiedName">"ST_PackMLModuleBase_HMI"</v>
-                              <v n="Name">"ST_PackMLModuleBase_HMI"</v>
+                              <v n="QualifiedName">"ST_PackMLBaseModule_HMI"</v>
+                              <v n="Name">"ST_PackMLBaseModule_HMI"</v>
                             </o>
                             <v n="TypeNodeName">"HMI"</v>
                             <o n="TypeNodeAttributes" t="TypeNodeAttributes2">
@@ -439,10 +439,10 @@
                         <o n="TypeNodeAttributes" t="TypeNodeAttributes2">
                           <v n="AttrFlags">0UL</v>
                           <d n="TypeNodeAttributesData" t="CaseInsensitiveHashtable" ckt="String" cvt="String">
-                            <v>ieccodeconversion_useexistinginterface</v>
-                            <v>_3S.CoDeSys.VisuGenerated.IVisualisationIEC</v>
                             <v>conditionalshow</v>
                             <v>visu_elemdev</v>
+                            <v>ieccodeconversion_useexistinginterface</v>
+                            <v>_3S.CoDeSys.VisuGenerated.IVisualisationIEC</v>
                             <v>''NORMAL__COMMENT</v>
                             <v> interface contains additional methods to IVisualElement</v>
                           </d>
@@ -643,10 +643,10 @@
                               <o n="TypeNodeAttributes" t="TypeNodeAttributes2">
                                 <v n="AttrFlags">0UL</v>
                                 <d n="TypeNodeAttributesData" t="CaseInsensitiveHashtable" ckt="String" cvt="String">
-                                  <v>ieccodeconversion_useexistinginterface</v>
-                                  <v>_3S.CoDeSys.VisuGenerated.IVisualisationIEC</v>
                                   <v>conditionalshow</v>
                                   <v>visu_elemdev</v>
+                                  <v>ieccodeconversion_useexistinginterface</v>
+                                  <v>_3S.CoDeSys.VisuGenerated.IVisualisationIEC</v>
                                   <v>''NORMAL__COMMENT</v>
                                   <v> interface contains additional methods to IVisualElement</v>
                                 </d>
@@ -704,10 +704,10 @@
                                 <o n="TypeNodeAttributes" t="TypeNodeAttributes2">
                                   <v n="AttrFlags">0UL</v>
                                   <d n="TypeNodeAttributesData" t="CaseInsensitiveHashtable" ckt="String" cvt="String">
-                                    <v>ieccodeconversion_useexistinginterface</v>
-                                    <v>_3S.CoDeSys.VisuGenerated.IVisualisationIEC</v>
                                     <v>conditionalshow</v>
                                     <v>visu_elemdev</v>
+                                    <v>ieccodeconversion_useexistinginterface</v>
+                                    <v>_3S.CoDeSys.VisuGenerated.IVisualisationIEC</v>
                                     <v>''NORMAL__COMMENT</v>
                                     <v> interface contains additional methods to IVisualElement</v>
                                   </d>
@@ -730,17 +730,17 @@
                             <o n="TypeNodeAttributes" t="TypeNodeAttributes2">
                               <v n="AttrFlags">1048577UL</v>
                               <d n="TypeNodeAttributesData" t="CaseInsensitiveHashtable" ckt="String" cvt="String">
-                                <v>Visible</v>
-                                <v>False</v>
                                 <v>DefaultArraySize</v>
                                 <v>5</v>
-                                <v>VisibleChildren</v>
-                                <v>True</v>
                                 <v>ieccodeconversion_array</v>
                                 <v></v>
                                 <v>''NORMAL__COMMENT</v>
                                 <v> We hide this node to prevent having two References nodes
  Nevertheless we want to make sure that the children are displayed</v>
+                                <v>Visible</v>
+                                <v>False</v>
+                                <v>VisibleChildren</v>
+                                <v>True</v>
                               </d>
                               <v n="ConvDone">true</v>
                             </o>
@@ -793,24 +793,24 @@
                         <o n="TypeNodeAttributes" t="TypeNodeAttributes2">
                           <v n="AttrFlags">81920UL</v>
                           <d n="TypeNodeAttributesData" t="CaseInsensitiveHashtable" ckt="String" cvt="String">
-                            <v>DisplayFrameReferencesConfiguration</v>
-                            <v></v>
-                            <v>DescriptionTextId</v>
-                            <v>TL_ElementProperties.Desc_ReferencedVisus</v>
-                            <v>SortFlag</v>
-                            <v>80</v>
                             <v>AssignDestination</v>
                             <v>Init</v>
                             <v>Category</v>
                             <v>Simple|Standard</v>
-                            <v>DynamicArray</v>
-                            <v></v>
                             <v>conditionalshow</v>
                             <v>visu_elemdev</v>
-                            <v>FrameReferences</v>
+                            <v>DescriptionTextId</v>
+                            <v>TL_ElementProperties.Desc_ReferencedVisus</v>
+                            <v>DisplayFrameReferencesConfiguration</v>
                             <v></v>
                             <v>DisplayTextId</v>
                             <v>TL_ElementProperties.References</v>
+                            <v>DynamicArray</v>
+                            <v></v>
+                            <v>FrameReferences</v>
+                            <v></v>
+                            <v>SortFlag</v>
+                            <v>80</v>
                             <v>Storable</v>
                             <v>True</v>
                           </d>
@@ -913,10 +913,10 @@
                         <o n="TypeNodeAttributes" t="TypeNodeAttributes2">
                           <v n="AttrFlags">0UL</v>
                           <d n="TypeNodeAttributesData" t="CaseInsensitiveHashtable" ckt="String" cvt="String">
-                            <v>ieccodeconversion_useexistinginterface</v>
-                            <v>_3S.CoDeSys.VisuGenerated.IVisualisationIEC</v>
                             <v>conditionalshow</v>
                             <v>visu_elemdev</v>
+                            <v>ieccodeconversion_useexistinginterface</v>
+                            <v>_3S.CoDeSys.VisuGenerated.IVisualisationIEC</v>
                             <v>''NORMAL__COMMENT</v>
                             <v> interface contains additional methods to IVisualElement</v>
                           </d>
@@ -1117,10 +1117,10 @@
                               <o n="TypeNodeAttributes" t="TypeNodeAttributes2">
                                 <v n="AttrFlags">0UL</v>
                                 <d n="TypeNodeAttributesData" t="CaseInsensitiveHashtable" ckt="String" cvt="String">
-                                  <v>ieccodeconversion_useexistinginterface</v>
-                                  <v>_3S.CoDeSys.VisuGenerated.IVisualisationIEC</v>
                                   <v>conditionalshow</v>
                                   <v>visu_elemdev</v>
+                                  <v>ieccodeconversion_useexistinginterface</v>
+                                  <v>_3S.CoDeSys.VisuGenerated.IVisualisationIEC</v>
                                   <v>''NORMAL__COMMENT</v>
                                   <v> interface contains additional methods to IVisualElement</v>
                                 </d>
@@ -1178,10 +1178,10 @@
                                 <o n="TypeNodeAttributes" t="TypeNodeAttributes2">
                                   <v n="AttrFlags">0UL</v>
                                   <d n="TypeNodeAttributesData" t="CaseInsensitiveHashtable" ckt="String" cvt="String">
-                                    <v>ieccodeconversion_useexistinginterface</v>
-                                    <v>_3S.CoDeSys.VisuGenerated.IVisualisationIEC</v>
                                     <v>conditionalshow</v>
                                     <v>visu_elemdev</v>
+                                    <v>ieccodeconversion_useexistinginterface</v>
+                                    <v>_3S.CoDeSys.VisuGenerated.IVisualisationIEC</v>
                                     <v>''NORMAL__COMMENT</v>
                                     <v> interface contains additional methods to IVisualElement</v>
                                   </d>
@@ -1204,17 +1204,17 @@
                             <o n="TypeNodeAttributes" t="TypeNodeAttributes2">
                               <v n="AttrFlags">1048577UL</v>
                               <d n="TypeNodeAttributesData" t="CaseInsensitiveHashtable" ckt="String" cvt="String">
-                                <v>Visible</v>
-                                <v>False</v>
-                                <v>ieccodeconversion_array</v>
-                                <v></v>
-                                <v>VisibleChildren</v>
-                                <v>True</v>
                                 <v>DefaultArraySize</v>
                                 <v>5</v>
+                                <v>ieccodeconversion_array</v>
+                                <v></v>
                                 <v>''NORMAL__COMMENT</v>
                                 <v> We hide this node to prevent having two References nodes
  Nevertheless we want to make sure that the children are displayed</v>
+                                <v>Visible</v>
+                                <v>False</v>
+                                <v>VisibleChildren</v>
+                                <v>True</v>
                               </d>
                               <v n="ConvDone">true</v>
                             </o>
@@ -1267,26 +1267,26 @@
                         <o n="TypeNodeAttributes" t="TypeNodeAttributes2">
                           <v n="AttrFlags">81920UL</v>
                           <d n="TypeNodeAttributesData" t="CaseInsensitiveHashtable" ckt="String" cvt="String">
-                            <v>conditionalshow</v>
-                            <v>visu_elemdev</v>
-                            <v>DescriptionTextId</v>
-                            <v>TL_ElementProperties.Desc_ReferencedVisus</v>
-                            <v>SortFlag</v>
-                            <v>80</v>
                             <v>AssignDestination</v>
                             <v>Init</v>
                             <v>Category</v>
                             <v>Simple|Standard</v>
-                            <v>DynamicArray</v>
-                            <v></v>
+                            <v>conditionalshow</v>
+                            <v>visu_elemdev</v>
+                            <v>DescriptionTextId</v>
+                            <v>TL_ElementProperties.Desc_ReferencedVisus</v>
                             <v>DisplayFrameReferencesConfiguration</v>
+                            <v></v>
+                            <v>DisplayTextId</v>
+                            <v>TL_ElementProperties.References</v>
+                            <v>DynamicArray</v>
                             <v></v>
                             <v>FrameReferences</v>
                             <v></v>
+                            <v>SortFlag</v>
+                            <v>80</v>
                             <v>Storable</v>
                             <v>True</v>
-                            <v>DisplayTextId</v>
-                            <v>TL_ElementProperties.References</v>
                           </d>
                           <v n="ConvDone">true</v>
                         </o>
@@ -1387,10 +1387,10 @@
                         <o n="TypeNodeAttributes" t="TypeNodeAttributes2">
                           <v n="AttrFlags">0UL</v>
                           <d n="TypeNodeAttributesData" t="CaseInsensitiveHashtable" ckt="String" cvt="String">
-                            <v>ieccodeconversion_useexistinginterface</v>
-                            <v>_3S.CoDeSys.VisuGenerated.IVisualisationIEC</v>
                             <v>conditionalshow</v>
                             <v>visu_elemdev</v>
+                            <v>ieccodeconversion_useexistinginterface</v>
+                            <v>_3S.CoDeSys.VisuGenerated.IVisualisationIEC</v>
                             <v>''NORMAL__COMMENT</v>
                             <v> interface contains additional methods to IVisualElement</v>
                           </d>
@@ -1591,10 +1591,10 @@
                               <o n="TypeNodeAttributes" t="TypeNodeAttributes2">
                                 <v n="AttrFlags">0UL</v>
                                 <d n="TypeNodeAttributesData" t="CaseInsensitiveHashtable" ckt="String" cvt="String">
-                                  <v>ieccodeconversion_useexistinginterface</v>
-                                  <v>_3S.CoDeSys.VisuGenerated.IVisualisationIEC</v>
                                   <v>conditionalshow</v>
                                   <v>visu_elemdev</v>
+                                  <v>ieccodeconversion_useexistinginterface</v>
+                                  <v>_3S.CoDeSys.VisuGenerated.IVisualisationIEC</v>
                                   <v>''NORMAL__COMMENT</v>
                                   <v> interface contains additional methods to IVisualElement</v>
                                 </d>
@@ -1652,10 +1652,10 @@
                                 <o n="TypeNodeAttributes" t="TypeNodeAttributes2">
                                   <v n="AttrFlags">0UL</v>
                                   <d n="TypeNodeAttributesData" t="CaseInsensitiveHashtable" ckt="String" cvt="String">
-                                    <v>ieccodeconversion_useexistinginterface</v>
-                                    <v>_3S.CoDeSys.VisuGenerated.IVisualisationIEC</v>
                                     <v>conditionalshow</v>
                                     <v>visu_elemdev</v>
+                                    <v>ieccodeconversion_useexistinginterface</v>
+                                    <v>_3S.CoDeSys.VisuGenerated.IVisualisationIEC</v>
                                     <v>''NORMAL__COMMENT</v>
                                     <v> interface contains additional methods to IVisualElement</v>
                                   </d>
@@ -1678,17 +1678,17 @@
                             <o n="TypeNodeAttributes" t="TypeNodeAttributes2">
                               <v n="AttrFlags">1048577UL</v>
                               <d n="TypeNodeAttributesData" t="CaseInsensitiveHashtable" ckt="String" cvt="String">
-                                <v>Visible</v>
-                                <v>False</v>
-                                <v>ieccodeconversion_array</v>
-                                <v></v>
-                                <v>VisibleChildren</v>
-                                <v>True</v>
                                 <v>DefaultArraySize</v>
                                 <v>5</v>
+                                <v>ieccodeconversion_array</v>
+                                <v></v>
                                 <v>''NORMAL__COMMENT</v>
                                 <v> We hide this node to prevent having two References nodes
  Nevertheless we want to make sure that the children are displayed</v>
+                                <v>Visible</v>
+                                <v>False</v>
+                                <v>VisibleChildren</v>
+                                <v>True</v>
                               </d>
                               <v n="ConvDone">true</v>
                             </o>
@@ -1741,26 +1741,26 @@
                         <o n="TypeNodeAttributes" t="TypeNodeAttributes2">
                           <v n="AttrFlags">81920UL</v>
                           <d n="TypeNodeAttributesData" t="CaseInsensitiveHashtable" ckt="String" cvt="String">
-                            <v>conditionalshow</v>
-                            <v>visu_elemdev</v>
-                            <v>DescriptionTextId</v>
-                            <v>TL_ElementProperties.Desc_ReferencedVisus</v>
-                            <v>SortFlag</v>
-                            <v>80</v>
                             <v>AssignDestination</v>
                             <v>Init</v>
                             <v>Category</v>
                             <v>Simple|Standard</v>
-                            <v>DynamicArray</v>
-                            <v></v>
+                            <v>conditionalshow</v>
+                            <v>visu_elemdev</v>
+                            <v>DescriptionTextId</v>
+                            <v>TL_ElementProperties.Desc_ReferencedVisus</v>
                             <v>DisplayFrameReferencesConfiguration</v>
+                            <v></v>
+                            <v>DisplayTextId</v>
+                            <v>TL_ElementProperties.References</v>
+                            <v>DynamicArray</v>
                             <v></v>
                             <v>FrameReferences</v>
                             <v></v>
+                            <v>SortFlag</v>
+                            <v>80</v>
                             <v>Storable</v>
                             <v>True</v>
-                            <v>DisplayTextId</v>
-                            <v>TL_ElementProperties.References</v>
                           </d>
                           <v n="ConvDone">true</v>
                         </o>
@@ -1857,10 +1857,10 @@
                         <o n="TypeNodeAttributes" t="TypeNodeAttributes2">
                           <v n="AttrFlags">0UL</v>
                           <d n="TypeNodeAttributesData" t="CaseInsensitiveHashtable" ckt="String" cvt="String">
-                            <v>ieccodeconversion_useexistinginterface</v>
-                            <v>_3S.CoDeSys.VisuGenerated.IVisualisationIEC</v>
                             <v>conditionalshow</v>
                             <v>visu_elemdev</v>
+                            <v>ieccodeconversion_useexistinginterface</v>
+                            <v>_3S.CoDeSys.VisuGenerated.IVisualisationIEC</v>
                             <v>''NORMAL__COMMENT</v>
                             <v> interface contains additional methods to IVisualElement</v>
                           </d>
@@ -2897,7 +2897,7 @@
                 <v n="VisualElementIdentifier">"GenElemInst_20"</v>
                 <n n="VisualElementOfflinePaintCommands" />
                 <n n="VisualElementFrameInformation" />
-                <d n="VisualElementInputActions" t="Hashtable" ckt="String" cvt="IInputAction[]">
+                <d n="VisualElementInputActions" t="Hashtable" ckt="String" cvt="STSnippetInputAction[]">
                   <v>OnMouseClick</v>
                   <a cet="STSnippetInputAction">
                     <o>
@@ -3072,7 +3072,7 @@
                 <v n="VisualElementIdentifier">"GenElemInst_22"</v>
                 <n n="VisualElementOfflinePaintCommands" />
                 <n n="VisualElementFrameInformation" />
-                <d n="VisualElementInputActions" t="Hashtable" ckt="String" cvt="IInputAction[]">
+                <d n="VisualElementInputActions" t="Hashtable" ckt="String" cvt="STSnippetInputAction[]">
                   <v>OnMouseClick</v>
                   <a cet="STSnippetInputAction">
                     <o>
@@ -3247,7 +3247,7 @@
                 <v n="VisualElementIdentifier">"GenElemInst_24"</v>
                 <n n="VisualElementOfflinePaintCommands" />
                 <n n="VisualElementFrameInformation" />
-                <d n="VisualElementInputActions" t="Hashtable" ckt="String" cvt="IInputAction[]">
+                <d n="VisualElementInputActions" t="Hashtable" ckt="String" cvt="STSnippetInputAction[]">
                   <v>OnMouseClick</v>
                   <a cet="STSnippetInputAction">
                     <o>
@@ -3279,80 +3279,80 @@
           <o n="GeneratedLMMDescriptions" t="GeneratedLanguageModelEntriesData">
             <o n="GeneratedVisuFbDescription" t="GenericFbDescription">
               <d n="FbMethods" t="CaseInsensitiveHashtable_1" ckt="String" cvt="Guid">
-                <v>HasVisibilityAccess</v>
-                <v>4ab2a7b2-5ec9-4590-850f-30fd1e3eeb1c</v>
                 <v>ContainsPoint</v>
                 <v>4869dc08-c747-4911-bca8-d6980e6b25ed</v>
-                <v>HasInputAccess</v>
-                <v>55305650-e032-4021-9151-31e2f44a9e44</v>
-                <v>HasInputAccessIntern</v>
-                <v>ad258e50-7d65-4117-b1cb-edd19f167c15</v>
-                <v>GetTooltip</v>
-                <v>fe99f3ed-c8cc-44cc-8159-0c2596e6cfcf</v>
-                <v>GetDialogInterfaceSize</v>
-                <v>4f7cb244-5be0-41d8-828a-3af004b33fc8</v>
-                <v>GetUpdateRects</v>
-                <v>bb87a8ad-58d3-4663-b082-39614476b5d8</v>
-                <v>GetNamespace</v>
-                <v>bdb72b31-e216-45cf-b56d-fa7f4017e7c8</v>
-                <v>SetResult</v>
-                <v>90a2efa2-d25b-46dd-83cb-23ba7f7b4292</v>
-                <v>GetTranslator</v>
-                <v>76142fe3-4c01-4ecc-bd5c-79384ceb9b81</v>
-                <v>Update</v>
-                <v>5f13fa9e-f07c-4659-b055-69a66efa2936</v>
-                <v>SetClientData</v>
-                <v>dfccf6ba-1c70-435a-8ee6-01268528db94</v>
-                <v>HasVisibilityAccessIntern</v>
-                <v>e39298aa-8636-4e29-8647-612a0367bceb</v>
-                <v>GetInstance</v>
-                <v>30138130-750f-4dcb-b165-fff66c72f91f</v>
-                <v>GetClientData</v>
-                <v>feb43e2b-9252-4e0d-8f22-e332ba2e00a7</v>
-                <v>Paint</v>
-                <v>74e92bb4-cfa1-4a6c-9098-af4cd55956fc</v>
-                <v>GetElementArray</v>
-                <v>ffe050f0-48f2-4af8-9263-b821cc05d03b</v>
-                <v>SetVisuFlagsInternal</v>
-                <v>c446ffc9-9fdd-4ec0-8d1a-c18b293d93cc</v>
-                <v>GetText</v>
-                <v>ec2ae2e5-76e2-4780-9036-3b127374010f</v>
-                <v>GetTextProperties</v>
-                <v>6f663625-dd90-4314-9fc0-acfccacc9b07</v>
-                <v>IsAntialiasingInactive</v>
-                <v>e9e3a6d3-5621-4d4f-ba63-52650e336564</v>
-                <v>Initialize</v>
-                <v>1a52694c-8e28-4717-9009-e225edd42fbf</v>
                 <v>Destruct</v>
                 <v>1744f2aa-ea26-41cc-bab7-306d2d369e8a</v>
-                <v>SetStaticState</v>
-                <v>944a1307-3fe0-4de7-9c5b-4ecdac0e43fd</v>
-                <v>GetSurroundingRect</v>
-                <v>9946134b-b656-40b4-8f10-e9416538d5db</v>
-                <v>GetResult</v>
-                <v>4a5fd5bb-072c-4b51-96e9-a9acd18c5eec</v>
+                <v>ElementInfo</v>
+                <v>696cfab9-5680-4258-9c76-967a11f97631</v>
+                <v>FB_Exit</v>
+                <v>8e8eb10e-0245-41f3-bbcc-d49b8cd006cc</v>
+                <v>FB_Reinit</v>
+                <v>81531dea-1bd8-4be0-992b-cd655c537845</v>
+                <v>GetClientData</v>
+                <v>feb43e2b-9252-4e0d-8f22-e332ba2e00a7</v>
+                <v>GetDialogInterface</v>
+                <v>77fdcd3a-1441-4d47-a2de-6b0e4c9bde7a</v>
+                <v>GetDialogInterfaceSize</v>
+                <v>4f7cb244-5be0-41d8-828a-3af004b33fc8</v>
+                <v>GetElementArray</v>
+                <v>ffe050f0-48f2-4af8-9263-b821cc05d03b</v>
+                <v>GetElementIdArray</v>
+                <v>73d971a2-c24b-4ae0-be24-37353566647c</v>
+                <v>GetInitializeVersion</v>
+                <v>931a0dcb-cfd9-48f4-bace-956e3cb5d8e1</v>
+                <v>GetInstance</v>
+                <v>30138130-750f-4dcb-b165-fff66c72f91f</v>
                 <v>GetLocalUsergroup</v>
                 <v>0fb1e648-800d-4b68-8102-e672d438cc35</v>
                 <v>GetName</v>
                 <v>8448dc18-f1c1-4974-903d-bb20aa137383</v>
+                <v>GetNamespace</v>
+                <v>bdb72b31-e216-45cf-b56d-fa7f4017e7c8</v>
+                <v>GetResult</v>
+                <v>4a5fd5bb-072c-4b51-96e9-a9acd18c5eec</v>
                 <v>GetSize</v>
                 <v>79967c9d-105a-4e8a-8ccd-33fc63358bb8</v>
-                <v>SetDialogInterface</v>
-                <v>1bd08264-9869-4e9e-882c-addbbd015e22</v>
-                <v>FB_Reinit</v>
-                <v>81531dea-1bd8-4be0-992b-cd655c537845</v>
-                <v>FB_Exit</v>
-                <v>8e8eb10e-0245-41f3-bbcc-d49b8cd006cc</v>
-                <v>GetInitializeVersion</v>
-                <v>931a0dcb-cfd9-48f4-bace-956e3cb5d8e1</v>
-                <v>GetDialogInterface</v>
-                <v>77fdcd3a-1441-4d47-a2de-6b0e4c9bde7a</v>
-                <v>GetElementIdArray</v>
-                <v>73d971a2-c24b-4ae0-be24-37353566647c</v>
+                <v>GetSurroundingRect</v>
+                <v>9946134b-b656-40b4-8f10-e9416538d5db</v>
+                <v>GetText</v>
+                <v>ec2ae2e5-76e2-4780-9036-3b127374010f</v>
+                <v>GetTextProperties</v>
+                <v>6f663625-dd90-4314-9fc0-acfccacc9b07</v>
+                <v>GetTooltip</v>
+                <v>fe99f3ed-c8cc-44cc-8159-0c2596e6cfcf</v>
+                <v>GetTranslator</v>
+                <v>76142fe3-4c01-4ecc-bd5c-79384ceb9b81</v>
+                <v>GetUpdateRects</v>
+                <v>bb87a8ad-58d3-4663-b082-39614476b5d8</v>
                 <v>HandleInput</v>
                 <v>831dd537-2364-4cea-8f82-a5196e875687</v>
-                <v>ElementInfo</v>
-                <v>696cfab9-5680-4258-9c76-967a11f97631</v>
+                <v>HasInputAccess</v>
+                <v>55305650-e032-4021-9151-31e2f44a9e44</v>
+                <v>HasInputAccessIntern</v>
+                <v>ad258e50-7d65-4117-b1cb-edd19f167c15</v>
+                <v>HasVisibilityAccess</v>
+                <v>4ab2a7b2-5ec9-4590-850f-30fd1e3eeb1c</v>
+                <v>HasVisibilityAccessIntern</v>
+                <v>e39298aa-8636-4e29-8647-612a0367bceb</v>
+                <v>Initialize</v>
+                <v>1a52694c-8e28-4717-9009-e225edd42fbf</v>
+                <v>IsAntialiasingInactive</v>
+                <v>e9e3a6d3-5621-4d4f-ba63-52650e336564</v>
+                <v>Paint</v>
+                <v>74e92bb4-cfa1-4a6c-9098-af4cd55956fc</v>
+                <v>SetClientData</v>
+                <v>dfccf6ba-1c70-435a-8ee6-01268528db94</v>
+                <v>SetDialogInterface</v>
+                <v>1bd08264-9869-4e9e-882c-addbbd015e22</v>
+                <v>SetResult</v>
+                <v>90a2efa2-d25b-46dd-83cb-23ba7f7b4292</v>
+                <v>SetStaticState</v>
+                <v>944a1307-3fe0-4de7-9c5b-4ecdac0e43fd</v>
+                <v>SetVisuFlagsInternal</v>
+                <v>c446ffc9-9fdd-4ec0-8d1a-c18b293d93cc</v>
+                <v>Update</v>
+                <v>5f13fa9e-f07c-4659-b055-69a66efa2936</v>
               </d>
               <v n="FbName">"NotImportant"</v>
               <v n="FbGuid">{a820fc1e-d71f-479f-a200-f2cc0d18dc0b}</v>
@@ -3363,12 +3363,12 @@
             <d n="GeneratedAllElementsEntries" t="Hashtable" />
             <o n="VisuRegDesc" t="GenericFbDescription">
               <d n="FbMethods" t="CaseInsensitiveHashtable_1" ckt="String" cvt="Guid">
+                <v>FB_Exit</v>
+                <v>983d54c6-a123-442a-9b06-f84d3b8a7c05</v>
                 <v>FB_Init</v>
                 <v>91aecef8-dfa4-4a7f-9c55-8e73c62b92ba</v>
                 <v>FB_Reinit</v>
                 <v>3f4d4928-9c86-49a7-8bf4-80fdb551f9d7</v>
-                <v>FB_Exit</v>
-                <v>983d54c6-a123-442a-9b06-f84d3b8a7c05</v>
               </d>
               <v n="FbName">"NotImportant"</v>
               <v n="FbGuid">{52f48653-ff7e-4d92-aeac-0cfd53bb40ae}</v>
@@ -3378,34 +3378,34 @@
             <n n="MemManPou" />
             <o n="InputsPou" t="GenericFbDescription">
               <d n="FbMethods" t="CaseInsensitiveHashtable_1" ckt="String" cvt="Guid">
-                <v>ExecuteLooseCapture</v>
-                <v>ccdebafb-463b-4af1-8986-3be05ccecccb</v>
-                <v>ExecuteMouseDblClick</v>
-                <v>090f0f53-3451-4d2c-bbe6-fe22223f6178</v>
-                <v>ExecuteMouseDown</v>
-                <v>2c5fbc9c-2dcb-4e1d-b249-cb4aa8c13092</v>
-                <v>ExecuteMouseUp</v>
-                <v>eab37153-25bd-447a-a65a-4841c08d784b</v>
-                <v>GetElementInfo</v>
-                <v>7b924792-740f-4eff-902c-f432849b37de</v>
                 <v>abstrGetDefaultCursor</v>
                 <v>df2604ff-1479-4565-927f-308dadc6ffef</v>
                 <v>ExecuteDialogClosed</v>
                 <v>5f45114d-5469-457d-8848-237d79421ec0</v>
-                <v>ExecuteKeyUp</v>
-                <v>6a7f98a4-e197-4b8d-ab9b-86020966546a</v>
                 <v>ExecuteKeyDown</v>
                 <v>53e558a3-1023-4f2b-aad4-9399665e9898</v>
-                <v>ExecuteMouseMove</v>
-                <v>16ac4bbb-6ed7-4c27-998c-9647c4ca3a60</v>
-                <v>Initialize</v>
-                <v>f8ece135-8b5a-42dc-969f-61f9c7025bef</v>
+                <v>ExecuteKeyUp</v>
+                <v>6a7f98a4-e197-4b8d-ab9b-86020966546a</v>
+                <v>ExecuteLooseCapture</v>
+                <v>ccdebafb-463b-4af1-8986-3be05ccecccb</v>
+                <v>ExecuteMouseClick</v>
+                <v>d0265130-2750-420c-bc6b-22dc6a897f3f</v>
+                <v>ExecuteMouseDblClick</v>
+                <v>090f0f53-3451-4d2c-bbe6-fe22223f6178</v>
+                <v>ExecuteMouseDown</v>
+                <v>2c5fbc9c-2dcb-4e1d-b249-cb4aa8c13092</v>
                 <v>ExecuteMouseEnter</v>
                 <v>cd61df3b-4d76-4d26-9813-26392cc3747a</v>
                 <v>ExecuteMouseLeave</v>
                 <v>db4e2e70-9088-4647-b258-934c7d36a46d</v>
-                <v>ExecuteMouseClick</v>
-                <v>d0265130-2750-420c-bc6b-22dc6a897f3f</v>
+                <v>ExecuteMouseMove</v>
+                <v>16ac4bbb-6ed7-4c27-998c-9647c4ca3a60</v>
+                <v>ExecuteMouseUp</v>
+                <v>eab37153-25bd-447a-a65a-4841c08d784b</v>
+                <v>GetElementInfo</v>
+                <v>7b924792-740f-4eff-902c-f432849b37de</v>
+                <v>Initialize</v>
+                <v>f8ece135-8b5a-42dc-969f-61f9c7025bef</v>
               </d>
               <v n="FbName">"NotImportant"</v>
               <v n="FbGuid">{5b480db5-368d-4a14-ba84-07a1ca73e8f4}</v>
@@ -3479,7 +3479,6 @@
         <Type n="Guid">System.Guid</Type>
         <Type n="Hashtable">System.Collections.Hashtable</Type>
         <Type n="HotkeyConfiguration">{6b108d46-58af-4e41-a3f4-174d8f160cc4}</Type>
-        <Type n="IInputAction[]">_3S.CoDeSys.VisualElem.IInputAction[], VisualElem, Version=3.5.13.0, Culture=neutral, PublicKeyToken=null</Type>
         <Type n="InputBoxInputAction">{e8e7e747-f76f-4dee-ab1c-b9637e41ac26}</Type>
         <Type n="InputBoxInputAction[]">_3S.CoDeSys.VisualElem.InputBoxInputAction[], VisualElem.plugin, Version=3.5.13.32, Culture=neutral, PublicKeyToken=null</Type>
         <Type n="Int16">System.Int16</Type>
@@ -3490,6 +3489,7 @@
         <Type n="String">System.String</Type>
         <Type n="StructuredTypeNode">{503c5b2e-e80e-4ee7-ae00-c5b93a62b1aa}</Type>
         <Type n="STSnippetInputAction">{6302d3fe-6ea5-4c42-819a-a9734a133b3d}</Type>
+        <Type n="STSnippetInputAction[]">_3S.CoDeSys.VisualElem.STSnippetInputAction[], VisualElem.plugin, Version=3.5.13.32, Culture=neutral, PublicKeyToken=null</Type>
         <Type n="TextDocument">{f3878285-8e4f-490b-bb1b-9acbb7eb04db}</Type>
         <Type n="TextLine">{a5de0b0b-1cb5-4913-ac21-9d70293ec00d}</Type>
         <Type n="TypeClass">{16f7aa24-038f-444e-9d81-b001bc091d35}</Type>
