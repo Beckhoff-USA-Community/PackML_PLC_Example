@@ -277,16 +277,16 @@
       <Resolution>FloatingPointUtils, 3.5.9.0 (System)</Resolution>
     </PlaceholderResolution>
     <PlaceholderResolution Include="SPT Base Types">
-      <Resolution>SPT Base Types, 3.2.9.1 (Beckhoff Automation LLC)</Resolution>
+      <Resolution>SPT Base Types, 3.9.0 (Beckhoff Automation LLC)</Resolution>
     </PlaceholderResolution>
     <PlaceholderResolution Include="SPT Components">
-      <Resolution>SPT Components, 3.2.6.1 (Beckhoff Automation LLC)</Resolution>
+      <Resolution>SPT Components, 3.9.1 (Beckhoff Automation LLC)</Resolution>
     </PlaceholderResolution>
     <PlaceholderResolution Include="SPT Event Logger">
-      <Resolution>SPT Event Logger, 3.2.0 (Beckhoff Automation LLC)</Resolution>
+      <Resolution>SPT Event Logger, 3.9.0 (Beckhoff Automation LLC)</Resolution>
     </PlaceholderResolution>
     <PlaceholderResolution Include="SPT Utilities">
-      <Resolution>SPT Utilities, 3.2.2 (Beckhoff Automation LLC)</Resolution>
+      <Resolution>SPT Utilities, 3.9.0 (Beckhoff Automation LLC)</Resolution>
     </PlaceholderResolution>
     <PlaceholderResolution Include="Standard">
       <Resolution>Tc2_Standard, 3.3.3.0 (Beckhoff Automation GmbH)</Resolution>
@@ -370,7 +370,7 @@
       <Resolution>Util, 3.5.11.0 (System)</Resolution>
     </PlaceholderResolution>
     <PlaceholderResolution Include="VisuDialogs">
-      <Resolution>VisuDialogs, * (System)</Resolution>
+      <Resolution>VisuDialogs, 3.5.12.0 (System)</Resolution>
     </PlaceholderResolution>
   </ItemGroup>
   <ProjectExtensions>
