@@ -4,11 +4,14 @@ The purpose of this project is to serve as an example of how to setup a PLC proj
 This sample is created by Beckhoff Automation LLC., and is provided as-is under the MIT license.
 
 # Getting Started
-The [SPT-Libraries](https://github.com/Beckhoff-USA-Community/SPT-Libraries) are required for this project.
+The [SPT-Libraries V3.9](https://github.com/Beckhoff-USA-Community/SPT-Libraries/tree/V3.9) are required for this project.
 
 Once the Repository has been cloned the user will need to install project libraries.
+
+### Update
+The project has been updated to use the new V3.9 Libraries. All previous library versions have been removed.
 
 # Build and Test
 TwinCAT "Activate and restart".
 
-If you want to learn more about creating good readme files then refer the following [guidelines](https://docs.microsoft.com/en-us/azure/devops/repos/git/create-a-readme?view=azure-devops). You can also seek inspiration from the below readme files: the contain VFFS_Demo.pdf contained in this repository.
+For further information about the project see the VFFS_Demo.pdf contained in this repository.
