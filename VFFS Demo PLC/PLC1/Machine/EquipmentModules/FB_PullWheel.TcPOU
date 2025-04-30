@@ -3,43 +3,43 @@
   <POU Name="FB_PullWheel" Id="{496b17f1-4b0a-4954-89f4-eec9ef72b2f5}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK FB_PullWheel EXTENDS FB_PackML_BaseModule
 VAR
-    // Sub module definitions here
+	// Sub module definitions here
 
-    // List of sub modules
-    ipSubModules_Init : ARRAY[1..Parameters_PackML_Base.MAX_NO_OF_SUBMODULES] OF I_PackML_BaseModule := [];
+	// List of sub modules
+	ipSubModules_Init : ARRAY[1..Parameters_PackML_Base.MAX_NO_OF_SUBMODULES] OF I_PackML_BaseModule := [];
 
-    // Component definitions here
-    LeftPullWheel     : FB_Component_BasicSlaveAxis := (Name := 'Left');
-    RightPullWheel    : FB_Component_BasicSlaveAxis := (Name := 'Right');
-    PullWheelCylinder : FB_Cylinder                 := (Name := 'Cylinder');
+	// Component definitions here
+	LeftPullWheel	  : FB_Component_BasicSlaveAxis := (Name := 'Left');
+	RightPullWheel	  : FB_Component_BasicSlaveAxis := (Name := 'Right');
+	PullWheelCylinder : FB_Cylinder					:= (Name := 'Cylinder');
 
-    //Alarms for this module
-    PullWheelAlarms : ARRAY[1..PULL_WHEELS_ALARM_COUNT] OF FB_TcAlarm;
+	//Alarms for this module
+	PullWheelAlarms : ARRAY[1..PULL_WHEELS_ALARM_COUNT] OF FB_TcAlarm;
 
 	//Data for recipe
 	Recipe : ST_PullWheelsRecipe;
-    (*Parameters from PackTags for module
-    _Param  : ARRAY[1..10] OF ST_Descriptor2;*)
-    _Report : ARRAY[1..10] OF ST_Descriptor2;
 
-    //HMI Control for EM
-    fbControlSourceHMI : FB_ControlSource_HMI;
+	(*Parameters from PackTags for module
+    _Param  : ARRAY[1..10] OF ST_Descriptor2;*)
+	_Report : ARRAY[1..10] OF ST_Descriptor2;
+
+	//HMI Control for EM
+	fbControlSourceHMI : FB_ControlSource_HMI;
 END_VAR
 
 VAR CONSTANT
+	//reports 
+	FAULT : INT := 1;
 
-    //reports 
-    FAULT : INT := 1;
-
-    //Alarms
-    PULL_WHEELS_ALARM_COUNT : INT := 5;
+	//Alarms
+	PULL_WHEELS_ALARM_COUNT : INT := 5;
 END_VAR
 
 //Simulation variables for messaging
 VAR
-    ErrorInput : BOOL;
-    WarnInput  : BOOL;
-    InfoInput  : BOOL;
+	ErrorInput : BOOL;
+	WarnInput  : BOOL;
+	InfoInput  : BOOL;
 END_VAR]]></Declaration>
     <Implementation>
       <ST><![CDATA[]]></ST>
@@ -56,27 +56,29 @@ VAR_INPUT
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[CASE SequenceState OF
-    0:
-        NoStateTasksToComplete := FALSE;
-        SequenceState          := SequenceState + 10;
-    10:
-        LeftPullWheel.Stop();
-        RightPullWheel.Stop();
-        IF LeftPullWheel.Stopped AND RightPullWheel.Stopped THEN
-            SequenceState := SequenceState + 10;
-        END_IF
-    20:
-        // Disable here
-        LeftPullWheel.Disable();
-        RightPullWheel.Disable();
-        PullWheelCylinder.Retract();
+	0:
+		NoStateTasksToComplete := FALSE;
+		SequenceState		   := SequenceState + 10;
 
-        // Check not enabled here
-        IF NOT LeftPullWheel.Enabled AND NOT RightPullWheel.Enabled AND PullWheelCylinder.Retracted THEN
-            SequenceState := SequenceState + 10;
-        END_IF
+	10:
+		LeftPullWheel.Stop();
+		RightPullWheel.Stop();
+		IF LeftPullWheel.Stopped AND RightPullWheel.Stopped THEN
+			SequenceState := SequenceState + 10;
+		END_IF
 
-        StateTasksComplete := TRUE;
+	20:
+		// Disable here
+		LeftPullWheel.Disable();
+		RightPullWheel.Disable();
+		PullWheelCylinder.Retract();
+
+		// Check not enabled here
+		IF NOT LeftPullWheel.Enabled AND NOT RightPullWheel.Enabled AND PullWheelCylinder.Retracted THEN
+			SequenceState := SequenceState + 10;
+		END_IF
+
+		StateTasksComplete := TRUE;
 END_CASE
 
 SUPER^.Aborting();]]></ST>
@@ -86,10 +88,9 @@ SUPER^.Aborting();]]></ST>
       <Declaration><![CDATA[PROPERTY Acceleration : LREAL]]></Declaration>
       <Set Name="Set" Id="{a82221d7-d213-426a-9fb3-1813ff8529dc}">
         <Declaration><![CDATA[VAR
-END_VAR
-]]></Declaration>
+END_VAR]]></Declaration>
         <Implementation>
-          <ST><![CDATA[Recipe.LeftAxis.Acceleration := Acceleration;
+          <ST><![CDATA[Recipe.LeftAxis.Acceleration  := Acceleration;
 Recipe.RightAxis.Acceleration := Acceleration;]]></ST>
         </Implementation>
       </Set>
@@ -100,24 +101,27 @@ VAR_INPUT
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[CASE SequenceState OF
-    0:
-        NoStateTasksToComplete := FALSE;
-        SequenceState          := SequenceState + 10;
-    10:
-        //Reset any alarms that get latched
-        PullWheelAlarms[E_PullWheels.StartTimeout].Clear(0, 0);
-        SequenceState := SequenceState + 10;
-    20:
-        // Enable here
-        LeftPullWheel.Enable();
-        RightPullWheel.Enable();
+	0:
+		NoStateTasksToComplete := FALSE;
+		SequenceState		   := SequenceState + 10;
 
-        // Check enabled here
-        IF LeftPullWheel.Enabled AND RightPullWheel.Enabled THEN
-            SequenceState := SequenceState + 10;
-        END_IF
-    30:
-        StateTasksComplete := TRUE;
+	10:
+		//Reset any alarms that get latched
+		PullWheelAlarms[E_PullWheels.StartTimeout].Clear(0, 0);
+		SequenceState := SequenceState + 10;
+
+	20:
+		// Enable here
+		LeftPullWheel.Enable();
+		RightPullWheel.Enable();
+
+		// Check enabled here
+		IF LeftPullWheel.Enabled AND RightPullWheel.Enabled THEN
+			SequenceState := SequenceState + 10;
+		END_IF
+
+	30:
+		StateTasksComplete := TRUE;
 END_CASE
 
 SUPER^.Clearing();]]></ST>
@@ -129,10 +133,10 @@ VAR_INPUT
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[// Add your event creation here
-F_CreateAllEventsInClass(Alarms     := PullWheelAlarms,
-                         ClassSize  := SIZEOF(TC_EVENTS.PullWheels),
-                         pInitEvent := ADR(TC_EVENTS.PullWheels.InitReferenceEvent),
-                         Prefix     := _Name);
+F_CreateAllEventsInClass(Alarms		:= PullWheelAlarms,
+						 ClassSize	:= SIZEOF(TC_EVENTS.PullWheels),
+						 pInitEvent := ADR(TC_EVENTS.PullWheels.InitReferenceEvent),
+						 Prefix		:= _Name);
 
 // Super call to base
 SUPER^.CreateEvents();]]></ST>
@@ -144,8 +148,8 @@ VAR_INPUT
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[IF NOT _InitComplete THEN
-    _InitComplete := Initialize();
-    RETURN;
+	_InitComplete := Initialize();
+	RETURN;
 END_IF
 
 SUPER^.CyclicLogic();
@@ -175,21 +179,21 @@ Here the alarms will raise and clear on its own if the input changes
 
 //Generic Alarms for Testing
 IF ErrorInput AND NOT PullWheelAlarms[E_PullWheels.AlarmMessage].bRaised THEN
-    RaiseAlarm2Args(PullWheelAlarms[E_PullWheels.AlarmMessage], '', '');
+	RaiseAlarm2Args(PullWheelAlarms[E_PullWheels.AlarmMessage], '', '');
 ELSIF NOT ErrorInput AND PullWheelAlarms[E_PullWheels.AlarmMessage].bRaised THEN
-    PullWheelAlarms[E_PullWheels.AlarmMessage].Clear(0, 0);
+	PullWheelAlarms[E_PullWheels.AlarmMessage].Clear(0, 0);
 END_IF
 
 IF WarnInput AND NOT PullWheelAlarms[E_PullWheels.WarnMessage].bRaised THEN
-    RaiseAlarm2Args(PullWheelAlarms[E_PullWheels.WarnMessage], '', '');
+	RaiseAlarm2Args(PullWheelAlarms[E_PullWheels.WarnMessage], '', '');
 ELSIF NOT WarnInput AND PullWheelAlarms[E_PullWheels.WarnMessage].bRaised THEN
-    PullWheelAlarms[E_PullWheels.WarnMessage].Clear(0, 0);
+	PullWheelAlarms[E_PullWheels.WarnMessage].Clear(0, 0);
 END_IF
 
 IF InfoInput AND NOT PullWheelAlarms[E_PullWheels.InfoMessage].bRaised THEN
-    RaiseAlarm2Args(PullWheelAlarms[E_PullWheels.InfoMessage], '', '');
+	RaiseAlarm2Args(PullWheelAlarms[E_PullWheels.InfoMessage], '', '');
 ELSIF NOT InfoInput AND PullWheelAlarms[E_PullWheels.InfoMessage].bRaised THEN
-    PullWheelAlarms[E_PullWheels.InfoMessage].Clear(0, 0);
+	PullWheelAlarms[E_PullWheels.InfoMessage].Clear(0, 0);
 END_IF]]></ST>
       </Implementation>
     </Method>
@@ -200,17 +204,19 @@ END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[// Function based on mode.  NO need to make SUPER^.Executing() since it does nothing.
 CASE _CurrentMode OF
-    E_PMLUnitMode.ePMLUnitMode_Production:
-        IF LeftPullWheel.InPosition AND NOT LeftPullWheel.Busy THEN
-            PullWheelCylinder.Retract();
-            IF PullWheelCylinder.Retracted THEN
-                StateComplete();
-            END_IF
-        END_IF
-    E_PMLUnitMode.ePMLUnitMode_Maintenance:
-        ;
-    E_PMLUnitMode.ePMLUnitMode_Manual:
-        ;
+	E_PMLUnitMode.ePMLUnitMode_Production:
+		IF LeftPullWheel.InPosition AND NOT LeftPullWheel.Busy THEN
+			PullWheelCylinder.Retract();
+			IF PullWheelCylinder.Retracted THEN
+				StateComplete();
+			END_IF
+		END_IF
+
+	E_PMLUnitMode.ePMLUnitMode_Maintenance:
+		;
+
+	E_PMLUnitMode.ePMLUnitMode_Manual:
+		;
 END_CASE]]></ST>
       </Implementation>
     </Method>
@@ -218,28 +224,28 @@ END_CASE]]></ST>
       <Declaration><![CDATA[//! @summary Basic module initialization logic
 METHOD PROTECTED Initialize : BOOL;
 VAR
-    i                        : UDINT;
-    varInfo                  : __SYSTEM.VAR_INFO;
-    AllSubUnitsInitialized   : BOOL := TRUE;
-    AllComponentsInitialized : BOOL := TRUE;
+	i						 : UDINT;
+	varInfo					 : __SYSTEM.VAR_INFO;
+	AllSubUnitsInitialized	 : BOOL := TRUE;
+	AllComponentsInitialized : BOOL := TRUE;
 END_VAR
 
 //! @description This method is called by <c>CyclicLogic()</c> as required]]></Declaration>
       <Implementation>
         <ST><![CDATA[Initialize := FALSE;
 CASE DescendantSequenceState OF
-    0:
+	0:
 		RegisterComponent(LeftPullWheel);
-		RegisterComponent(RightPullWheel);		
+		RegisterComponent(RightPullWheel);
 		RegisterComponent(PullWheelCylinder);
-		
-        _LogModeChanges         := FALSE;
-        _LogStateChanges        := FALSE;
-        DescendantSequenceState := DescendantSequenceState + 10;
-    10:
-        //Setup Custom modes here
+		_LogModeChanges			:= FALSE;
+		_LogStateChanges		:= FALSE;
+		DescendantSequenceState := DescendantSequenceState + 10;
 
-        (*CustomModes(eMode                          :=,
+	10:
+		//Setup Custom modes here
+
+		(*CustomModes(eMode                          :=,
                     sName                          :=,
                     bDisableClearing               :=,
                     bDisableStarting               :=,
@@ -264,24 +270,27 @@ CASE DescendantSequenceState OF
                     bEnableUnitModeChangeComplete  :=,
                     bError                         =>,
                     nErrorId                       =>);*)
-        DescendantSequenceState := DescendantSequenceState + 10;
-    20:
-        //Copy Mode names
-        FOR i := 1 TO 3 DO
-            ModeNames[i] := F_UnitModeToString(UDINT_TO_DINT(i));
-        END_FOR
+		DescendantSequenceState := DescendantSequenceState + 10;
 
-        Initialize_TagData();
+	20:
+		//Copy Mode names
+		FOR i := 1 TO 3 DO
+			ModeNames[i] := F_UnitModeToString(UDINT_TO_DINT(i));
+		END_FOR
+
+		Initialize_TagData();
 		RegisterExternalController(Controller := fbControlSourceHMI);
 		fbControlSourceHMI.CyclicLogic();
-        DescendantSequenceState := DescendantSequenceState + 10;
-    30:
-        //Call the Super
-        IF SUPER^.Initialize() THEN
-            DescendantSequenceState := DescendantSequenceState + 10;
-        END_IF
-    40:
-        Initialize := TRUE;
+		DescendantSequenceState := DescendantSequenceState + 10;
+
+	30:
+		//Call the Super
+		IF SUPER^.Initialize() THEN
+			DescendantSequenceState := DescendantSequenceState + 10;
+		END_IF
+
+	40:
+		Initialize := TRUE;
 END_CASE]]></ST>
       </Implementation>
     </Method>
@@ -291,33 +300,30 @@ VAR_INPUT
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[// Reports
-_Report[FAULT].ID    := TO_DINT(1 * 10 + 1);
-_Report[FAULT].Name  := 'Fault ID';
-_Report[FAULT].Unit  := 'n/a';
+_Report[FAULT].ID	:= TO_DINT(1 * 10 + 1);
+_Report[FAULT].Name := 'Fault ID';
+_Report[FAULT].Unit := 'n/a';
 
 //Recipe
-Recipe.Length := 100;
-Recipe.LeftAxis.Velocity := 100;
-Recipe.LeftAxis.Acceleration := 1000;
-Recipe.RightAxis.Velocity := 100;
-Recipe.RightAxis.Acceleration := 1000;
-]]></ST>
+Recipe.Length				  := 100;
+Recipe.LeftAxis.Velocity	  := 100;
+Recipe.LeftAxis.Acceleration  := 1000;
+Recipe.RightAxis.Velocity	  := 100;
+Recipe.RightAxis.Acceleration := 1000;]]></ST>
       </Implementation>
     </Method>
     <Property Name="Length" Id="{25f83960-2850-4c98-aac0-0474e792dc9b}" FolderPath="Properties\">
       <Declaration><![CDATA[PROPERTY Length : LREAL]]></Declaration>
       <Get Name="Get" Id="{49a64ec1-b283-4c39-b495-d337d077c39a}">
         <Declaration><![CDATA[VAR
-END_VAR
-]]></Declaration>
+END_VAR]]></Declaration>
         <Implementation>
           <ST><![CDATA[Length := Recipe.Length;]]></ST>
         </Implementation>
       </Get>
       <Set Name="Set" Id="{62003e52-0dea-4a17-a8a3-a51e509c6ad2}">
         <Declaration><![CDATA[VAR
-END_VAR
-]]></Declaration>
+END_VAR]]></Declaration>
         <Implementation>
           <ST><![CDATA[Recipe.Length := Length;]]></ST>
         </Implementation>
@@ -326,18 +332,18 @@ END_VAR
     <Method Name="RaiseAlarm2Args" Id="{3b444795-a02f-4331-ab15-8dec5e002fb2}" FolderPath="Methods\">
       <Declaration><![CDATA[METHOD RaiseAlarm2Args
 VAR_IN_OUT
-    Alarm : FB_TcAlarm; //Alarm to be raised
+	Alarm : FB_TcAlarm; //Alarm to be raised
 END_VAR
 
 VAR_INPUT
-    String_1 : STRING; //First String Parameter (The Name of this component will be applied first automatically)
-    String_2 : STRING; //Second String Parameter
+	String_1 : STRING; //First String Parameter (The Name of this component will be applied first automatically)
+	String_2 : STRING; //Second String Parameter
 END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[F_RaiseAlarmWithStringParameters(Alarm    := Alarm,
-                                 String_1 := Name,
-                                 String_2 := String_1,
-                                 String_3 := String_2);]]></ST>
+        <ST><![CDATA[F_RaiseAlarmWithStringParameters(Alarm	  := Alarm,
+								 String_1 := Name,
+								 String_2 := String_1,
+								 String_3 := String_2);]]></ST>
       </Implementation>
     </Method>
     <Method Name="Resetting" Id="{c85d70ed-952c-4c53-9986-231b7ace540a}" FolderPath="Methods\Acting States\">
@@ -346,28 +352,30 @@ VAR_INPUT
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[CASE _CurrentMode OF
-    //=================================PRODUCTION MODE==================================
-    E_PMLUnitMode.ePMLUnitMode_Production:
-        CASE SequenceState OF
-            0:
-                NoStateTasksToComplete := FALSE;
-                SequenceState          := SequenceState + 10;
-            10:
-                /// No reason to gear to the master LeftPullWheel.Master1  REF= MAIN.VFFSDemo.Master.Axis;
-                RightPullWheel.Master1 REF= LeftPullWheel.Axis;
+	//=================================PRODUCTION MODE==================================
+	E_PMLUnitMode.ePMLUnitMode_Production:
+		CASE SequenceState OF
+			0:
+				NoStateTasksToComplete := FALSE;
+				SequenceState		   := SequenceState + 10;
 
-                ///LeftPullWheel.GearIn();
-                RightPullWheel.GearIn();
-                SequenceState := SequenceState + 10;
-            20:
-                IF (*LeftPullWheel.InGear AND*) RightPullWheel.InGear THEN
-                    StateTasksComplete := TRUE;
-                END_IF
-        END_CASE
+			10:
+				/// No reason to gear to the master LeftPullWheel.Master1  REF= MAIN.VFFSDemo.Master.Axis;
+				RightPullWheel.Master1 REF= LeftPullWheel.Axis;
 
-    //=================================MAINTENANCE & MANUAL MODE==================================	
-    E_PMLUnitMode.ePMLUnitMode_Maintenance, E_PMLUnitMode.ePMLUnitMode_Manual:
-        ;
+				///LeftPullWheel.GearIn();
+				RightPullWheel.GearIn();
+				SequenceState := SequenceState + 10;
+
+			20:
+				IF (*LeftPullWheel.InGear AND*) RightPullWheel.InGear THEN
+					StateTasksComplete := TRUE;
+				END_IF
+		END_CASE
+
+	//=================================MAINTENANCE & MANUAL MODE==================================	
+	E_PMLUnitMode.ePMLUnitMode_Maintenance, E_PMLUnitMode.ePMLUnitMode_Manual:
+		;
 END_CASE
 
 SUPER^.Resetting();]]></ST>
@@ -379,42 +387,45 @@ VAR_INPUT
 END_VAR
 
 VAR_INST
-    StartTimer : TON;
+	StartTimer : TON;
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[CASE _CurrentMode OF
-    //=================================PRODUCTION MODE==================================
-    E_PMLUnitMode.ePMLUnitMode_Production:
-        CASE SequenceState OF
-            0:
-                // Delay 1 scan to make sure timer is off.  Not guarnteed from last time where it finished.
-                NoStateTasksToComplete := FALSE;
-                SequenceState          := SequenceState + 10;
-            10:
-                PullWheelCylinder.Extend();
-                IF PullWheelCylinder.Extended THEN
-                    NoStateTasksToComplete     := FALSE;
-                    LeftPullWheel.Velocity     := Recipe.LeftAxis.Velocity;
-                    LeftPullWheel.Acceleration := Recipe.LeftAxis.Acceleration;
-                    LeftPullWheel.MoveRelative(Distance := Recipe.Length, FALSE);
-                    SequenceState := SequenceState + 10;
-                END_IF
-            20:
-                IF LeftPullWheel.Busy THEN
-                    SequenceState := SequenceState + 10;
-                END_IF
+	//=================================PRODUCTION MODE==================================
+	E_PMLUnitMode.ePMLUnitMode_Production:
+		CASE SequenceState OF
+			0:
+				// Delay 1 scan to make sure timer is off.  Not guarnteed from last time where it finished.
+				NoStateTasksToComplete := FALSE;
+				SequenceState		   := SequenceState + 10;
 
-                IF StartTimer.Q AND NOT PullWheelAlarms[E_PullWheels.StartTimeout].bRaised THEN
-                    RaiseAlarm2Args(PullWheelAlarms[E_PullWheels.StartTimeout], '', '');
-                    SequenceState := SequenceState + 10;
-                END_IF
-            30:
-                StateTasksComplete := TRUE;
-        END_CASE
+			10:
+				PullWheelCylinder.Extend();
+				IF PullWheelCylinder.Extended THEN
+					NoStateTasksToComplete	   := FALSE;
+					LeftPullWheel.Velocity	   := Recipe.LeftAxis.Velocity;
+					LeftPullWheel.Acceleration := Recipe.LeftAxis.Acceleration;
+					LeftPullWheel.MoveRelative(Distance := Recipe.Length, FALSE);
+					SequenceState := SequenceState + 10;
+				END_IF
 
-    //=================================MAINTENANCE & MANUAL MODE==================================
-    E_PMLUnitMode.ePMLUnitMode_Maintenance, E_PMLUnitMode.ePMLUnitMode_Manual:
-        ;
+			20:
+				IF LeftPullWheel.Busy THEN
+					SequenceState := SequenceState + 10;
+				END_IF
+
+				IF StartTimer.Q AND NOT PullWheelAlarms[E_PullWheels.StartTimeout].bRaised THEN
+					RaiseAlarm2Args(PullWheelAlarms[E_PullWheels.StartTimeout], '', '');
+					SequenceState := SequenceState + 10;
+				END_IF
+
+			30:
+				StateTasksComplete := TRUE;
+		END_CASE
+
+	//=================================MAINTENANCE & MANUAL MODE==================================
+	E_PMLUnitMode.ePMLUnitMode_Maintenance, E_PMLUnitMode.ePMLUnitMode_Manual:
+		;
 END_CASE
 
 SUPER^.Starting();
@@ -427,24 +438,26 @@ VAR_INPUT
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[CASE _CurrentMode OF
-    //=================================PRODUCTION MODE==================================
-    E_PMLUnitMode.ePMLUnitMode_Production:
-        CASE SequenceState OF
-            0:
-                NoStateTasksToComplete := FALSE;
-                PullWheelCylinder.Retract();
-                SequenceState := SequenceState + 10;
-            10:
-                IF PullWheelCylinder.Retracted THEN
-                    SequenceState := SequenceState + 10;
-                END_IF
-            20:
-                StateTasksComplete := TRUE;
-        END_CASE
+	//=================================PRODUCTION MODE==================================
+	E_PMLUnitMode.ePMLUnitMode_Production:
+		CASE SequenceState OF
+			0:
+				NoStateTasksToComplete := FALSE;
+				PullWheelCylinder.Retract();
+				SequenceState := SequenceState + 10;
 
-    //=================================MAINTENANCE & MANUAL MODE==================================
-    E_PMLUnitMode.ePMLUnitMode_Maintenance, E_PMLUnitMode.ePMLUnitMode_Manual:
-        ;
+			10:
+				IF PullWheelCylinder.Retracted THEN
+					SequenceState := SequenceState + 10;
+				END_IF
+
+			20:
+				StateTasksComplete := TRUE;
+		END_CASE
+
+	//=================================MAINTENANCE & MANUAL MODE==================================
+	E_PMLUnitMode.ePMLUnitMode_Maintenance, E_PMLUnitMode.ePMLUnitMode_Manual:
+		;
 END_CASE
 
 SUPER^.Stopping();]]></ST>
@@ -454,91 +467,12 @@ SUPER^.Stopping();]]></ST>
       <Declaration><![CDATA[PROPERTY Velocity : LREAL]]></Declaration>
       <Set Name="Set" Id="{e26bea52-2635-4098-a40e-4dd141afac28}">
         <Declaration><![CDATA[VAR
-END_VAR
-]]></Declaration>
+END_VAR]]></Declaration>
         <Implementation>
-          <ST><![CDATA[Recipe.LeftAxis.Velocity := Velocity;
+          <ST><![CDATA[Recipe.LeftAxis.Velocity  := Velocity;
 Recipe.RightAxis.Velocity := Velocity;]]></ST>
         </Implementation>
       </Set>
     </Property>
-    <LineIds Name="FB_PullWheel">
-      <LineId Id="9" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_PullWheel.Aborting">
-      <LineId Id="237" Count="23" />
-      <LineId Id="229" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_PullWheel.Acceleration.Set">
-      <LineId Id="2" Count="0" />
-      <LineId Id="5" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_PullWheel.Clearing">
-      <LineId Id="154" Count="20" />
-      <LineId Id="5" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_PullWheel.CreateEvents">
-      <LineId Id="74" Count="6" />
-      <LineId Id="6" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_PullWheel.CyclicLogic">
-      <LineId Id="88" Count="5" />
-      <LineId Id="102" Count="0" />
-      <LineId Id="101" Count="0" />
-      <LineId Id="103" Count="0" />
-      <LineId Id="94" Count="4" />
-      <LineId Id="86" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_PullWheel.CyclicLogic_Simulation">
-      <LineId Id="81" Count="3" />
-      <LineId Id="96" Count="17" />
-      <LineId Id="55" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_PullWheel.Execute">
-      <LineId Id="89" Count="12" />
-      <LineId Id="14" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_PullWheel.Initialize">
-      <LineId Id="696" Count="55" />
-      <LineId Id="11" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_PullWheel.Initialize_TagData">
-      <LineId Id="94" Count="2" />
-      <LineId Id="5" Count="0" />
-      <LineId Id="108" Count="0" />
-      <LineId Id="100" Count="0" />
-      <LineId Id="99" Count="0" />
-      <LineId Id="104" Count="0" />
-      <LineId Id="101" Count="0" />
-      <LineId Id="107" Count="0" />
-      <LineId Id="106" Count="0" />
-      <LineId Id="103" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_PullWheel.Length.Get">
-      <LineId Id="2" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_PullWheel.Length.Set">
-      <LineId Id="2" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_PullWheel.RaiseAlarm2Args">
-      <LineId Id="36" Count="2" />
-      <LineId Id="16" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_PullWheel.Resetting">
-      <LineId Id="204" Count="24" />
-      <LineId Id="5" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_PullWheel.Starting">
-      <LineId Id="246" Count="35" />
-      <LineId Id="220" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_PullWheel.Stopping">
-      <LineId Id="32" Count="20" />
-      <LineId Id="5" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_PullWheel.Velocity.Set">
-      <LineId Id="2" Count="0" />
-      <LineId Id="5" Count="0" />
-    </LineIds>
   </POU>
 </TcPlcObject>

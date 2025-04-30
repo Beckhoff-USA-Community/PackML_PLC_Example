@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.11">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
   <POU Name="FB_Cylinder" Id="{84ff1c9d-387b-40dd-9e52-4cc6c2a7141b}" SpecialFunc="None">
     <Declaration><![CDATA[(*	This FB is used for a single output solenoid 
 	It uses the times to say when Extended/Retracted  	
@@ -7,27 +7,27 @@
 *)
 FUNCTION_BLOCK FB_Cylinder EXTENDS FB_ComponentBase IMPLEMENTS I_Cylinder
 VAR
-    //Output
-    Output AT %Q* : BOOL;
+	//Output
+	Output AT %Q* : BOOL;
 
-    // Internal variables
-    _ExtendRequest  : BOOL;
-    _RetractRequest : BOOL;
-    _Extended       : BOOL;
-    _Retracted      : BOOL;
-    _Extending      : BOOL;
-    _Retracting     : BOOL;
-    _ExtendTime     : LREAL := 1000; // Default time 1s
-    _RetractTime    : LREAL := 1000; // Default time 1s
+	// Internal variables
+	_ExtendRequest	: BOOL;
+	_RetractRequest : BOOL;
+	_Extended		: BOOL;
+	_Retracted		: BOOL;
+	_Extending		: BOOL;
+	_Retracting		: BOOL;
+	_ExtendTime		: LREAL := 1000; // Default time 1s
+	_RetractTime	: LREAL := 1000; // Default time 1s
 
-    // Timer for Extend/Retract
-    Extend_TON    : TON;
-    Retract_TON   : TON;
-    Extend_RTRIG  : R_TRIG;
-    Retract_RTRIG : R_TRIG;
+	// Timer for Extend/Retract
+	Extend_TON	  : TON;
+	Retract_TON	  : TON;
+	Extend_RTRIG  : R_TRIG;
+	Retract_RTRIG : R_TRIG;
 
-    //HMI 
-    Cylinder_HMI : ST_Cylinder_HMI;
+	//HMI 
+	Cylinder_HMI : ST_Cylinder_HMI;
 END_VAR]]></Declaration>
     <Implementation>
       <ST><![CDATA[]]></ST>
@@ -52,33 +52,33 @@ Retract_RTRIG(CLK := _RetractRequest);
 
 //Handle Extend
 IF Extend_RTRIG.Q THEN
-    Output          := TRUE;
-    _Extending      := TRUE;
-    _Retracting     := FALSE;
-    _Retracted      := FALSE;
-    _RetractRequest := FALSE;
+	Output			:= TRUE;
+	_Extending		:= TRUE;
+	_Retracting		:= FALSE;
+	_Retracted		:= FALSE;
+	_RetractRequest := FALSE;
 END_IF
 
 //Handle Retract
 IF Retract_RTRIG.Q THEN
-    Output         := FALSE;
-    _Extending     := FALSE;
-    _Retracting    := TRUE;
-    _Extended      := FALSE;
-    _ExtendRequest := FALSE;
+	Output		   := FALSE;
+	_Extending	   := FALSE;
+	_Retracting	   := TRUE;
+	_Extended	   := FALSE;
+	_ExtendRequest := FALSE;
 END_IF
 
 //Handle the time to Extend/Retract
 Extend_TON(IN := _Extending, PT := LREAL_TO_TIME(_ExtendTime));
 Retract_TON(IN := _Retracting, PT := LREAL_TO_TIME(_RetractTime));
 IF Extend_TON.Q THEN
-    _Extended  := TRUE;
-    _Extending := FALSE;
+	_Extended  := TRUE;
+	_Extending := FALSE;
 END_IF
 
 IF Retract_TON.Q THEN
-    _Retracted  := TRUE;
-    _Retracting := FALSE;
+	_Retracted	:= TRUE;
+	_Retracting := FALSE;
 END_IF
 
 SUPER^.CyclicLogic();]]></ST>
@@ -87,7 +87,7 @@ SUPER^.CyclicLogic();]]></ST>
     <Method Name="Extend" Id="{f76b6140-af7b-4e84-89e2-4088b7535499}" FolderPath="I_Cylinder\">
       <Declaration><![CDATA[METHOD Extend]]></Declaration>
       <Implementation>
-        <ST><![CDATA[_ExtendRequest  := TRUE;
+        <ST><![CDATA[_ExtendRequest	:= TRUE;
 _RetractRequest := FALSE;]]></ST>
       </Implementation>
     </Method>
@@ -127,19 +127,19 @@ END_VAR]]></Declaration>
 
 //Handle the requests to extend and retract
 IF ComponentBase_HMI.Status.HMIControlAvailable THEN
-    IF Cylinder_HMI.Command.Extend THEN
-        Extend();
-    ELSIF Cylinder_HMI.Command.Retract THEN
-        Retract();
-    END_IF
+	IF Cylinder_HMI.Command.Extend THEN
+		Extend();
+	ELSIF Cylinder_HMI.Command.Retract THEN
+		Retract();
+	END_IF
 END_IF
 
 //Update HMI status info
-Cylinder_HMI.Status.Extended    := _Extended;
-Cylinder_HMI.Status.Extending   := _Extending;
-Cylinder_HMI.Status.Retracted   := _Retracted;
-Cylinder_HMI.Status.Retracting  := _Retracting;
-Cylinder_HMI.Config.ExtendTime  := _ExtendTime;
+Cylinder_HMI.Status.Extended	:= _Extended;
+Cylinder_HMI.Status.Extending	:= _Extending;
+Cylinder_HMI.Status.Retracted	:= _Retracted;
+Cylinder_HMI.Status.Retracting	:= _Retracting;
+Cylinder_HMI.Config.ExtendTime	:= _ExtendTime;
 Cylinder_HMI.Config.RetractTime := _RetractTime;]]></ST>
       </Implementation>
     </Method>
@@ -151,16 +151,16 @@ METHOD PROTECTED Initialize : BOOL;
       <Implementation>
         <ST><![CDATA[//Set the cylinder to retracted
 IF Output THEN
-    _Extended  := TRUE;
-    _Retracted := FALSE;
+	_Extended  := TRUE;
+	_Retracted := FALSE;
 ELSE
-    _Extended  := FALSE;
-    _Retracted := TRUE;
+	_Extended  := FALSE;
+	_Retracted := TRUE;
 END_IF
 
-_Extending      := FALSE;
-_ExtendRequest  := FALSE;
-_Retracting     := FALSE;
+_Extending		:= FALSE;
+_ExtendRequest	:= FALSE;
+_Retracting		:= FALSE;
 _RetractRequest := FALSE;
 
 //Call base class Initialize
@@ -172,8 +172,8 @@ Initialize := SUPER^.Initialize();]]></ST>
 VAR_INPUT
 END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[_Busy    := _Extending OR _Retracting;
-_Error   := FALSE;
+        <ST><![CDATA[_Busy	 := _Extending OR _Retracting;
+_Error	 := FALSE;
 _ErrorID := 0;
 SUPER^.Monitoring();]]></ST>
       </Implementation>
@@ -181,7 +181,7 @@ SUPER^.Monitoring();]]></ST>
     <Method Name="Retract" Id="{62f4be5a-2417-454d-83fa-0301d008b1f8}" FolderPath="I_Cylinder\">
       <Declaration><![CDATA[METHOD Retract]]></Declaration>
       <Implementation>
-        <ST><![CDATA[_ExtendRequest  := FALSE;
+        <ST><![CDATA[_ExtendRequest	:= FALSE;
 _RetractRequest := TRUE;]]></ST>
       </Implementation>
     </Method>
@@ -212,53 +212,5 @@ END_VAR]]></Declaration>
         </Implementation>
       </Set>
     </Property>
-    <LineIds Name="FB_Cylinder">
-      <LineId Id="9" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_Cylinder.CreateEvents">
-      <LineId Id="5" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_Cylinder.CyclicLogic">
-      <LineId Id="156" Count="34" />
-      <LineId Id="4" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_Cylinder.Extend">
-      <LineId Id="10" Count="0" />
-      <LineId Id="5" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_Cylinder.Extended.Get">
-      <LineId Id="2" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_Cylinder.ExtendTime.Get">
-      <LineId Id="2" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_Cylinder.ExtendTime.Set">
-      <LineId Id="2" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_Cylinder.HMICommunication">
-      <LineId Id="117" Count="16" />
-      <LineId Id="22" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_Cylinder.Initialize">
-      <LineId Id="120" Count="14" />
-      <LineId Id="6" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_Cylinder.Monitoring">
-      <LineId Id="37" Count="2" />
-      <LineId Id="5" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_Cylinder.Retract">
-      <LineId Id="9" Count="0" />
-      <LineId Id="4" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_Cylinder.Retracted.Get">
-      <LineId Id="2" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_Cylinder.RetractTime.Get">
-      <LineId Id="2" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_Cylinder.RetractTime.Set">
-      <LineId Id="2" Count="0" />
-    </LineIds>
   </POU>
 </TcPlcObject>
